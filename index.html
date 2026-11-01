@@ -96,7 +96,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 400; line-height: 1.2; 
 .counts b { font-weight: 400; font-size: 26px; line-height: 1; }
 .counts span { font-family: var(--f-body); font-size: 13px; }
 
-.tracks { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 5px; }
+.tracks { display: grid; grid-template-columns: repeat(var(--n, 13), minmax(0, 1fr)); gap: 5px; }
 .tracks button, .pill { border: 1px solid var(--line); background: linear-gradient(180deg, var(--steel-a), var(--steel-b)); border-radius: 8px; cursor: pointer; color: var(--ink); }
 .tracks button { padding: 6px 0 5px; text-align: center; line-height: 1.15; min-width: 0; }
 .tracks small { display: block; font: 400 8.5px/1 var(--f-tech); color: var(--mute); letter-spacing: .08em; margin-bottom: 3px; }
@@ -241,7 +241,7 @@ a.card:hover { border-color: var(--accent); }
 @media (max-width: 760px) {
   .player { grid-template-columns: minmax(0, 1fr); padding-block: 22px 14px; gap: 20px; }
   .disc-box { width: min(78%, 330px); order: -1; }
-  .tracks { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .tracks { grid-template-columns: repeat(8, minmax(0, 1fr)); }
   .now-head { grid-template-columns: minmax(0, 1fr); gap: 6px; }
   .now-body { grid-template-columns: minmax(0, 1fr); }
   .year { grid-template-columns: minmax(0, 1fr); gap: 8px; }
@@ -257,6 +257,54 @@ a.card:hover { border-color: var(--accent); }
   .shuffle-act { grid-column: 1 / -1; flex-direction: row; }
   .albums { grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); }
 }
+
+/* 两条线 */
+.linebar { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.linebar .chip { text-decoration: none; font-size: 15px; padding: 5px 15px; display: inline-flex; align-items: baseline; gap: 7px; }
+.linebar small { font: 400 12px/1 var(--f-lcd); opacity: .8; }
+.ygrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+.ycard { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; padding: 14px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none; align-content: start; }
+.ycard:hover { border-color: var(--accent); }
+.yn { font: 400 34px/1 var(--f-lcd); }
+.yb { display: grid; gap: 5px; min-width: 0; }
+.yb b { font: 400 21px/1.2 var(--f-display); }
+.yb small { color: var(--mute); font-size: 13.5px; line-height: 1.55; }
+.year-big { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 22px; align-items: center; margin: 10px 0 14px; }
+.year-big > span { font-size: clamp(54px, 9vw, 96px); line-height: 1; color: var(--accent); }
+.year-big p { margin: 6px 0 0; color: var(--mute); }
+.year-h .frow { margin-bottom: 10px; }
+.pill { text-decoration: none; display: inline-block; }
+.mon { font: 400 17px/1.3 var(--f-display); margin: 18px 0 2px; color: var(--accent); }
+.events .tag { padding: 0 7px; font-size: 11.5px; white-space: nowrap; }
+.src { font-size: 11.5px; color: var(--mute); margin-left: 2px; }
+.alist { list-style: none; margin: 0; padding: 0; }
+.alist li { display: grid; grid-template-columns: 54px minmax(0, 1.6fr) minmax(0, 1fr); gap: 10px; padding: 7px 4px; border-bottom: 1px solid var(--line); align-items: baseline; line-height: 1.4; }
+.alist time { font: 400 13px/1 var(--f-lcd); color: var(--mute); }
+.alist .ti a { color: inherit; }
+.alist small { display: block; color: var(--mute); font-size: 12.5px; }
+.tune.wide li { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) 46px 104px; }
+.tune.wide li:has(.no) { grid-template-columns: 44px minmax(0, 1.6fr) minmax(0, 1fr) 46px 104px; }
+.edition { margin-bottom: 22px; }
+.edition h3 { font-size: 21px; margin-bottom: 4px; }
+.edition h3 a { color: inherit; }
+.edition h3 small { font-size: 13px; color: var(--mute); }
+.page-h ~ .sec h4, .edition h4 { font: 600 14px/1.4 var(--f-body); color: var(--mute); margin: 12px 0 2px; }
+.prose .sub { font-size: 25px; margin: 26px 0 8px; }
+@media (max-width: 760px) {
+  .ygrid { grid-template-columns: minmax(0, 1fr); }
+  .tune.wide li, .tune.wide li:has(.no) { grid-template-columns: minmax(0, 1fr) 100px; gap: 2px 10px; }
+  .tune.wide li .no, .tune.wide li .yr { display: none; }
+  .tune.wide li .by { grid-column: 1; grid-row: 2; font-size: 13px; color: var(--mute); }
+  .tune.wide li .act { grid-column: 2; grid-row: 1 / span 2; }
+  .alist li { grid-template-columns: 46px minmax(0, 1fr); }
+  .alist li .by { grid-column: 2; font-size: 13px; color: var(--mute); }
+  .year-big { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+}
+
+.plays { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; }
+
+.sec, .edition, .prose .sub { scroll-margin-top: 84px; }
+@media (max-width: 980px) { .sec, .edition, .prose .sub { scroll-margin-top: 124px; } }
 </style>
 </head>
 <body>
@@ -264,7 +312,7 @@ a.card:hover { border-color: var(--accent); }
   <div class="wrap deck-in">
     <a class="brand" href="#home"><span class="brand-disc" aria-hidden="true"></span><b>千禧年华语音乐大百科</b></a>
     <nav class="nav" aria-label="主导航">
-      <a href="#home">首页</a><a href="#years">编年史</a><a href="#artists">歌手库</a><a href="#albums">专辑墙</a><a href="#songs">点歌台</a><a href="#awards">金曲奖</a><a href="#topics">专题</a><a href="#makers">幕后</a><a href="#about">关于</a>
+      <a href="#home">首页</a><a href="#years">编年史</a><a href="#artists">歌手库</a><a href="#albums">专辑墙</a><a href="#songs">点歌台</a><a href="#charts">榜单</a><a href="#topics">专题</a><a href="#makers">幕后</a><a href="#about">关于</a>
     </nav>
     <div class="search" role="search">
       <input id="q" type="search" placeholder="搜歌手、专辑、歌名" aria-label="搜索全站" autocomplete="off">
@@ -294,6 +342,11 @@ a.card:hover { border-color: var(--accent); }
   const albumsAt = group(D.albums, b => b.y);
   const songsAt = group(D.songs, s => s.y);
   const YEARS = D.years.map(y => y.y);
+  const LINES = { hktw: '港台线', cn: '内地线' };
+  const lineOfRegion = r => (r === '内地' ? 'cn' : 'hktw');
+  const lineOfArtist = id => lineOfRegion(artists[id]?.region);
+  const yearsOf = l => D.years.filter(y => y[l]);
+  const spanOf = l => { const v = yearsOf(l); return `${v[0]?.y}—${v[v.length - 1]?.y}`; };
 
   const ytSearch = q => 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
   const musicSearch = q => 'https://music.youtube.com/search?q=' + encodeURIComponent(q);
@@ -306,6 +359,14 @@ a.card:hover { border-color: var(--accent); }
     const text = label ?? (s.vk || (s.vid ? '视频' : '搜索'));
     const where = !s.vid || s.vk === '音频' ? 'YouTube Music' : 'YouTube';
     return `<a class="play" href="${esc(ytUrl(s))}" target="_blank" rel="noopener" aria-label="在 ${where} 打开 ${esc(artists[s.a]?.zh)}《${esc(s.t)}》">${esc(text)}</a>`;
+  };
+  // YouTube 的临时歌单链接一次最多 50 首，超过就拆成几段
+  const playAll = list => {
+    const vids = [...new Set(list.map(x => (x.vid ? x : songs[x.id])?.vid).filter(Boolean))];
+    if (vids.length < 2) return '';
+    const parts = [];
+    for (let i = 0; i < vids.length; i += 50) parts.push(vids.slice(i, i + 50));
+    return `<div class="plays">${parts.map((p, i) => `<a class="play" href="https://www.youtube.com/watch_videos?video_ids=${p.join(',')}" target="_blank" rel="noopener">${parts.length > 1 ? `连播第 ${i * 50 + 1}—${i * 50 + p.length} 首` : `连播 ${p.length} 首`}</a>`).join('')}</div>`;
   };
   const artistLink = id => artists[id] ? `<a href="#a-${id}">${esc(artists[id].zh)}</a>` : '';
   const creditOf = s => (s.by ?? [s.a]).map(artistLink).join(' / ') + (s.feat ? ` feat. ${esc(s.feat)}` : '');
@@ -341,50 +402,65 @@ a.card:hover { border-color: var(--accent); }
   const heavy = list => list.slice().sort((x, y) => (y.star ?? 0) - (x.star ?? 0));
 
   /* 首页 */
+  let line = 'hktw';
   let track = 2000;
+  const songRow = (x, i) => {
+    const s = x.id ? songs[x.id] : null;
+    const rank = i == null ? '' : `<span class="no">${String(i + 1).padStart(3, '0')}</span>`;
+    if (s) return `<li>${rank}<span class="ti">${s.al && albums[s.al] ? `<a href="#b-${s.al}">${esc(s.t)}</a>` : esc(s.t)}${x.why || x.n ? `<small>${esc(x.why || x.n)}</small>` : ''}</span><span class="by">${creditOf(s)}</span><span class="yr">${x.y ?? s.y}</span><span class="act">${playLink(s)}</span></li>`;
+    return `<li>${rank}<span class="ti">${esc(x.t)}${x.why || x.n ? `<small>${esc(x.why || x.n)}</small>` : ''}</span><span class="by">${esc(x.a)}</span><span class="yr">${x.y ?? ''}</span><span class="act"><a class="play alt" href="${esc(musicSearch(`${x.a} ${x.t}`))}" target="_blank" rel="noopener">搜索</a></span></li>`;
+  };
+  const songRows = (list, ranked) => `<ul class="tune wide">${list.map((x, i) => songRow(x, ranked ? i : null)).join('')}</ul>`;
+  const lineBar = (cur, href) => `<div class="linebar" role="group" aria-label="选择线路">${Object.entries(LINES).map(([k, v]) => `<a class="chip" aria-pressed="${k === cur}" href="${href(k)}">${v}<small>${spanOf(k)}</small></a>`).join('')}</div>`;
   const renderNow = () => {
     const box = document.getElementById('now');
     if (!box) return;
-    const y = D.years.find(v => v.y === track);
-    const idx = YEARS.indexOf(track) + 1;
-    document.querySelectorAll('.tracks button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.y === track)));
+    const list = yearsOf(line);
+    if (!list.some(v => v.y === track)) track = list[list.length - 1].y;
+    document.getElementById('tracks').innerHTML = list.map((v, i) => `<button type="button" data-y="${v.y}" aria-pressed="${v.y === track}" aria-label="${v.y} 年"><small>TR${String(i + 1).padStart(2, '0')}</small><b>${String(v.y).slice(2)}</b></button>`).join('');
+    document.getElementById('tracks').style.setProperty('--n', list.length);
+    document.querySelectorAll('[data-line]').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.line === line)));
     document.getElementById('hub').textContent = track;
+    const y = D.years.find(v => v.y === track)[line];
+    const idx = list.findIndex(v => v.y === track) + 1;
+    const bs = heavy((albumsAt[track] ?? []).filter(b => lineOfArtist(b.a) === line)).slice(0, 8);
+    const ss = (y.songs?.length ? y.songs.slice(0, 7).map(x => songs[x.id]).filter(Boolean) : heavy((songsAt[track] ?? []).filter(s => lineOfArtist(s.a) === line)).slice(0, 7));
     box.innerHTML = `
       <div class="lcd now-head">
         <span class="big">TRACK ${String(idx).padStart(2, '0')}</span>
         <p>${esc(y.title)}。${esc(y.lead)}</p>
-        <a class="more" style="color:inherit" href="#y${track}">这一年的完整年表 →</a>
+        <a class="more" style="color:inherit" href="#y${track}-${line}">读完这一年 →</a>
       </div>
       <div class="now-body">
-        <div class="albums tight">${heavy(albumsAt[track] ?? []).slice(0, 8).map(albumCard).join('')}</div>
-        ${tuneList(heavy(songsAt[track] ?? []).slice(0, 7), true)}
+        <div class="albums tight">${bs.map(albumCard).join('')}</div>
+        ${tuneList(ss, true)}
       </div>`;
   };
   const home = () => {
     view.innerHTML = `
       <section class="wrap player">
         <div>
-          <p class="tech">Mandopop &amp; Cantopop Encyclopedia · 1997—2009</p>
+          <p class="tech">Mandopop &amp; Cantopop Encyclopedia · 1997—2012</p>
           <h1><span>千禧年</span><span><em>华语音乐</em></span><span>大百科</span></h1>
-          <p class="lede">从陶喆把 R&amp;B 带进国语歌，到周杰伦、孙燕姿、五月天、超级女声和彩铃神曲。这里按歌手、专辑、年份和奖项，收录这十三年里华语歌坛的作品与故事。每首歌都直达 YouTube 或 YouTube Music。</p>
+          <p class="lede">内地和港台走的不是同一条时间线，所以这里分成两条来讲：港台线从陶喆到周杰伦，内地线从校园民谣之后到彩铃神曲。逐年大事、历届榜单和歌单，每首歌都直达 YouTube 或 YouTube Music。</p>
           <div class="lcd counts">
             <div><b>${fmt(D.artists.length)}</b><span>组歌手</span></div>
             <div><b>${fmt(D.albums.length)}</b><span>张专辑</span></div>
             <div><b>${fmt(D.songs.length)}</b><span>首歌</span></div>
-            <div><b>${YEARS.length}</b><span>个年份</span></div>
+            <div><b>${fmt(D.charts.reduce((n, c) => n + c.editions.length, 0))}</b><span>届榜单</span></div>
           </div>
         </div>
         <div class="disc-box" aria-hidden="true">
           <div class="disc-clip"><div class="disc">
             <svg viewBox="0 0 200 200"><defs><path id="ring" d="M100 100m-84 0a84 84 0 1 1 168 0a84 84 0 1 1-168 0"/></defs>
-              <text><textPath href="#ring">MILLENNIUM MANDOPOP · COMPACT DISC DIGITAL AUDIO · 1997—2009 · THIRTEEN TRACKS ·</textPath></text></svg>
+              <text><textPath href="#ring">MILLENNIUM MANDOPOP · COMPACT DISC DIGITAL AUDIO · TWO LINES · ONE ERA ·</textPath></text></svg>
           </div><div class="hub"></div></div>
           <div class="lcd year-chip"><b id="hub">${track}</b></div>
         </div>
       </section>
       <section class="wrap">
-        <p class="tech" style="margin:0 0 6px">选一条音轨：每一轨是一个年份</p>
-        <div class="tracks">${YEARS.map((y, i) => `<button type="button" data-y="${y}" aria-pressed="false" aria-label="${y} 年"><small>TR${String(i + 1).padStart(2, '0')}</small><b>${String(y).slice(2)}</b></button>`).join('')}</div>
+        <div class="frow" style="margin-bottom:8px"><span class="tech">选一条线</span>${Object.entries(LINES).map(([k, v]) => `<button type="button" class="chip" data-line="${k}">${v}</button>`).join('')}<span class="tech">每一轨是一个年份</span></div>
+        <div class="tracks" id="tracks"></div>
       </section>
       <section class="wrap now" id="now" aria-live="polite"></section>
       <section class="wrap sec">
@@ -395,7 +471,8 @@ a.card:hover { border-color: var(--accent); }
         <div class="sec-h"><h2>专题</h2><a class="more" href="#topics">全部专题</a></div>
         <div class="cards">${D.topics.slice(0, 6).map(topicCard).join('')}</div>
       </section>`;
-    view.querySelectorAll('.tracks button').forEach(b => b.addEventListener('click', () => { track = +b.dataset.y; renderNow(); }));
+    document.getElementById('tracks').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { track = +b.dataset.y; renderNow(); } });
+    view.querySelectorAll('[data-line]').forEach(c => c.addEventListener('click', () => { line = c.dataset.line; renderNow(); }));
     renderNow();
     shuffle();
   };
@@ -412,20 +489,67 @@ a.card:hover { border-color: var(--accent); }
   };
 
   /* 年表 */
-  const years = () => {
+  const srcLink = s => {
+    if (!s) return '';
+    if (s.startsWith('bili:')) return ` <a class="src" href="https://www.bilibili.com/video/${esc(s.slice(5))}" target="_blank" rel="noopener">B站</a>`;
+    if (s.startsWith('wiki:')) return ' <span class="src">维基</span>';
+    if (/^https?:/.test(s)) { let host = '来源'; try { host = new URL(s).hostname.replace(/^www\./, '').split('.').slice(-2, -1)[0]; } catch {} return ` <a class="src" href="${esc(s)}" target="_blank" rel="noopener">${esc(host)}</a>`; }
+    return '';
+  };
+  const yearCard = (v, l) => {
+    const y = v[l];
+    return `<a class="ycard" href="#y${v.y}-${l}"><span class="yn">${v.y}</span><span class="yb"><b>${esc(y.title)}</b><small>${esc(y.lead)}</small><span class="tech">${y.events.length} 条大事 · ${y.albums.length} 张专辑 · ${y.songs.length} 首歌</span></span></a>`;
+  };
+  const years = l => {
     view.innerHTML = `
-      <header class="wrap page-h"><h1>编年史</h1><p>1997 到 2009 年，每年一节：当年的大事、重要唱片和金曲奖。</p>
-        <div class="jump" style="margin-top:12px">${YEARS.map(y => `<a class="tag lcdnum" href="#y${y}">${y}</a>`).join('')}</div></header>
-      <div class="wrap">${D.years.map(y => `
-        <section class="year" id="y${y.y}">
-          <div class="year-n"><a href="#y${y.y}">${y.y}</a></div>
-          <div>
-            <h2>${esc(y.title)}</h2>
-            <p class="prose" style="margin:0">${esc(y.lead)}</p>
-            <ul class="events">${y.events.map(e => `<li><time>${esc(e[0])}</time><span>${esc(e[1])}</span></li>`).join('')}</ul>
-            <div class="albums tight">${heavy(albumsAt[y.y] ?? []).slice(0, 7).map(albumCard).join('')}</div>
-          </div>
-        </section>`).join('')}</div>`;
+      <header class="wrap page-h"><h1>编年史</h1><p>内地和港台的节奏不同，这里分成两条线。港台线的主轴是唱片工业的高峰和转型，内地线一直讲到 2012 年彩铃和网络歌曲时代收束。</p>
+        ${lineBar(l, k => `#years-${k}`)}</header>
+      <div class="wrap ygrid">${yearsOf(l).map(v => yearCard(v, l)).join('')}</div>`;
+  };
+  const MONTHS = ['全年', '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+  const monthOf = d => +String(d ?? '').slice(5, 7) || 0;
+  const eventsHtml = (list, cat) => {
+    const shown = cat === '全部' ? list : list.filter(e => e.c === cat);
+    const by = group(shown, e => monthOf(e.d));
+    return Object.keys(by).map(Number).sort((a, b) => (a || 99) - (b || 99)).map(m => `<h3 class="mon">${MONTHS[m]}</h3><ul class="events">${by[m].map(e => `<li><time>${esc(String(e.d ?? '').slice(5) || '—')}</time><span><span class="tag">${esc(e.c)}</span> ${esc(e.t)}${srcLink(e.s)}</span></li>`).join('')}</ul>`).join('') || '<p class="prose">这个分类下没有条目。</p>';
+  };
+  const editionHtml = (c, e) => `<section class="edition"><h3><a href="#c-${c.id}">${esc(c.name)}</a> · ${esc(e.title ?? '')}${e.date ? ` <small class="lcdnum">${esc(e.date)}</small>` : ''}</h3>${e.venue || e.note ? `<p class="credit">${esc([e.venue, e.note].filter(Boolean).join('。'))}</p>` : ''}${e.groups.map(g => `<h4>${esc(g.award)}</h4>${playAll(g.items)}${songRows(g.items.map(it => ({ id: it.id, t: it.t, a: it.a, n: it.n })))}`).join('')}${e.src ? `<p class="credit">资料${srcLink(e.src)}</p>` : ''}</section>`;
+  const yearPage = (yr, l) => {
+    const v = D.years.find(x => x.y === yr);
+    if (!v) return notFound();
+    if (!v[l]) l = v.hktw ? 'hktw' : 'cn';
+    const y = v[l], list = yearsOf(l), i = list.findIndex(x => x.y === yr), other = l === 'cn' ? 'hktw' : 'cn';
+    const editions = D.charts.filter(c => c.track === l).flatMap(c => c.editions.filter(e => e.y === yr).map(e => [c, e]));
+    const cats = ['全部', ...new Set(y.events.map(e => e.c))];
+    const jump = [['综述', y.overview.length], ['大事记', y.events.length], ['专辑', y.albums.length], ['歌单', y.songs.length], ['榜单', editions.length], ['来源', v.sources.length]].filter(x => x[1]);
+    view.innerHTML = `<div class="wrap">
+      <header class="page-h year-h">
+        <p class="tech" style="margin:0"><a href="#years-${l}">编年史</a> / ${LINES[l]}</p>
+        <div class="year-big"><span class="lcdnum">${yr}</span><div><h1>${esc(y.title)}</h1><p>${esc(y.lead)}</p></div></div>
+        <div class="frow">
+          ${list[i - 1] ? `<a class="pill" href="#y${list[i - 1].y}-${l}">← ${list[i - 1].y}</a>` : ''}
+          ${list[i + 1] ? `<a class="pill" href="#y${list[i + 1].y}-${l}">${list[i + 1].y} →</a>` : ''}
+          ${v[other] ? `<a class="pill go" href="#y${yr}-${other}">看同年${LINES[other]}</a>` : ''}
+        </div>
+        <div class="jump">${jump.map(([k]) => `<button type="button" class="chip" data-go="sec-${k}">${k}</button>`).join('')}</div>
+      </header>
+      ${y.overview.length ? `<section class="sec" id="sec-综述"><div class="sec-h"><h2>年度综述</h2></div><div class="prose">${y.overview.map(p => `<p>${esc(p)}</p>`).join('')}</div></section>` : ''}
+      <section class="sec" id="sec-大事记"><div class="sec-h"><h2>大事记</h2><span class="tech">${y.events.length} Events</span></div>
+        <div class="frow" id="cats">${cats.map(c => `<button type="button" class="chip" data-cat="${esc(c)}" aria-pressed="${c === '全部'}">${esc(c)}</button>`).join('')}</div>
+        <div id="evlist">${eventsHtml(y.events, '全部')}</div></section>
+      ${y.albums.length ? `<section class="sec" id="sec-专辑"><div class="sec-h"><h2>当年专辑</h2><span class="tech">${y.albums.length} Albums</span></div>
+        <ul class="alist">${y.albums.map(b => `<li><time>${esc(String(b.d ?? '').slice(5) || '')}</time><span class="ti">${b.id ? `<a href="#b-${b.id}">《${esc(b.t)}》</a>` : `《${esc(b.t)}》`}${b.n ? `<small>${esc(b.n)}</small>` : ''}</span><span class="by">${esc(b.a)}</span></li>`).join('')}</ul></section>` : ''}
+      ${y.songs.length ? `<section class="sec" id="sec-歌单"><div class="sec-h"><h2>年度歌单</h2><span class="tech">${y.songs.length} Songs</span></div>${playAll(y.songs)}${songRows(y.songs, true)}</section>` : ''}
+      ${editions.length ? `<section class="sec" id="sec-榜单"><div class="sec-h"><h2>当年榜单</h2></div>${editions.map(([c, e]) => editionHtml(c, e)).join('')}</section>` : ''}
+      ${v.sources.length ? `<section class="sec" id="sec-来源"><div class="sec-h"><h2>资料来源</h2></div><ul class="prose">${v.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}</ul></section>` : ''}
+    </div>`;
+    view.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => document.getElementById(b.dataset.go)?.scrollIntoView({ behavior: 'smooth' })));
+    view.querySelector('#cats').addEventListener('click', e => {
+      const c = e.target.closest('[data-cat]');
+      if (!c) return;
+      view.querySelectorAll('[data-cat]').forEach(x => x.setAttribute('aria-pressed', String(x === c)));
+      view.querySelector('#evlist').innerHTML = eventsHtml(y.events, c.dataset.cat);
+    });
   };
 
   /* 歌手库 */
@@ -467,7 +591,7 @@ a.card:hover { border-color: var(--accent); }
           <div class="tags">${(a.tags ?? []).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div></div>
         <div class="prose" style="margin-top:16px">${(a.blurb ?? '').split('\n').map(p => `<p>${esc(p)}</p>`).join('')}</div>
         ${bs.length ? `<section class="sec"><div class="sec-h"><h2>千禧年间的专辑</h2><span class="tech">${bs.length} Albums</span></div><div class="albums">${bs.map(albumCard).join('')}</div></section>` : ''}
-        ${ss.length ? `<section class="sec"><div class="sec-h"><h2>代表歌曲</h2><span class="tech">${ss.length} Songs</span></div>${tuneList(ss)}</section>` : ''}
+        ${ss.length ? `<section class="sec"><div class="sec-h"><h2>代表歌曲</h2><span class="tech">${ss.length} Songs</span></div>${playAll(ss)}${tuneList(ss)}</section>` : ''}
       </div>
       ${infoBox(a)}
     </div>`;
@@ -527,12 +651,12 @@ a.card:hover { border-color: var(--accent); }
   };
 
   /* 点歌台 */
-  const songFilter = { lang: '全部', len: '全部', year: '全部', region: '全部', page: 0 };
+  const songFilter = { line: '全部', lang: '全部', len: '全部', year: '全部', region: '全部', page: 0 };
   const PAGE = 60;
   const lenOf = s => [...(s.tn ?? s.t).replace(/[\s（(].*$/, '')].length;
   const songsView = () => {
     const regions = ['全部', ...new Set(D.artists.map(a => a.region))];
-    const list = D.songs.filter(s => (songFilter.lang === '全部' || s.lang === songFilter.lang)
+    const list = D.songs.filter(s => (songFilter.line === '全部' || LINES[lineOfArtist(s.a)] === songFilter.line) && (songFilter.lang === '全部' || s.lang === songFilter.lang)
       && (songFilter.year === '全部' || s.y === +songFilter.year)
       && (songFilter.region === '全部' || artists[s.a]?.region === songFilter.region)
       && (songFilter.len === '全部' || (songFilter.len === '7+' ? lenOf(s) >= 7 : lenOf(s) === +songFilter.len)));
@@ -543,6 +667,7 @@ a.card:hover { border-color: var(--accent); }
       <header class="wrap page-h"><h1>点歌台</h1><p>像 KTV 点歌机一样按字数、语种和年份找歌。条目号的前两位是年份。粉色按钮写着 MV 或视频的跳转 YouTube，写着音频或搜索的跳转 YouTube Music。</p></header>
       <div class="wrap">
         <div class="filters">
+          ${chips('线路', ['全部', '港台线', '内地线'], songFilter.line, 'line')}
           ${chips('字数', ['全部', 1, 2, 3, 4, 5, 6, '7+'], songFilter.len, 'len')}
           ${chips('语种', ['全部', ...new Set(D.songs.map(s => s.lang))], songFilter.lang, 'lang')}
           ${chips('地区', regions, songFilter.region, 'region')}
@@ -561,34 +686,49 @@ a.card:hover { border-color: var(--accent); }
     document.getElementById('next').addEventListener('click', () => turn(1));
   };
 
-  /* 金曲奖 */
-  const awardCell = c => c ? `${esc(c[0])}${c[1] ? `<small>${esc(c[1])}</small>` : ''}` : '<small>本届未颁</small>';
-  const awardsView = () => {
-    view.innerHTML = `
-      <header class="wrap page-h"><h1>金曲奖</h1><p>台湾金曲奖第 9 至 21 届的流行音乐主要奖项。最佳专辑一栏在第 17 届起对应最佳国语专辑奖。年度歌曲奖在第 8 至 16 届停颁，第 17 届恢复。最佳乐团奖从第 12 届起单独颁发。</p></header>
-      <div class="wrap"><div class="scroll"><table class="gma">
-        <thead><tr><th>届次</th><th>最佳专辑</th><th>年度歌曲</th><th>国语男歌手</th><th>国语女歌手</th><th>乐团</th><th>演唱组合</th><th>新人</th></tr></thead>
-        <tbody>${D.awards.map(r => `<tr><th><b>${r.y}</b>第 ${r.n} 届</th>${['album', 'song', 'male', 'female', 'band', 'group', 'newcomer'].map(k => `<td>${awardCell(r[k])}</td>`).join('')}</tr>`).join('')}</tbody>
-      </table></div></div>`;
+  /* 榜单 */
+  const chartsView = l => {
+    const list = D.charts.filter(c => c.track === l);
+    view.innerHTML = `<header class="wrap page-h"><h1>榜单</h1><p>内地榜和港台榜分开收录。每届名单都能直接点歌。</p>
+      <div class="linebar">${[['hktw', '港台榜'], ['cn', '内地榜']].map(([k, v]) => `<a class="chip" aria-pressed="${k === l}" href="#charts-${k}">${v}</a>`).join('')}</div></header>
+      <div class="wrap"><div class="cards">${list.map(c => `<a class="card" href="#c-${c.id}"><span class="tech">${esc(c.org ?? '')}</span><h3>${esc(c.name)}</h3><p>${esc(c.about ?? '')}</p><span class="tech">${c.editions.length} 届</span></a>`).join('')}</div></div>`;
+  };
+  const chartPage = id => {
+    const c = D.charts.find(x => x.id === id);
+    if (!c) return notFound();
+    const eds = c.editions.slice().sort((x, y) => x.y - y.y);
+    view.innerHTML = `<div class="wrap">
+      <header class="page-h"><p class="tech" style="margin:0"><a href="#charts-${c.track}">榜单</a> / ${c.track === 'cn' ? '内地榜' : '港台榜'}</p><h1>${esc(c.name)}</h1><p>${esc(c.about ?? '')}</p>
+        <div class="jump">${eds.map(e => `<button type="button" class="tag lcdnum" data-go="ed-${e.y}-${e.n ?? ''}">${e.y}</button>`).join('')}</div></header>
+      ${eds.map(e => `<section class="sec" id="ed-${e.y}-${e.n ?? ''}"><div class="sec-h"><h2>${e.y} · ${esc(e.title ?? '')}</h2>${e.date ? `<span class="lcdnum">${esc(e.date)}</span>` : ''}</div>${e.venue || e.note ? `<p class="credit">${esc([e.venue, e.note].filter(Boolean).join('。'))}</p>` : ''}${e.groups.map(g => `<h4>${esc(g.award)}</h4>${playAll(g.items)}${songRows(g.items.map(it => ({ id: it.id, t: it.t, a: it.a, n: it.n })))}`).join('')}${e.src ? `<p class="credit">资料${srcLink(e.src)}</p>` : ''}</section>`).join('')}
+    </div>`;
+    view.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => document.getElementById(b.dataset.go)?.scrollIntoView({ behavior: 'smooth' })));
   };
 
   /* 专题 */
-  const topicCard = t => `<a class="card" href="#t-${t.id}"><span class="tech">${esc(t.kicker)}</span><h3>${esc(t.title)}</h3><p>${esc(t.summary)}</p></a>`;
+  const trackName = { all: '两岸三地', hktw: '港台', cn: '内地' };
+  const topicCard = t => `<a class="card" href="#t-${t.id}"><span class="tech">${esc(t.kicker ?? '')} · ${trackName[t.track] ?? ''}</span><h3>${esc(t.title)}</h3><p>${esc(t.summary)}</p><span class="tech">${t.songs.length} 首歌</span></a>`;
+  const topicFilter = { track: '全部' };
   const topicsView = () => {
-    view.innerHTML = `<header class="wrap page-h"><h1>专题</h1><p>把散落的歌连成线：曲风、技术、产业和社会现象如何改变了这十三年的华语音乐。</p></header>
-      <div class="wrap"><div class="cards">${D.topics.map(topicCard).join('')}</div></div>`;
+    const list = D.topics.filter(t => topicFilter.track === '全部' || t.track === topicFilter.track || t.track === 'all');
+    view.innerHTML = `<header class="wrap page-h"><h1>专题</h1><p>把散落的歌连成线：曲风、技术、产业和社会现象如何改变了这段华语音乐。</p>
+      <div class="linebar">${[['全部', '全部'], ['hktw', '港台'], ['cn', '内地']].map(([k, v]) => `<button type="button" class="chip" data-t="${k}" aria-pressed="${k === topicFilter.track}">${v}</button>`).join('')}</div></header>
+      <div class="wrap"><div class="cards">${list.map(topicCard).join('')}</div></div>`;
+    view.querySelectorAll('[data-t]').forEach(c => c.addEventListener('click', () => { topicFilter.track = c.dataset.t; topicsView(); }));
   };
   const topicPage = id => {
     const t = D.topics.find(x => x.id === id);
     if (!t) return notFound();
-    const list = (t.songs ?? []).map(k => songs[k]).filter(Boolean);
-    const people = (t.artists ?? []).map(k => artists[k]).filter(Boolean);
     view.innerHTML = `<div class="wrap">
-      <header class="page-h"><p class="tech" style="margin:0"><a href="#topics">专题</a> / ${esc(t.kicker)}</p><h1>${esc(t.title)}</h1></header>
-      <div class="prose">${t.body.map(p => `<p>${esc(p)}</p>`).join('')}</div>
-      ${people.length ? `<section class="sec"><div class="sec-h"><h2>相关歌手</h2></div><div class="people">${people.map(whoCard).join('')}</div></section>` : ''}
-      ${list.length ? `<section class="sec"><div class="sec-h"><h2>听这些歌</h2></div>${tuneList(list)}</section>` : ''}
+      <header class="page-h"><p class="tech" style="margin:0"><a href="#topics">专题</a> / ${esc(t.kicker ?? '')} / ${trackName[t.track] ?? ''}</p><h1>${esc(t.title)}</h1><p>${esc(t.summary)}</p>
+        <div class="jump">${t.body.filter(s => s.h).map((s, i) => `<button type="button" class="chip" data-go="s${i}">${esc(s.h)}</button>`).join('')}${t.songs.length ? '<button type="button" class="chip" data-go="sec-songs">歌单</button>' : ''}</div></header>
+      <div class="prose">${t.body.map((s, i) => `${s.h ? `<h2 class="sub" id="s${i}">${esc(s.h)}</h2>` : ''}${(s.p ?? []).map(p => `<p>${esc(p)}</p>`).join('')}`).join('')}</div>
+      ${t.timeline.length ? `<section class="sec"><div class="sec-h"><h2>时间线</h2></div><ul class="events">${t.timeline.map(e => `<li><time>${esc(String(e.d ?? '').slice(0, 7))}</time><span>${esc(e.text)}${srcLink(e.src)}</span></li>`).join('')}</ul></section>` : ''}
+      ${t.people.length ? `<section class="sec"><div class="sec-h"><h2>关键人物</h2></div><div class="cards">${t.people.map(p => `<article class="card"><span class="tech">${esc(p.role ?? '')}</span><h3>${esc(p.name)}</h3><p>${esc(p.text ?? '')}</p></article>`).join('')}</div></section>` : ''}
+      ${t.songs.length ? `<section class="sec" id="sec-songs"><div class="sec-h"><h2>听这些歌</h2><span class="tech">${t.songs.length} Songs</span></div>${playAll(t.songs)}${songRows(t.songs)}</section>` : ''}
+      ${t.sources.length ? `<section class="sec"><div class="sec-h"><h2>资料来源</h2></div><ul class="prose">${t.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}</ul></section>` : ''}
     </div>`;
+    view.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => document.getElementById(b.dataset.go)?.scrollIntoView({ behavior: 'smooth' })));
   };
 
   /* 幕后 */
@@ -603,12 +743,12 @@ a.card:hover { border-color: var(--accent); }
     view.innerHTML = `<div class="wrap">
       <header class="page-h"><h1>关于本站</h1></header>
       <div class="prose">
-        <p>这是一个非官方的粉丝向音乐资料站。站内文字为本站整理撰写，不收录歌词。音频和视频都不存放在站内，歌曲链接全部跳转到 YouTube 或 YouTube Music。</p>
-        <p><b>收录范围：</b>1997 至 2009 年发行的华语专辑与歌曲，覆盖台湾、香港、内地、新加坡和马来西亚。这是一份编辑精选，不是完整目录。</p>
+        <p>这是一个非官方的粉丝向音乐资料站。编年史分内地和港台两条线，因为两地的时间节奏不同。B 站纪录片字幕和播客只作线索，事实以其他来源核对为准，评价类内容不当作事实收录。站内文字为本站整理撰写，不收录歌词。音频和视频都不存放在站内，歌曲链接全部跳转到 YouTube 或 YouTube Music。</p>
+        <p><b>收录范围：</b>港台线 1997 至 2009 年，内地线 1997 至 2012 年，覆盖台湾、香港、内地、新加坡和马来西亚。这是一份编辑精选，不是完整目录。</p>
         <p><b>视频链接：</b>${fmt(m.linked)} 首歌链接到具体的视频或音频，其中 ${fmt(m.official)} 条来自官方、唱片公司频道或 YouTube 官方音频。优先顺序是官方 MV、高播放量的原版 MV、官方音频，最后才是现场版。每条都在 ${esc(m.checked)} 用 YouTube oEmbed 确认过存在。其余歌曲和专辑里的非主打曲目使用 YouTube Music 搜索链接。部分视频有地区限制，打不开时可以用专辑页的搜索链接。</p>
         <p><b>封面与资料：</b>专辑封面、曲目和发行信息取自 iTunes Search API，首发日期参考 MusicBrainz，其中 ${fmt(m.wikiDates)} 张重点专辑的日期再用维基百科校对过。封面版权归各唱片公司所有，这里以缩略图用于资料说明。歌手照片取自维基共享资源，署名见各词条。</p>
         <p><b>奖项：</b>金曲奖名单整理自维基百科各届条目。</p>
-        <p><b>已知局限：</b>iTunes 上缺货的专辑没有封面，用色块代替。曲目来自流媒体版本，可能与原版 CD 有出入。年份以首发为准。</p>
+        <p><b>已知局限：</b>iTunes 上缺货的专辑没有封面，用色块代替。曲目来自流媒体版本，可能与原版 CD 有出入。年份以首发为准。约三分之一的链接来自非官方上传，经过规则过滤和抽查，但仍可能有少量挂错版本。部分年份的台湾当年报道和销量数据没有查到，个别事件只有单一来源，每条大事都标了来源，可以点开核对。连播按钮使用 YouTube 的临时歌单，一次最多 50 首，超过的分段播放。</p>
       </div>
       <section class="sec"><div class="sec-h"><h2>主要数据来源</h2></div>
         <ul class="prose">${m.sources.map(s => `<li><a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a></li>`).join('')}</ul>
@@ -650,27 +790,30 @@ a.card:hover { border-color: var(--accent); }
   document.addEventListener('click', e => { if (!e.target.closest('.search')) close(); });
 
   /* 路由 */
-  const NAV = { home: '#home', years: '#years', artists: '#artists', albums: '#albums', songs: '#songs', awards: '#awards', topics: '#topics', makers: '#makers', about: '#about' };
+  const NAV = { home: '#home', years: '#years', artists: '#artists', albums: '#albums', songs: '#songs', charts: '#charts', topics: '#topics', makers: '#makers', about: '#about' };
   const route = () => {
     const h = (location.hash || '#home').slice(1);
     let nav = 'home';
-    const yearHit = /^y(\d{4})$/.exec(h);
-    if (yearHit) { years(); nav = 'years'; document.getElementById(h)?.scrollIntoView(); }
+    const yearHit = /^y(\d{4})(?:-(hktw|cn))?$/.exec(h);
+    if (yearHit) { yearPage(+yearHit[1], yearHit[2] ?? 'hktw'); nav = 'years'; }
     else if (h === 'home' || h === '') home();
-    else if (h === 'years') { years(); nav = 'years'; }
+    else if (h === 'years' || h === 'years-hktw') { years('hktw'); nav = 'years'; }
+    else if (h === 'years-cn') { years('cn'); nav = 'years'; }
     else if (h === 'artists') { artistsView(); nav = 'artists'; }
     else if (h === 'albums') { albumsView(); nav = 'albums'; }
     else if (h === 'songs') { songsView(); nav = 'songs'; }
-    else if (h === 'awards') { awardsView(); nav = 'awards'; }
+    else if (h === 'charts' || h === 'charts-hktw' || h === 'awards') { chartsView('hktw'); nav = 'charts'; }
+    else if (h === 'charts-cn') { chartsView('cn'); nav = 'charts'; }
     else if (h === 'topics') { topicsView(); nav = 'topics'; }
     else if (h === 'makers') { makersView(); nav = 'makers'; }
     else if (h === 'about') { aboutView(); nav = 'about'; }
     else if (h.startsWith('a-')) { artistPage(h.slice(2)); nav = 'artists'; }
     else if (h.startsWith('b-')) { albumPage(h.slice(2)); nav = 'albums'; }
+    else if (h.startsWith('c-')) { chartPage(h.slice(2)); nav = 'charts'; }
     else if (h.startsWith('t-')) { topicPage(h.slice(2)); nav = 'topics'; }
     else notFound();
     document.querySelectorAll('.nav a').forEach(a => a.getAttribute('href') === NAV[nav] ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
-    if (!yearHit) window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
   addEventListener('hashchange', route);
   route();
