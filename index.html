@@ -405,6 +405,7 @@ body.has-dock { padding-bottom: 92px; }
 .dock-keys svg { width: 20px; height: 20px; fill: currentColor; }
 .dock-seek { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 13px; }
 .dock-seek input { width: 100%; accent-color: var(--hot); }
+.dock-seek input:disabled { opacity: .4; }
 .dock-tools { display: flex; align-items: center; gap: 4px; }
 .dock-tools input { width: 74px; accent-color: var(--accent); }
 .dock-tools .chip { font-size: 12.5px; padding: 2px 9px; text-decoration: none; white-space: nowrap; }
@@ -1054,7 +1055,7 @@ body.has-dock { padding-bottom: 92px; }
         <p><b>视频链接：</b>${fmt(m.linked)} 首歌链接到具体的视频或音频，其中 ${fmt(m.official)} 条来自官方、唱片公司频道或 YouTube 官方音频。优先顺序是官方 MV、高播放量的原版 MV、官方音频，最后才是现场版。每条都在 ${esc(m.checked)} 用 YouTube oEmbed 确认过存在。春晚专题优先用 CCTV春晚 官方频道的当届片段。其余歌曲和专辑里的非主打曲目使用 YouTube Music 搜索链接。部分视频有地区限制，打不开时可以用专辑页的搜索链接。</p>
         <p><b>封面与资料：</b>专辑封面、曲目和发行信息取自 iTunes Search API，首发日期参考 MusicBrainz，其中 ${fmt(m.wikiDates)} 张重点专辑的日期再用维基百科校对过。封面版权归各唱片公司所有，这里以缩略图用于资料说明。歌手照片取自维基共享资源，署名见各词条。</p>
         <p><b>奖项：</b>金曲奖名单整理自维基百科各届条目。</p>
-        <p><b>已知局限：</b>iTunes 上缺货的专辑没有封面，用色块代替。曲目来自流媒体版本，可能与原版 CD 有出入。年份以首发为准。约三分之一的链接来自非官方上传，经过规则过滤和抽查，但仍可能有少量挂错版本。部分年份的台湾当年报道和销量数据没有查到，个别事件只有单一来源，每条大事都标了来源，可以点开核对。站内连播不限首数，遇到禁止嵌入的视频会自动跳过；跳去 YouTube 的临时歌单一次最多 50 首。手机浏览器切到后台时可能暂停。</p>
+        <p><b>已知局限：</b>iTunes 上缺货的专辑没有封面，用色块代替。曲目来自流媒体版本，可能与原版 CD 有出入。年份以首发为准。约三分之一的链接来自非官方上传，经过规则过滤和抽查，但仍可能有少量挂错版本。部分年份的台湾当年报道和销量数据没有查到，个别事件只有单一来源，每条大事都标了来源，可以点开核对。站内连播不限首数，遇到禁止嵌入的视频会自动跳过；YouTube 可能在歌曲前插片头广告，本站没有收入，也不能去掉；跳去 YouTube 的临时歌单一次最多 50 首。手机浏览器切到后台时可能暂停。</p>
       </div>
       <section class="sec"><div class="sec-h"><h2>主要数据来源</h2></div>
         <ul class="prose">${m.sources.map(s => `<li><a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a></li>`).join('')}</ul>
@@ -1147,12 +1148,7 @@ body.has-dock { padding-bottom: 92px; }
     else toast('列表放完了。');
   };
   const onState = e => {
-    if (e.data === YT.PlayerState.BUFFERING) return;
-    const on = e.data === YT.PlayerState.PLAYING;
-    dock.classList.toggle('spin', on);
-    $('dk-play').innerHTML = on ? ICON.pause : ICON.play;
-    $('dk-play').setAttribute('aria-label', on ? '暂停' : '播放');
-    if (on) P.skips = 0;
+    if (e.data === YT.PlayerState.PLAYING) { P.skips = 0; P.held = false; }
     if (e.data === YT.PlayerState.ENDED) next();
   };
   const onError = e => {
@@ -1165,6 +1161,7 @@ body.has-dock { padding-bottom: 92px; }
   };
   const playAt = async i => {
     P.pos = i;
+    P.held = false;
     dock.hidden = false;
     document.body.classList.add('has-dock');
     paint();
@@ -1206,7 +1203,8 @@ body.has-dock { padding-bottom: 92px; }
   });
   $('dk-play').addEventListener('click', () => {
     if (!P.yt?.getPlayerState) return;
-    if (P.yt.getPlayerState() === YT.PlayerState.PLAYING) P.yt.pauseVideo(); else P.yt.playVideo();
+    P.held = dock.classList.contains('spin');
+    if (P.held) P.yt.pauseVideo(); else P.yt.playVideo();
   });
   $('dk-next').addEventListener('click', next);
   $('dk-prev').addEventListener('click', () => { if (P.yt?.getCurrentTime?.() > 3) P.yt.seekTo(0, true); else playAt(Math.max(0, P.pos - 1)); });
@@ -1237,12 +1235,23 @@ body.has-dock { padding-bottom: 92px; }
   $('dk-vol').addEventListener('input', e => P.yt?.setVolume?.(+e.target.value));
   $('dk-seek').addEventListener('input', () => { P.seeking = true; });
   $('dk-seek').addEventListener('change', e => { P.seeking = false; P.yt?.seekTo?.((P.yt.getDuration() || 0) * e.target.value / 1000, true); });
+  // 片头广告期间官方接口一直报“未开始”，时间却在走，这时显示广告并锁住进度条
   setInterval(() => {
-    if (dock.hidden || P.seeking || !P.yt?.getDuration) return;
-    const d = P.yt.getDuration() || 0, t = P.yt.getCurrentTime() || 0;
-    $('dk-now').textContent = clock(t);
+    if (dock.hidden || !P.yt?.getDuration) return;
+    const st = P.yt.getPlayerState(), d = P.yt.getDuration() || 0, t = P.yt.getCurrentTime() || 0;
+    const ad = st === YT.PlayerState.UNSTARTED && t > 0;
+    const on = !P.held && (ad || st === YT.PlayerState.PLAYING || st === YT.PlayerState.BUFFERING);
+    if (on !== dock.classList.contains('spin')) {
+      dock.classList.toggle('spin', on);
+      $('dk-play').innerHTML = on ? ICON.pause : ICON.play;
+      $('dk-play').setAttribute('aria-label', on ? '暂停' : '播放');
+    }
+    if (ad && !P.adSeen) { P.adSeen = true; toast('YouTube 正在放片头广告，能跳过时在视频窗口里点“跳过”。'); }
+    $('dk-seek').disabled = ad;
+    if (P.seeking) return;
+    $('dk-now').textContent = ad ? '广告' : clock(t);
     $('dk-dur').textContent = clock(d);
-    $('dk-seek').value = d ? Math.round(t / d * 1000) : 0;
+    $('dk-seek').value = d && !ad ? Math.round(t / d * 1000) : 0;
   }, 500);
   $('dk-play').innerHTML = ICON.play;
   new MutationObserver(() => { if (!dock.hidden) requestAnimationFrame(markNow); }).observe(view, { childList: true, subtree: true });
