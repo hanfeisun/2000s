@@ -104,11 +104,12 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 400; line-height: 1.2; 
 .tracks button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .tracks button[aria-pressed="true"] small { color: inherit; }
 .now { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding-block: 18px 34px; }
-.now-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px 18px; align-items: center; }
+.now-head { display: grid; grid-template-columns: 200px auto minmax(0, 1fr) auto; gap: 8px 18px; align-items: center; }
+.now-art { grid-row: span 2; width: 200px; height: 200px; border-radius: 3px; box-shadow: 0 4px 14px rgba(0, 0, 0, .4); }
 .now-head .big { font-size: 42px; line-height: 1; }
 .now-head h2 { font-size: 26px; }
 .now-head p { margin: 4px 0 0; font-family: var(--f-body); font-size: 15px; line-height: 1.55; }
-.now-stats { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 2px 22px; font-family: var(--f-body); font-size: 13px; }
+.now-stats { grid-column: 2 / -1; display: flex; flex-wrap: wrap; gap: 2px 22px; font-family: var(--f-body); font-size: 13px; }
 .now-stats b { font: 400 22px/1 var(--f-lcd); }
 .now-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 30px; align-items: start; }
 .now-foot { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -131,12 +132,14 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 400; line-height: 1.2; 
 .era-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px minmax(0, 1fr); gap: 7px; }
 .era-head { margin-bottom: 6px; font: 400 18px/1.2 var(--f-display); text-align: center; }
 .era-head b { font-weight: 400; color: var(--accent); }
-.era-c { display: grid; gap: 3px; align-content: start; padding: 11px 13px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none; min-width: 0; }
+.era-c { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; align-items: start; padding: 11px 13px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none; min-width: 0; }
 a.era-c:hover { border-color: var(--accent); }
+.era-c img { width: 96px; height: 96px; border-radius: 2px; }
+.era-c > span { display: grid; gap: 3px; min-width: 0; }
 .era-c b { font: 400 19px/1.25 var(--f-display); }
 .era-c small { color: var(--mute); font-size: 13.5px; line-height: 1.55; }
 .era-c .tech { font-size: 9.5px; }
-.era-c.none { place-content: center; text-align: center; color: var(--mute); font-size: 13px; background: transparent; border-style: dashed; }
+.era-c.none { grid-template-columns: minmax(0, 1fr); place-content: center; text-align: center; color: var(--mute); font-size: 13px; background: transparent; border-style: dashed; }
 .era-y { font: 400 20px/1 var(--f-lcd); border: 1px solid var(--line); border-radius: 10px; background: linear-gradient(180deg, var(--steel-a), var(--steel-b)); color: var(--ink); cursor: pointer; }
 .era-y:hover { border-color: var(--accent); color: var(--accent); }
 
@@ -271,6 +274,9 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .card { display: grid; gap: 6px; align-content: start; padding: 16px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 a.card:hover { border-color: var(--accent); }
 .card h3 { font-size: 23px; }
+.topic-card { padding: 0 0 14px; overflow: hidden; }
+.topic-card img { width: 100%; height: auto; aspect-ratio: 1; }
+.topic-card > :not(img) { margin-inline: 14px; }
 .card p { margin: 0; color: var(--mute); font-size: 14px; line-height: 1.6; }
 .foot { border-top: 1px solid var(--line); margin-top: 26px; padding-block: 18px 34px; color: var(--mute); font-size: 13px; }
 .shuffle { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
@@ -295,6 +301,8 @@ a.card:hover { border-color: var(--accent); }
   .disc-box { width: min(78%, 330px); order: -1; }
   .tracks { grid-template-columns: repeat(8, minmax(0, 1fr)); }
   .now-head { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .now-art { grid-row: auto; width: 100%; height: auto; aspect-ratio: 1; }
+  .now-stats { grid-column: 1; }
   .now-grid { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .ev-scroll { max-height: 460px; }
   .era-head { display: none; }
@@ -320,14 +328,15 @@ a.card:hover { border-color: var(--accent); }
 .linebar .chip { text-decoration: none; font-size: 15px; padding: 5px 15px; display: inline-flex; align-items: baseline; gap: 7px; }
 .linebar small { font: 400 12px/1 var(--f-lcd); opacity: .8; }
 .ygrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
-.ycard { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; padding: 14px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none; align-content: start; }
+.ycard { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 12px; padding: 14px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none; align-content: start; }
 .ycard:hover { border-color: var(--accent); }
-.yn { font: 400 34px/1 var(--f-lcd); }
+.ycard img { width: 132px; height: 132px; border-radius: 2px; }
 .yb { display: grid; gap: 5px; min-width: 0; }
 .yb b { font: 400 21px/1.2 var(--f-display); }
 .yb small { color: var(--mute); font-size: 13.5px; line-height: 1.55; }
-.year-big { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 22px; align-items: center; margin: 10px 0 14px; }
-.year-big > span { font-size: clamp(54px, 9vw, 96px); line-height: 1; color: var(--accent); }
+.year-big { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 28px; align-items: center; margin: 10px 0 14px; }
+.year-big > img { width: 300px; height: 300px; border-radius: 3px; box-shadow: 0 8px 26px var(--shadow); }
+.year-big .lcdnum { display: block; font-size: clamp(44px, 7vw, 72px); line-height: 1; color: var(--accent); margin-bottom: 6px; }
 .year-big p { margin: 6px 0 0; color: var(--mute); }
 .year-h .frow { margin-bottom: 10px; }
 .pill { text-decoration: none; display: inline-block; }
@@ -355,7 +364,10 @@ a.card:hover { border-color: var(--accent); }
   .tune.wide li .act { grid-column: 2; grid-row: 1 / span 2; }
   .alist li { grid-template-columns: 46px minmax(0, 1fr); }
   .alist li .by { grid-column: 2; font-size: 13px; color: var(--mute); }
-  .year-big { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .year-big { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .year-big > img { width: 100%; height: auto; aspect-ratio: 1; }
+  .ycard { grid-template-columns: 104px minmax(0, 1fr); }
+  .ycard img { width: 104px; height: 104px; }
 }
 
 .plays { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; }
@@ -452,7 +464,10 @@ a.card:hover { border-color: var(--accent); }
     const b = albums[e.target.dataset?.album];
     if (b) e.target.outerHTML = blankCover(b);
     else if (e.target.dataset?.title) e.target.outerHTML = blankCover({ id: e.target.dataset.title, t: e.target.dataset.title });
+    else if (e.target.dataset?.art) e.target.remove();
   }, true);
+  // 年度和专题的封面插画，文件缺失时直接隐藏
+  const artImg = (id, cls = '') => `<img class="art ${cls}" src="art/${id}.webp" data-art="${id}" alt="" loading="lazy" width="800" height="800">`;
   const albumCard = b => `<a class="alb" href="#b-${b.id}">${cover(b)}<span><b>${esc(b.t)}</b><small>${esc(artists[b.a]?.zh)} · ${b.y}</small></span></a>`;
   // 年度专辑里没有专辑页的，点开去 YouTube Music 搜
   const spareCard = (x, y) => `<a class="alb" href="${esc(musicSearch(`${x.a} ${x.t}`))}" target="_blank" rel="noopener"><span class="case"><img src="${esc(x.cover)}" data-title="${esc(x.t)}" alt="《${esc(x.t)}》专辑封面" loading="lazy" width="300" height="300"></span><span><b>${esc(x.t)}</b><small>${esc(x.a)} · ${y}</small></span></a>`;
@@ -509,6 +524,7 @@ a.card:hover { border-color: var(--accent); }
     document.getElementById('now-say').textContent = `${track} 年${LINES[line]}：${y.title}`;
     box.innerHTML = `
       <div class="lcd now-head">
+        ${artImg(`y${track}-${line}`, 'now-art')}
         <span class="big">TRACK ${String(idx).padStart(2, '0')}</span>
         <div><h2>${track} · ${esc(y.title)}</h2><p>${esc(y.lead)}</p></div>
         <a class="more" style="color:inherit" href="#y${track}-${line}">整页阅读 →</a>
@@ -561,7 +577,7 @@ a.card:hover { border-color: var(--accent); }
     </article>`;
   };
   const eraRow = v => {
-    const cell = l => (v[l] ? `<a class="era-c" href="#y${v.y}-${l}"><b>${esc(v[l].title)}</b><small>${esc(v[l].lead)}</small><span class="tech">${v[l].events.length} 条大事 · ${v[l].songs.length} 首歌</span></a>` : `<span class="era-c none">${LINES[l]}讲到 ${yearsOf(l).at(-1).y} 年</span>`);
+    const cell = l => (v[l] ? `<a class="era-c" href="#y${v.y}-${l}">${artImg(`y${v.y}-${l}`)}<span><b>${esc(v[l].title)}</b><small>${esc(v[l].lead)}</small><span class="tech">${v[l].events.length} 条大事 · ${v[l].songs.length} 首歌</span></span></a>` : `<span class="era-c none">${LINES[l]}讲到 ${yearsOf(l).at(-1).y} 年</span>`);
     return `<div class="era-row">${cell('hktw')}<button type="button" class="era-y" data-y="${v.y}" aria-label="在上方查看 ${v.y} 年">${v.y}</button>${cell('cn')}</div>`;
   };
   const home = () => {
@@ -653,7 +669,7 @@ a.card:hover { border-color: var(--accent); }
   };
   const yearCard = (v, l) => {
     const y = v[l];
-    return `<a class="ycard" href="#y${v.y}-${l}"><span class="yn">${v.y}</span><span class="yb"><b>${esc(y.title)}</b><small>${esc(y.lead)}</small><span class="tech">${y.events.length} 条大事 · ${y.albums.length} 张专辑 · ${y.songs.length} 首歌</span></span></a>`;
+    return `<a class="ycard" href="#y${v.y}-${l}">${artImg(`y${v.y}-${l}`)}<span class="yb"><b>${esc(y.title)}</b><small>${esc(y.lead)}</small><span class="tech">${y.events.length} 条大事 · ${y.albums.length} 张专辑 · ${y.songs.length} 首歌</span></span></a>`;
   };
   const years = l => {
     view.innerHTML = `
@@ -685,7 +701,7 @@ a.card:hover { border-color: var(--accent); }
     view.innerHTML = `<div class="wrap">
       <header class="page-h year-h">
         <p class="tech" style="margin:0"><a href="#years-${l}">编年史</a> / ${LINES[l]}</p>
-        <div class="year-big"><span class="lcdnum">${yr}</span><div><h1>${esc(y.title)}</h1><p>${esc(y.lead)}</p></div></div>
+        <div class="year-big">${artImg(`y${yr}-${l}`)}<div><span class="lcdnum">${yr}</span><h1>${esc(y.title)}</h1><p>${esc(y.lead)}</p></div></div>
         <div class="frow">
           ${list[i - 1] ? `<a class="pill" href="#y${list[i - 1].y}-${l}">← ${list[i - 1].y}</a>` : ''}
           ${list[i + 1] ? `<a class="pill" href="#y${list[i + 1].y}-${l}">${list[i + 1].y} →</a>` : ''}
@@ -890,7 +906,7 @@ a.card:hover { border-color: var(--accent); }
 
   /* 专题 */
   const trackName = { all: '两岸三地', hktw: '港台', cn: '内地' };
-  const topicCard = t => `<a class="card" href="#t-${t.id}"><span class="tech">${esc(t.kicker ?? '')} · ${trackName[t.track] ?? ''}</span><h3>${esc(t.title)}</h3><p>${esc(t.summary)}</p><span class="tech">${t.songs.length} 首歌</span></a>`;
+  const topicCard = t => `<a class="card topic-card" href="#t-${t.id}">${artImg(`t-${t.id}`)}<span class="tech">${esc(t.kicker ?? '')} · ${trackName[t.track] ?? ''}</span><h3>${esc(t.title)}</h3><p>${esc(t.summary)}</p><span class="tech">${t.songs.length} 首歌</span></a>`;
   const topicFilter = { track: '全部' };
   const topicsView = () => {
     const list = D.topics.filter(t => topicFilter.track === '全部' || t.track === topicFilter.track || t.track === 'all');
@@ -903,7 +919,7 @@ a.card:hover { border-color: var(--accent); }
     const t = D.topics.find(x => x.id === id);
     if (!t) return notFound();
     view.innerHTML = `<div class="wrap">
-      <header class="page-h"><p class="tech" style="margin:0"><a href="#topics">专题</a> / ${esc(t.kicker ?? '')} / ${trackName[t.track] ?? ''}</p><h1>${esc(t.title)}</h1><p>${esc(t.summary)}</p>
+      <header class="page-h"><p class="tech" style="margin:0"><a href="#topics">专题</a> / ${esc(t.kicker ?? '')} / ${trackName[t.track] ?? ''}</p><div class="year-big">${artImg(`t-${t.id}`)}<div><h1>${esc(t.title)}</h1><p>${esc(t.summary)}</p></div></div>
         <div class="jump">${t.body.filter(s => s.h).map((s, i) => `<button type="button" class="chip" data-go="s${i}">${esc(s.h)}</button>`).join('')}${t.songs.length ? '<button type="button" class="chip" data-go="sec-songs">歌单</button>' : ''}</div></header>
       <div class="prose">${t.body.map((s, i) => `${s.h ? `<h2 class="sub" id="s${i}">${esc(s.h)}</h2>` : ''}${(s.p ?? []).map(p => `<p>${esc(p)}</p>`).join('')}`).join('')}</div>
       ${t.timeline.length ? `<section class="sec"><div class="sec-h"><h2>时间线</h2></div><ul class="events">${t.timeline.map(e => `<li><time>${esc(String(e.d ?? '').slice(0, 7))}</time><span>${esc(e.text)}${srcLink(e.src)}</span></li>`).join('')}</ul></section>` : ''}
