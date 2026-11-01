@@ -429,8 +429,6 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .tile b { font: 400 25px/1.2 var(--f-display); }
 .tile .lcdnum { font-size: 17px; color: var(--accent); }
 .tile small { grid-column: 1 / -1; color: var(--mute); font-size: 13.5px; line-height: 1.55; }
-.nav .nav-dream { color: #5a2c10; background: linear-gradient(180deg, #ffe9c9, #ffc48a); border-color: rgba(120, 70, 20, .3); }
-.nav .nav-dream:hover { background: linear-gradient(180deg, #fff1da, #ffd29c); }
 .ent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
 .ent { --c: #8fb6e8; position: relative; display: grid; gap: 2px; align-content: start; padding: 10px 13px 11px 16px; border-radius: 8px; color: var(--ink); text-decoration: none; background: var(--plate); border: 1px solid var(--line); box-shadow: inset 0 1px 0 var(--gloss); overflow: hidden; }
 .ent::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--c); }
@@ -453,19 +451,9 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .day li a { color: inherit; text-decoration-color: var(--line); }
 .ent-y { margin: 4px 0 0; font-size: 22px; color: var(--accent); }
 .ent-scene { color: var(--mute); border-left: 3px solid var(--line); padding-left: 12px; }
-/* 首页的梦境入口 */
-.dream-door { margin-bottom: 26px; }
-.now-copy .more + .more { margin-left: 16px; }
-.dream-door a { position: relative; display: block; overflow: hidden; border-radius: 12px; min-height: 260px; color: #fff8e8; text-decoration: none; background: linear-gradient(120deg, #e8c9a0, #8fae98); box-shadow: 0 18px 36px -24px var(--shadow), 0 0 0 1px var(--line); }
-.dream-door img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s ease; }
-.dream-door a:hover img { transform: scale(1.03); }
-.door-vhs { position: absolute; left: 20px; top: 14px; font: 400 17px/1.2 var(--f-lcd); letter-spacing: .05em; text-shadow: 1px 0 0 rgba(255, 60, 90, .55), -1px 0 0 rgba(60, 200, 255, .55); }
-.door-vhs b { font-weight: 400; font-size: 20px; }
-.door-copy { position: absolute; left: 20px; right: 20px; bottom: 16px; display: grid; gap: 3px; justify-items: start; text-shadow: 0 1px 10px rgba(50, 25, 10, .75); }
-.door-copy b { font: 400 34px/1.15 var(--f-display); }
-.door-copy small { font-size: 15px; max-width: 34em; }
-.door-copy i { font-style: normal; font-size: 13.5px; padding: 1px 12px; margin-top: 4px; border: 1px solid rgba(255, 248, 232, .8); border-radius: 3px; }
-.foot-dream { margin: 0 0 12px; color: var(--mute); }
+.foot-dream { margin: 0 0 12px; font-size: 12px; }
+.foot-dream a { color: var(--mute); opacity: .55; text-decoration: none; }
+.foot-dream a:hover { opacity: 1; }
 @media (max-width: 760px) {
   .ent-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -625,7 +613,7 @@ body.has-dock { padding-bottom: 92px; }
   <div class="wrap deck-in">
     <a class="brand" href="#home"><span class="brand-disc" aria-hidden="true"></span><b>千禧时光机</b></a>
     <nav class="nav" aria-label="主导航">
-      <a href="#home">首页</a><a href="#music">音乐</a><a href="#f-screen">荧屏</a><a href="#f-net">网络</a><a href="#f-school">校园</a><a href="#f-life">生活</a><a href="#f-world">社会</a><a href="#f-sport">体育</a><a href="#f-sub">亚文化</a><a href="#about">关于</a><a class="nav-dream" href="#dream">入梦</a>
+      <a href="#home">首页</a><a href="#music">音乐</a><a href="#f-screen">荧屏</a><a href="#f-net">网络</a><a href="#f-school">校园</a><a href="#f-life">生活</a><a href="#f-world">社会</a><a href="#f-sport">体育</a><a href="#f-sub">亚文化</a><a href="#about">关于</a>
     </nav>
     <div class="search" role="search">
       <input id="q" type="search" placeholder="搜歌手、专辑、歌名" aria-label="搜索全站" autocomplete="off">
@@ -637,7 +625,7 @@ body.has-dock { padding-bottom: 92px; }
 <nav class="subnav" id="subnav" aria-label="音乐" hidden><div class="wrap"><a href="#music">总览</a><a href="#years">编年史</a><a href="#artists">歌手库</a><a href="#albums">专辑墙</a><a href="#songs">点歌台</a><a href="#charts">榜单</a><a href="#topics">专题</a><a href="#makers">幕后</a></div></nav>
 <main id="view"></main>
 <footer class="foot"><div class="wrap">
-  <p class="foot-dream">下午永远不会结束。<a href="#dream">回到二楼走廊</a></p>
+  <p class="foot-dream"><a href="#dream">下午永远不会结束。</a></p>
   <div class="badges" aria-hidden="true">
     <span class="b88 steel"><b>Y2K</b>READY</span>
     <span class="b88 lcdb">HI-FI<b>STEREO</b></span>
@@ -675,7 +663,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=f2a77b5a31"></script>
+<script src="data.js?v=335d497066"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -870,7 +858,6 @@ body.has-dock { padding-bottom: 92px; }
         <div class="now-copy">
           <p class="now-tag"><span class="lcd">YEAR ${track}</span><span class="tech">${LINES[l]}</span></p>
           <h2>${esc(y.title)}</h2><p>${esc(y.lead)}</p>
-          <a class="more" href="#dream-${track}">走进这一年的下午 →</a>
         </div>
         <div class="lcd now-stats">
           <span><b>${count}</b> 件往事</span><span><b>${y.events.length}</b> 条音乐大事</span><span><b>${y.songs.length}</b> 首歌</span>
@@ -905,7 +892,7 @@ body.has-dock { padding-bottom: 92px; }
             <div><b>${fmt(D.songs.length)}</b><span>首歌</span></div>
             <div><b>${fmt(D.albums.length)}</b><span>张专辑</span></div>
           </div>
-          <div class="plays hero-play"><a class="play big" href="#dream">入梦</a><a class="play big alt" href="#songs" data-all>随机听歌</a></div>
+          <div class="plays hero-play"><a class="play big" href="#songs" data-all>随机听歌</a></div>
         </div>
         <div class="disc-box" aria-hidden="true">
           <svg class="orbit" viewBox="0 0 640 640">
@@ -922,13 +909,6 @@ body.has-dock { padding-bottom: 92px; }
           <div class="seal"><svg viewBox="0 0 100 100"><defs><path id="seal" d="M50 50m-36 0a36 36 0 1 1 72 0a36 36 0 1 1-72 0"/></defs><text><textPath href="#seal">16 YEARS · TIME MACHINE · 全程收录 · </textPath></text></svg><b>Y2K</b></div>
           <div class="lcd year-chip"><i>YEAR</i><b id="hub">${track}</b></div>
         </div>
-      </section>
-      <section class="wrap dream-door">
-        <a href="#dream" aria-label="走进千禧一梦">
-          <img src="art/dream-hall.webp" alt="" width="1600" height="640" loading="lazy" data-art="dream-hall">
-          <span class="door-vhs"><b>PLAY ▶</b><br>????.08.31 PM 5:47</span>
-          <span class="door-copy"><b>千禧一梦</b><small>二楼走廊有十六扇门，每扇门后面都是那一年的下午。没有人，但歌还在放。</small><i>推门进去</i></span>
-        </a>
       </section>
       <section class="wrap">
         <div class="frow dial-h"><span class="tech">Dial</span><b>拨到哪一年</b></div>
@@ -1049,7 +1029,7 @@ body.has-dock { padding-bottom: 92px; }
         <div class="frow">
           ${list[i - 1] ? `<a class="pill" href="#y${list[i - 1].y}-${l}">← ${list[i - 1].y}</a>` : ''}
           ${list[i + 1] ? `<a class="pill" href="#y${list[i + 1].y}-${l}">${list[i + 1].y} →</a>` : ''}
-          ${v[other] ? `<a class="pill go" href="#y${yr}-${other}">看同年${LINES[other]}</a>` : ''}<a class="pill" href="#dream-${yr}">走进这一年的下午</a>
+          ${v[other] ? `<a class="pill go" href="#y${yr}-${other}">看同年${LINES[other]}</a>` : ''}
         </div>
         <div class="jump">${jump.map(([k]) => `<button type="button" class="chip" data-go="sec-${k}">${k}</button>`).join('')}</div>
       </header>
@@ -1333,7 +1313,7 @@ body.has-dock { padding-bottom: 92px; }
     const near = nearby(e.peak, 40).filter(x => x !== e && facetOf(x) !== k).slice(0, 8);
     view.innerHTML = `<div class="wrap"><header class="page-h ent-h"><p class="tech" style="margin:0"><a href="#f-${k}">${FACETS[k]?.name ?? ''}</a> / ${esc(e.cat)}</p>
         <h1>${esc(e.name)}</h1><p class="lcdnum ent-y">${span(e)}</p></header>
-      <div class="prose"><p>${esc(e.text)}</p>${e.scene ? `<p class="ent-scene">${esc(e.scene)}</p>` : ''}<p><a class="pill" href="#dream-${e.peak}">走进 ${e.peak} 年的下午</a></p></div>
+      <div class="prose"><p>${esc(e.text)}</p>${e.scene ? `<p class="ent-scene">${esc(e.scene)}</p>` : ''}</div>
       ${list.length ? `<section class="sec"><div class="sec-h"><h2>相关的歌</h2><span class="tech">${list.length} Songs</span></div>${playAll(list)}${tuneList(list)}</section>` : ''}
       ${near.length ? `<section class="sec"><div class="sec-h"><h2>同一时候还有</h2></div><div class="ent-grid">${near.map(entryCard).join('')}</div></section>` : ''}
       ${e.sources.length ? `<section class="sec"><div class="sec-h"><h2>资料来源</h2></div><ul class="prose">${e.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}</ul></section>` : ''}
@@ -1584,7 +1564,8 @@ body.has-dock { padding-bottom: 92px; }
   const songsOfLine = y => vidsOf(dreamLine(y).songs).map(v => byVid.get(v));
   const dreamApi = {
     info: y => {
-      const entries = (D.culture ?? []).filter(c => c.from <= y && y <= c.to).sort((a, b) => Math.abs(a.peak - y) - Math.abs(b.peak - y));
+      // 梦里只放日常，大案和事故留在社会页
+      const entries = (D.culture ?? []).filter(c => c.group !== 'news' && c.from <= y && y <= c.to).sort((a, b) => Math.abs(a.peak - y) - Math.abs(b.peak - y));
       return { title: dreamLine(y).title, entries, tvEntry: entries.find(e => e.prop === 'tv' || e.prop === 'vhs'), albums: heavy(albumsAt[y] ?? []).filter(b => b.cover).slice(0, 12).map(b => ({ id: b.id, cover: b.cover, t: b.t })) };
     },
     playYear: y => { if (P.dreamYear !== y) { P.dreamYear = y; playList(songsOfLine(y), 0, 'shuffle'); } },
