@@ -464,6 +464,39 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .tile b { font: 400 25px/1.2 var(--f-display); }
 .tile .lcdnum { font-size: 17px; color: var(--accent); }
 .tile small { grid-column: 1 / -1; color: var(--mute); font-size: 13.5px; line-height: 1.55; }
+/* 专栏一览：目录式，靠细线分隔，不用卡片 */
+.f-body { padding-top: 20px; }
+.cols { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 46px; border-top: 2px solid var(--ink); }
+.cols li { border-bottom: 1px solid var(--line); }
+.cols a { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 16px; align-items: start; padding: 15px 0 16px; color: var(--ink); text-decoration: none; }
+.cols a:not(:has(img)) { grid-template-columns: minmax(0, 1fr); }
+.col-b { display: grid; gap: 3px; min-width: 0; }
+.col-c { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; box-shadow: 0 10px 22px -14px var(--shadow), 0 0 0 1px var(--line); background: var(--well); }
+.cols a:hover b { color: var(--accent); }
+.cols b { font: 400 25px/1.25 var(--f-display); }
+.cols small { color: var(--mute); font-size: 14.5px; line-height: 1.7; }
+.col-m { font-size: 12px; color: var(--mute); }
+/* 词条索引：按类别列名字 */
+.ent-idx { columns: 3; column-gap: 34px; }
+.ent-idx section { break-inside: avoid; margin-bottom: 16px; }
+.ent-idx h3 { font-size: 19px; padding-bottom: 3px; margin-bottom: 4px; border-bottom: 1px solid var(--line); }
+.ent-idx ul { list-style: none; margin: 0; padding: 0; }
+.ent-idx li { display: flex; justify-content: space-between; gap: 10px; padding: 2px 0; line-height: 1.5; }
+.ent-idx a { color: var(--ink); text-decoration: none; }
+.ent-idx a:hover { color: var(--accent); text-decoration: underline; }
+.ent-idx small { flex: none; font-size: 11.5px; color: var(--mute); }
+.year-h { font: 400 30px/1.1 var(--f-lcd); margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); max-width: 46rem; }
+/* 专栏文章 */
+.col-h h1 { font-size: clamp(32px, 4.4vw, 52px); }
+.col-top { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 26px; align-items: center; margin-top: 10px; }
+.col-top h1 { background: var(--chrome); -webkit-background-clip: text; background-clip: text; color: transparent; filter: var(--chrome-fx); -webkit-text-stroke: .5px var(--chrome-edge); }
+.col-top p { max-width: 42em; color: var(--mute); }
+.col-text { font-size: 16.5px; line-height: 1.95; }
+.col-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 30px 0 10px; padding-top: 14px; border-top: 2px solid var(--ink); }
+.col-nav a { color: var(--ink); text-decoration: none; font: 400 20px/1.3 var(--f-display); }
+.col-nav a:last-child { text-align: right; }
+.col-nav a:hover { color: var(--accent); }
+.col-nav small { display: block; font: 400 12.5px/1.6 var(--f-body); color: var(--mute); }
 .ent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
 .ent { --c: #8fb6e8; position: relative; display: grid; gap: 2px; align-content: start; padding: 10px 13px 11px 16px; border-radius: 8px; color: var(--ink); text-decoration: none; background: var(--plate); border: 1px solid var(--line); box-shadow: inset 0 1px 0 var(--gloss); overflow: hidden; }
 .ent::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--c); }
@@ -581,6 +614,7 @@ body.has-dock { padding-bottom: 92px; }
   body.has-dock { padding-bottom: 150px; }
 }
 @media (max-width: 980px) {
+  .ent-idx { columns: 2; }
   .disc-box { display: none; }
   .deck-in { flex-wrap: wrap; gap: 8px 12px; }
   .nav { order: 3; flex-basis: 100%; }
@@ -620,6 +654,10 @@ body.has-dock { padding-bottom: 92px; }
   .tv-third b { padding: 0 22px 2px; font-size: 20px; }
   .tv-roll { margin: 0 14px; font-size: 12px; }
   .barcode { display: none; }
+  .cols { grid-template-columns: minmax(0, 1fr); }
+  .cols a { grid-template-columns: 124px minmax(0, 1fr); gap: 12px; }
+  .col-top { grid-template-columns: minmax(0, 1fr); }
+  .ent-idx { columns: 1; }
   .tracks { grid-template-columns: repeat(8, minmax(0, 1fr)); }
   .now-head { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 12px; }
   .now-art { grid-row: auto; width: 100%; height: auto; aspect-ratio: 1; }
@@ -718,7 +756,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=d5c52b370b"></script>
+<script src="data.js?v=51c96a8694"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -919,7 +957,7 @@ body.has-dock { padding-bottom: 92px; }
         </div>
       </div>
       <div class="tabs" role="tablist" aria-label="这一年的切面">${tabs.map(([k, n]) => `<button type="button" role="tab" data-tab="${k}" aria-selected="${k === nowTab}">${n}</button>`).join('')}</div>
-      <div class="now-tab">${nowTab === 'year' ? digest(v, l) : nowTab === 'music' ? musicTab(v, l) : facetGrid(nowTab, track)}</div>`;
+      <div class="now-tab">${nowTab === 'year' ? digest(v, l) : nowTab === 'music' ? musicTab(v, l) : facetYear(nowTab, track)}</div>`;
   };
   // 首页的榜单卡片：列出第一个有歌的奖项，下面放本届连播
   const edMini = (c, e) => {
@@ -1052,7 +1090,7 @@ body.has-dock { padding-bottom: 92px; }
         <div class="sec-h"><h2>时光机里有什么</h2><span class="tech">Facets</span></div>
         <div class="tiles">
           <a class="tile" href="#music"><b>音乐</b><span class="lcdnum">${fmt(D.songs.length)}</span><small>内地和港台两条线，歌手、专辑、榜单、歌单和专题</small></a>
-          ${Object.entries(FACETS).filter(([k]) => inFacet(k).length).map(([k, f]) => `<a class="tile" data-f="${k}" href="#f-${k}"><b>${f.name}</b><span class="lcdnum">${inFacet(k).length}</span><small>${esc(f.lede)}</small></a>`).join('')}
+          ${Object.entries(FACETS).filter(([k]) => inFacet(k).length).map(([k, f]) => `<a class="tile" data-f="${k}" href="#f-${k}"><b>${f.name}</b><span class="lcdnum">${columnsOf(k).length ? `${columnsOf(k).length} 篇专栏` : inFacet(k).length}</span><small>${esc(f.lede)}</small></a>`).join('')}
         </div>
       </section>
       <section class="wrap sec">
@@ -1398,6 +1436,8 @@ body.has-dock { padding-bottom: 92px; }
   };
 
   /* 时光机的各个切面 */
+  let viewCtl = null;
+  const viewBound = () => { viewCtl?.abort(); viewCtl = new AbortController(); return viewCtl.signal; };
   const FACETS = {
     screen: { name: '荧屏', en: 'On Screen', groups: ['drama', 'tvshow', 'movie'], lede: '电视剧、综艺、动画、广告和电影，一家人的晚上和孩子们的寒暑假。' },
     net: { name: '网络', en: 'Online', groups: ['net'], lede: '拨号上网、网吧、QQ、论坛、网游和手机。' },
@@ -1413,33 +1453,68 @@ body.has-dock { padding-bottom: 92px; }
   const nearby = (y, n) => (D.culture ?? []).filter(e => e.from <= y && y <= e.to).sort(nearer(y)).slice(0, n);
   const inFacet = (k, y) => (D.culture ?? []).filter(e => FACETS[k].groups.includes(e.group) && (y == null || (e.from <= y && y <= e.to))).sort(y == null ? (a, b) => a.peak - b.peak : nearer(y));
   const entryCard = e => `<a class="ent" data-f="${facetOf(e)}" href="#e-${e.id}"><span class="tech">${span(e)} · ${esc(e.cat)}</span><b>${esc(e.name)}</b><small>${esc(e.text.slice(0, 46))}…</small>${e.songs?.length ? '<i>有歌</i>' : ''}</a>`;
-  const facetGrid = (k, y) => { const list = inFacet(k, y); return list.length ? `<div class="ent-grid">${list.map(entryCard).join('')}</div>` : `<p class="prose">这一年的${FACETS[k].name}还没有收录内容。</p>`; };
+  const columnsOf = k => (D.columns ?? []).filter(c => c.facet === k);
+  const eventsOf = k => D.facetEvents?.[k] ?? [];
+  // 专栏一览：目录式排版，不用卡片
+  const colIndex = list => `<ol class="cols">${list.map((c, i) => `<li><a href="#col-${c.id}"><img class="col-c" src="art/col-${c.id}.webp" alt="" loading="lazy" width="800" height="600" data-art="col-${c.id}"><span class="col-b"><span class="tech">${String(i + 1).padStart(2, '0')} · ${esc(c.kicker ?? '')} · ${span(c)}</span><b>${esc(c.title)}</b><small>${esc(c.summary)}</small><span class="col-m lcdnum">${fmt(c.words)} 字</span></span></a></li>`).join('')}</ol>`;
+  const entryIndex = list => { const by = group(list, e => e.cat); return `<div class="ent-idx">${Object.keys(by).map(c => `<section><h3>${esc(c)}</h3><ul>${by[c].map(e => `<li><a href="#e-${e.id}">${esc(e.name)}</a><small class="lcdnum">${span(e)}</small></li>`).join('')}</ul></section>`).join('')}</div>`; };
+  const eventRow = e => `<li><time>${esc(String(e.d ?? '').slice(5) || '—')}</time><span><span class="tag">${esc(e.c)}</span> ${esc(e.t)}${srcLink(e.s)}</span></li>`;
+  const chronicle = list => { const by = group(list, e => String(e.d).slice(0, 4)); return Object.keys(by).sort().map(y => `<h3 class="year-h">${y}</h3><ul class="events">${by[y].map(eventRow).join('')}</ul>`).join('') || '<p class="prose">这一格没有大事。</p>'; };
+  // 首页年份面板里的切面标签：这一年的专栏、大事记和词条
+  const facetYear = (k, y) => {
+    const cols = columnsOf(k).filter(c => c.from <= y && y <= c.to), ev = eventsOf(k).filter(e => String(e.d).startsWith(String(y))), list = inFacet(k, y);
+    return `${cols.length ? `<section><div class="sec-h"><h2>这一年的专栏</h2><a class="more" href="#f-${k}">全部专栏</a></div>${colIndex(cols)}</section>` : ''}
+      ${ev.length ? `<section><div class="sec-h"><h2>大事记</h2><span class="tech">${ev.length} Events</span></div>${eventsHtml(ev, '全部')}</section>` : ''}
+      ${list.length ? `<section><div class="sec-h"><h2>词条</h2><span class="tech">${list.length} Entries</span></div>${entryIndex(list)}</section>` : `<p class="prose">这一年的${FACETS[k].name}还没有收录内容。</p>`}`;
+  };
   const dayBlock = () => ((D.days ?? []).length ? `<section class="wrap sec" id="k-days"><div class="sec-h"><h2>千禧年的一天</h2><span class="tech">A Day in the Life</span></div><p class="credit">根据当时的规定、调查和报道整理的典型情况，各地差别很大。</p><div class="days">${D.days.map(d => `<article class="day"><h3>${esc(d.who)}</h3><p class="tech">${esc(d.when)}</p><ol>${d.steps.map(s => `<li><time class="lcdnum">${esc(s.t)}</time><span>${s.ref && D.culture.some(e => e.id === s.ref) ? `<a href="#e-${esc(s.ref)}">${esc(s.text)}</a>` : esc(s.text)}${srcLink(s.src)}</span></li>`).join('')}</ol></article>`).join('')}</div></section>` : '');
-  const fFilter = { c: '全部', y: '全部' };
+  const fFilter = { tab: 'cols', c: '全部', y: '全部' };
   const facetView = k => {
     const f = FACETS[k];
     if (!f) return notFound();
-    fFilter.c = '全部'; fFilter.y = '全部';
-    const cats = ['全部', ...new Set(inFacet(k).map(e => e.cat))];
-    view.innerHTML = `<header class="wrap page-h"><h1 data-en="${f.en}">${f.name}</h1><p>${esc(f.lede)}每一条都标了年份和来源，能放的歌都接进了播放器。</p></header>
-      ${k === 'school' ? dayBlock() : ''}
-      <section class="wrap sec"><div class="sec-h"><h2>全部条目</h2><span class="tech" id="k-count"></span></div>
-        <div class="filters">
-          <div class="frow"><span class="tech">类别</span>${cats.map(c => `<button type="button" class="chip" data-kc="${esc(c)}">${esc(c)}</button>`).join('')}</div>
-          <div class="frow"><span class="tech">年份</span>${['全部', ...YEARS].map(y => `<button type="button" class="chip" data-ky="${y}">${y}</button>`).join('')}</div>
-        </div>
-        <div class="ent-grid" id="k-grid"></div>
-      </section>`;
+    const cols = columnsOf(k), evs = eventsOf(k), all = inFacet(k);
+    const tabs = [['cols', '专栏', cols.length], ['events', '大事记', evs.length], ['index', '词条', all.length]].filter(t => t[2]);
+    Object.assign(fFilter, { tab: tabs[0][0], c: '全部', y: '全部' });
+    view.innerHTML = `<header class="wrap page-h"><h1 data-en="${f.en}">${f.name}</h1><p>${esc(f.lede)}</p></header>
+      <div class="wrap"><div class="tabs" role="tablist" aria-label="${f.name}">${tabs.map(([t, n, c]) => `<button type="button" role="tab" data-ft="${t}">${n}<small class="lcdnum"> ${c}</small></button>`).join('')}</div></div>
+      <div class="wrap f-body" id="f-body"></div>`;
+    const chips = (name, list, cur) => list.map(x => `<button type="button" class="chip" data-${name}="${esc(x)}" aria-pressed="${String(x) === String(cur)}">${esc(x)}</button>`).join('');
     const paint = () => {
-      const list = inFacet(k, fFilter.y === '全部' ? null : +fFilter.y).filter(e => fFilter.c === '全部' || e.cat === fFilter.c);
-      $('k-grid').innerHTML = list.map(entryCard).join('') || '<p class="prose">这一格没有条目。</p>';
-      $('k-count').textContent = `${fmt(list.length)} 条`;
-      view.querySelectorAll('[data-kc]').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.kc === fFilter.c)));
-      view.querySelectorAll('[data-ky]').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.ky === String(fFilter.y))));
+      view.querySelectorAll('[data-ft]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.ft === fFilter.tab)));
+      const box = $('f-body');
+      if (fFilter.tab === 'cols') box.innerHTML = `${colIndex(cols)}${k === 'school' ? dayBlock() : ''}`;
+      else if (fFilter.tab === 'events') {
+        const list = evs.filter(e => (fFilter.c === '全部' || e.c === fFilter.c) && (fFilter.y === '全部' || String(e.d).startsWith(String(fFilter.y))));
+        box.innerHTML = `<div class="filters"><div class="frow"><span class="tech">类别</span>${chips('kc', ['全部', ...new Set(evs.map(e => e.c))], fFilter.c)}</div><div class="frow"><span class="tech">年份</span>${chips('ky', ['全部', ...YEARS], fFilter.y)}</div></div>${chronicle(list)}`;
+      } else box.innerHTML = `<div class="filters"><div class="frow"><span class="tech">年份</span>${chips('ky', ['全部', ...YEARS], fFilter.y)}</div></div>${entryIndex(inFacet(k, fFilter.y === '全部' ? null : +fFilter.y))}`;
     };
+    view.addEventListener('click', e => {
+      const t = e.target.closest('[data-ft]'), c = e.target.closest('[data-kc]'), y = e.target.closest('[data-ky]');
+      if (t) Object.assign(fFilter, { tab: t.dataset.ft, c: '全部', y: '全部' });
+      else if (c) fFilter.c = c.dataset.kc;
+      else if (y) fFilter.y = y.dataset.ky;
+      else return;
+      paint();
+    }, { signal: viewBound() });
     paint();
-    view.querySelectorAll('[data-kc]').forEach(c => c.addEventListener('click', () => { fFilter.c = c.dataset.kc; paint(); }));
-    view.querySelectorAll('[data-ky]').forEach(c => c.addEventListener('click', () => { fFilter.y = c.dataset.ky; paint(); }));
+  };
+  const columnPage = id => {
+    const c = (D.columns ?? []).find(x => x.id === id);
+    if (!c) return notFound();
+    const f = FACETS[c.facet], sibs = columnsOf(c.facet), i = sibs.indexOf(c), list = c.songs.map(s => songs[s]).filter(Boolean), ents = c.entries.map(id => (D.culture ?? []).find(e => e.id === id)).filter(Boolean);
+    view.innerHTML = `<div class="wrap col-page">
+      <header class="page-h col-h"><p class="tech" style="margin:0"><a href="#f-${c.facet}">${f.name}</a> / ${esc(c.kicker ?? '')}</p>
+        <div class="col-top"><img class="col-c" src="art/col-${c.id}.webp" alt="" width="800" height="600" data-art="col-${c.id}"><div><h1>${esc(c.title)}</h1><p>${esc(c.summary)}</p><p class="lcdnum ent-y">${span(c)} · ${fmt(c.words)} 字</p></div></div>
+        <div class="jump">${c.body.filter(s => s.h).map((s, n) => `<button type="button" class="chip" data-go="s${n}">${esc(s.h)}</button>`).join('')}</div></header>
+      <div class="prose col-text">${c.body.map((s, n) => `${s.h ? `<h2 class="sub" id="s${n}">${esc(s.h)}</h2>` : ''}${s.p.map(p => `<p>${esc(p)}</p>`).join('')}`).join('')}</div>
+      ${c.timeline.length ? `<section class="sec"><div class="sec-h"><h2>时间线</h2></div><ul class="events">${c.timeline.map(e => `<li><time>${esc(String(e.d ?? '').slice(0, 7))}</time><span>${esc(e.text)}${srcLink(e.src)}</span></li>`).join('')}</ul></section>` : ''}
+      ${list.length ? `<section class="sec"><div class="sec-h"><h2>听这些歌</h2><span class="tech">${list.length} Songs</span></div>${playAll(list)}${tuneList(list)}</section>` : ''}
+      ${ents.length ? `<section class="sec"><div class="sec-h"><h2>相关词条</h2></div>${entryIndex(ents)}</section>` : ''}
+      ${c.sources.length ? `<section class="sec"><div class="sec-h"><h2>资料来源</h2></div><ul class="prose">${c.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}</ul></section>` : ''}
+      ${c.credit ? `<p class="credit">封面照片：<a href="${esc(c.credit.url)}" target="_blank" rel="noopener">${esc(c.credit.author || '维基共享资源')}</a>，${esc(c.credit.license)}，经裁切和调色。</p>` : ''}
+      <nav class="col-nav" aria-label="${f.name}专栏">${sibs[i - 1] ? `<a href="#col-${sibs[i - 1].id}"><small>上一篇</small>${esc(sibs[i - 1].title)}</a>` : '<span></span>'}${sibs[i + 1] ? `<a href="#col-${sibs[i + 1].id}"><small>下一篇</small>${esc(sibs[i + 1].title)}</a>` : '<span></span>'}</nav>
+    </div>`;
+    view.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => document.getElementById(b.dataset.go)?.scrollIntoView({ behavior: 'smooth' })));
   };
   const entryPage = id => {
     const e = (D.culture ?? []).find(x => x.id === id);
@@ -1449,6 +1524,7 @@ body.has-dock { padding-bottom: 92px; }
     view.innerHTML = `<div class="wrap"><header class="page-h ent-h"><p class="tech" style="margin:0"><a href="#f-${k}">${FACETS[k]?.name ?? ''}</a> / ${esc(e.cat)}</p>
         <h1>${esc(e.name)}</h1><p class="lcdnum ent-y">${span(e)}</p></header>
       <div class="prose"><p>${esc(e.text)}</p>${e.scene ? `<p class="ent-scene">${esc(e.scene)}</p>` : ''}</div>
+      ${(D.columns ?? []).some(c => c.entries.includes(e.id)) ? `<section class="sec"><div class="sec-h"><h2>读专栏</h2></div>${colIndex(D.columns.filter(c => c.entries.includes(e.id)))}</section>` : ''}
       ${list.length ? `<section class="sec"><div class="sec-h"><h2>相关的歌</h2><span class="tech">${list.length} Songs</span></div>${playAll(list)}${tuneList(list)}</section>` : ''}
       ${near.length ? `<section class="sec"><div class="sec-h"><h2>同一时候还有</h2></div><div class="ent-grid">${near.map(entryCard).join('')}</div></section>` : ''}
       ${e.sources.length ? `<section class="sec"><div class="sec-h"><h2>资料来源</h2></div><ul class="prose">${e.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}</ul></section>` : ''}
@@ -1472,7 +1548,7 @@ body.has-dock { padding-bottom: 92px; }
         <p><b>视频链接：</b>${fmt(m.linked)} 首歌链接到具体的视频或音频，其中 ${fmt(m.official)} 条来自官方、唱片公司频道或 YouTube 官方音频。优先顺序是官方 MV、高播放量的原版 MV、官方音频，最后才是现场版。每条都在 ${esc(m.checked)} 用 YouTube oEmbed 确认过存在。春晚专题优先用 CCTV春晚 官方频道的当届片段。其余歌曲和专辑里的非主打曲目使用 YouTube Music 搜索链接。部分视频有地区限制，打不开时可以用专辑页的搜索链接。</p>
         <p><b>封面与资料：</b>专辑封面、曲目和发行信息取自 iTunes Search API，首发日期参考 MusicBrainz，其中 ${fmt(m.wikiDates)} 张重点专辑的日期再用维基百科校对过。封面版权归各唱片公司所有，这里以缩略图用于资料说明。歌手照片取自维基共享资源，署名见各词条。</p>
         <p><b>奖项：</b>金曲奖名单整理自维基百科各届条目。</p>
-        <p><b>年代条目：</b>${fmt(D.culture.length)} 条荧屏、网络、校园、生活、社会、体育和亚文化词条取自网上公开资料，每条都列了来源。不少条目只有一两个来源，“场景”写的是报道和回忆里的日常细节，不代表每个地方都一样。说法不一的数字会写出范围或两种说法。</p>
+        <p><b>专栏和词条：</b>${fmt((D.columns ?? []).length)} 篇专栏和 ${fmt(D.culture.length)} 条词条取自网上公开资料，每篇每条都列了来源。不少条目只有一两个来源，“场景”写的是报道和回忆里的日常细节，不代表每个地方都一样。说法不一的数字会写出范围或两种说法。</p>
         <p><b>已知局限：</b>iTunes 上缺货的专辑没有封面，用色块代替。曲目来自流媒体版本，可能与原版 CD 有出入。年份以首发为准。约三分之一的链接来自非官方上传，经过规则过滤和抽查，但仍可能有少量挂错版本。部分年份的台湾当年报道和销量数据没有查到，个别事件只有单一来源，每条大事都标了来源，可以点开核对。站内连播不限首数，遇到禁止嵌入的视频会自动跳过；YouTube 可能在歌曲前插片头广告，本站没有收入，也不能去掉；跳去 YouTube 的临时歌单一次最多 50 首。手机浏览器切到后台时可能暂停。</p>
       </div>
       <section class="sec"><div class="sec-h"><h2>主要数据来源</h2></div>
@@ -1487,6 +1563,7 @@ body.has-dock { padding-bottom: 92px; }
   const index = [
     ...D.artists.map(a => ({ k: `${a.zh} ${a.tw} ${a.en}`.toLowerCase(), href: `#a-${a.id}`, name: a.zh, sub: `${a.en} · ${a.kind}`, mark: '歌手', icon: face(a), rank: 0 })),
     ...D.albums.map(b => ({ k: `${b.t} ${b.tt ?? ''} ${artists[b.a]?.zh} ${artists[b.a]?.tw}`.toLowerCase(), key2: `${b.t} ${b.tt ?? ''}`.toLowerCase(), href: `#b-${b.id}`, name: b.t, sub: `${artists[b.a]?.zh} · ${b.y}`, mark: '专辑', icon: cover(b), rank: 1 })),
+    ...(D.columns ?? []).map(c => ({ k: `${c.title} ${c.kicker ?? ''}`.toLowerCase(), key2: c.title.toLowerCase(), href: `#col-${c.id}`, name: c.title, sub: `专栏 · ${FACETS[c.facet]?.name ?? ''}`, mark: '专栏', icon: `<span class="lcdnum">${String(c.from).slice(2)}</span>`, rank: 2 })),
     ...(D.culture ?? []).map(e => ({ k: `${e.name} ${e.cat}`.toLowerCase(), key2: e.name.toLowerCase(), href: `#e-${e.id}`, name: e.name, sub: `${e.cat} · ${e.from === e.to ? e.from : `${e.from}—${e.to}`}`, mark: '千禧', icon: `<span class="lcdnum">${String(e.peak).slice(2)}</span>`, rank: 1 })),
     ...D.songs.map(s => ({ k: `${s.t} ${s.tw ?? ''} ${artists[s.a]?.zh} ${artists[s.a]?.tw} ${artists[s.a]?.en}`.toLowerCase(), key2: `${s.t} ${s.tw ?? ''}`.toLowerCase(), href: s.al ? `#b-${s.al}` : `#a-${s.a}`, ext: ytUrl(s), name: s.t, sub: `${artists[s.a]?.zh} · ${s.y}`, mark: '歌曲', icon: `<span class="lcdnum">${String(s.y).slice(2)}</span>`, rank: 2 })),
   ];
@@ -1748,6 +1825,7 @@ body.has-dock { padding-bottom: 92px; }
     else if (h === 'charts-cn') { chartsView('cn'); nav = 'charts'; }
     else if (h === 'topics') { topicsView(); nav = 'topics'; }
     else if (h === 'life') { location.hash = '#f-life'; return; }
+    else if (h.startsWith('col-')) { columnPage(h.slice(4)); const c = (D.columns ?? []).find(x => x.id === h.slice(4)); if (c) nav = `f-${c.facet}`; }
     else if (h.startsWith('e-')) { entryPage(h.slice(2)); const e = (D.culture ?? []).find(x => x.id === h.slice(2)); if (e) nav = `f-${facetOf(e)}`; }
     else if (h === 'makers') { makersView(); nav = 'makers'; }
     else if (h === 'about') { aboutView(); nav = 'about'; }
