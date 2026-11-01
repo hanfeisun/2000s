@@ -372,8 +372,74 @@ a.card:hover { border-color: var(--accent); }
 
 .plays { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; }
 
-.sec, .edition, .prose .sub { scroll-margin-top: 84px; }
-@media (max-width: 980px) { .sec, .edition, .prose .sub { scroll-margin-top: 124px; } }
+/* 站内播放器：机身沿用顶部导航的金属色，中间是一块液晶屏 */
+body.has-dock { padding-bottom: 92px; }
+.dock { position: fixed; inset: auto 0 0; z-index: 45; pointer-events: none; }
+.dock[hidden] { display: none; }
+.dock-bar { pointer-events: auto; display: grid; grid-template-columns: 56px minmax(170px, 1fr) auto minmax(170px, 1fr) auto; gap: 12px; align-items: center; padding: 8px 16px calc(8px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(180deg, var(--steel-a), var(--steel-b)); border-top: 1px solid var(--line); box-shadow: 0 -4px 16px var(--shadow); }
+.dock-stage { pointer-events: auto; position: absolute; right: 16px; bottom: calc(100% + 10px); width: 356px; display: grid; gap: 8px; }
+.dock.big .dock-stage { width: min(640px, calc(100vw - 32px)); }
+.dock-video { aspect-ratio: 16 / 9; min-height: 200px; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 8px 26px var(--shadow), 0 0 0 1px var(--line); }
+.dock-video iframe { display: block; width: 100%; height: 100%; border: 0; }
+.dock-queue { max-height: 40vh; overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 26px var(--shadow); scrollbar-width: thin; }
+.dock-queue[hidden] { display: none; }
+.dock-queue ol { margin: 0; padding: 4px 0 4px 44px; font: 400 12.5px/1.2 var(--f-lcd); color: var(--mute); }
+.dock-queue button { display: block; width: 100%; padding: 5px 10px 5px 0; border: 0; background: none; text-align: left; cursor: pointer; font-family: var(--f-body); color: var(--ink); line-height: 1.3; }
+.dock-queue button:hover b { color: var(--accent); }
+.dock-queue button[aria-current] b { color: var(--hot); }
+.dock-queue b { display: block; font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.dock-queue small { color: var(--mute); font-size: 12px; }
+.dock-disc { width: 56px; height: 56px; border-radius: 50%; overflow: hidden; background: conic-gradient(from 25deg, #e8f1ff, #a9d0ff, #ffc0e7, #fff0ae, #aeffdd, #a4c4ff, #f5bcff, #e8f1ff); box-shadow: 0 0 0 1px var(--line), 0 2px 6px var(--shadow); -webkit-mask: radial-gradient(circle, transparent 0 11%, #000 11.5%); mask: radial-gradient(circle, transparent 0 11%, #000 11.5%); animation: spin 8s linear infinite paused; }
+.dock.spin .dock-disc { animation-play-state: running; }
+.dock-disc img { width: 100%; height: 100%; object-fit: cover; }
+.dock-lcd { min-width: 0; padding: 6px 12px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 10px; align-items: baseline; font-family: var(--f-body); }
+.dock-lcd .lcdnum { font-size: 12.5px; }
+.dock-lcd b { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dock-lcd small { grid-column: 1 / -1; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dock-lcd a { color: inherit; }
+.dock-keys { display: flex; align-items: center; gap: 6px; }
+.dock-keys button { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border-radius: 50%; border: 1px solid var(--line); background: linear-gradient(180deg, var(--steel-a), var(--steel-b)); color: var(--ink); cursor: pointer; }
+.dock-keys button.go { width: 48px; height: 48px; background: var(--hot); border-color: var(--hot); color: #fff; }
+:root[data-theme="dark"] .dock-keys button.go { color: #1a0312; }
+.dock-keys svg { width: 20px; height: 20px; fill: currentColor; }
+.dock-seek { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 13px; }
+.dock-seek input { width: 100%; accent-color: var(--hot); }
+.dock-tools { display: flex; align-items: center; gap: 4px; }
+.dock-tools input { width: 74px; accent-color: var(--accent); }
+.dock-tools .chip { font-size: 12.5px; padding: 2px 9px; text-decoration: none; white-space: nowrap; }
+.toast { position: fixed; left: 50%; bottom: 104px; transform: translateX(-50%); z-index: 46; max-width: min(520px, calc(100vw - 32px)); padding: 9px 14px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: 14px; line-height: 1.5; box-shadow: 0 8px 26px var(--shadow); }
+.toast[hidden] { display: none; }
+.toast a { color: inherit; }
+.play.on { background: var(--accent); color: var(--on-accent); box-shadow: none; }
+.play.big { padding: 9px 20px; font-size: 15.5px; }
+.hero-play { margin-top: 14px; }
+.whole details { margin-top: 6px; font-size: 13px; }
+.whole summary { cursor: pointer; }
+.listing .plays { margin: 0; }
+@media (max-width: 1180px) { .dock-tools input { display: none; } }
+@media (max-width: 1040px) {
+  .dock-bar { grid-template-columns: 56px minmax(0, 1fr) auto; }
+  .dock-seek { grid-column: 1 / 3; }
+  body.has-dock { padding-bottom: 150px; }
+}
+@media (max-width: 760px) {
+  .dock-bar { grid-template-columns: 44px minmax(0, 1fr) auto; gap: 6px 8px; padding-inline: 10px; }
+  .dock-disc { width: 44px; height: 44px; }
+  .dock-keys { gap: 3px; }
+  .dock-keys button { width: 34px; height: 34px; }
+  .dock-keys button.go { width: 42px; height: 42px; }
+  .dock-seek, .dock-tools { grid-column: 1 / -1; }
+  .dock-tools { justify-content: space-between; }
+  .dock-stage { right: 8px; width: 200px; }
+  .dock-video { aspect-ratio: auto; height: 200px; }
+  .dock.big .dock-stage { width: calc(100vw - 16px); }
+  .dock.big .dock-video { aspect-ratio: 16 / 9; height: auto; }
+  .dock-queue { position: fixed; left: 8px; right: 8px; bottom: 362px; max-height: calc(100vh - 500px); min-height: 120px; }
+  body.has-dock { padding-bottom: 170px; }
+  .toast { bottom: 150px; }
+}
+.sec, .edition, .prose .sub, .mon { scroll-margin-top: 84px; }
+@media (max-width: 980px) { .sec, .edition, .prose .sub, .mon { scroll-margin-top: 124px; } }
 </style>
 </head>
 <body>
@@ -390,8 +456,34 @@ a.card:hover { border-color: var(--accent); }
   </div>
 </header>
 <main id="view"></main>
-<footer class="foot"><div class="wrap">非官方粉丝资料站。音乐版权归原权利人所有，歌曲链接跳转至 YouTube 或 YouTube Music。<a href="#about">资料来源</a></div></footer>
-<script src="data.js?v=fd5bd44846"></script>
+<footer class="foot"><div class="wrap">非官方粉丝资料站。音乐版权归原权利人所有，歌曲由 YouTube 官方播放器播放。<a href="#about">资料来源</a></div></footer>
+<div class="toast" id="toast" role="status" hidden></div>
+<aside class="dock" id="dock" aria-label="播放器" hidden>
+  <div class="dock-stage">
+    <div class="dock-queue" id="dock-queue" hidden></div>
+    <div class="dock-video"><div id="yt-slot"></div></div>
+  </div>
+  <div class="dock-bar">
+    <span class="dock-disc" id="dock-disc" aria-hidden="true"></span>
+    <div class="lcd dock-lcd"><span class="lcdnum" id="dock-no"></span><b id="dock-title"></b><small id="dock-who"></small></div>
+    <div class="dock-keys">
+      <button type="button" id="dk-prev" aria-label="上一首"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+      <button type="button" id="dk-play" class="go" aria-label="播放"></button>
+      <button type="button" id="dk-next" aria-label="下一首"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+    </div>
+    <div class="dock-seek"><span class="lcdnum" id="dk-now">0:00</span><input id="dk-seek" type="range" min="0" max="1000" value="0" aria-label="播放进度"><span class="lcdnum" id="dk-dur">0:00</span></div>
+    <div class="dock-tools">
+      <input id="dk-vol" type="range" min="0" max="100" value="100" aria-label="音量">
+      <button type="button" class="chip" id="dk-shuffle" aria-pressed="false">随机</button>
+      <button type="button" class="chip" id="dk-repeat" aria-pressed="false">循环</button>
+      <button type="button" class="chip" id="dk-list" aria-pressed="false">列表</button>
+      <button type="button" class="chip" id="dk-size">大屏</button>
+      <a class="chip" id="dk-out" target="_blank" rel="noopener">YouTube</a>
+      <button type="button" class="chip" id="dk-close" aria-label="关闭播放器">关闭</button>
+    </div>
+  </div>
+</aside>
+<script src="data.js?v=a08ffce9a2"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -403,6 +495,8 @@ a.card:hover { border-color: var(--accent); }
 
   D.artists.forEach(a => { a.photo = window.FACES?.[a.id]; });
   const artists = by(D.artists, 'id');
+  // 没有简介的表演者不进歌手库，歌曲和搜索里仍然找得到
+  const listed = D.artists.filter(a => !a.thin);
   const albums = by(D.albums, 'id');
   const songs = by(D.songs, 'id');
   const albumsOf = group(D.albums, b => b.a);
@@ -424,22 +518,26 @@ a.card:hover { border-color: var(--accent); }
     return (s.vk === '音频' ? 'https://music.youtube.com/watch?v=' : 'https://www.youtube.com/watch?v=') + s.vid;
   };
   const artistName = s => artists[s.a]?.tw ?? '';
+  // 禁止嵌入的视频只能去 YouTube 看，不进站内队列
+  const canEmbed = s => s.vid && !s.ne;
   const playLink = (s, label) => {
     const text = label ?? (s.vk || (s.vid ? '视频' : '搜索'));
+    if (canEmbed(s)) return `<a class="play" href="${esc(ytUrl(s))}" target="_blank" rel="noopener" data-vid="${s.vid}" aria-label="播放 ${esc(artists[s.a]?.zh)}《${esc(s.t)}》">${esc(text)}</a>`;
     const where = !s.vid || s.vk === '音频' ? 'YouTube Music' : 'YouTube';
     return `<a class="play" href="${esc(ytUrl(s))}" target="_blank" rel="noopener" aria-label="在 ${where} 打开 ${esc(artists[s.a]?.zh)}《${esc(s.t)}》">${esc(text)}</a>`;
   };
   // YouTube 的临时歌单链接一次最多 50 首，超过就拆成几段
   const LIST_MAX = 50;
   const listUrl = vids => `https://www.youtube.com/watch_videos?video_ids=${vids.join(',')}`;
-  const vidsOf = list => [...new Set(list.map(x => (x.vid ? x : songs[x.id])?.vid).filter(Boolean))];
+  const vidsOf = list => [...new Set(list.map(x => (x.vid ? x : songs[x.id])).filter(s => s && canEmbed(s)).map(s => s.vid))];
   const slices = list => { const parts = []; for (let i = 0; i < list.length; i += LIST_MAX) parts.push(list.slice(i, i + LIST_MAX)); return parts; };
-  const playLinkAll = (vids, text) => `<a class="play" href="${listUrl(vids)}" target="_blank" rel="noopener">${esc(text)}</a>`;
+  const ytList = (vids, text) => `<a class="play alt" href="${listUrl(vids)}" target="_blank" rel="noopener">${esc(text)}</a>`;
+  // 站内连播不限首数，按住 Ctrl 点击时打开前 50 首的 YouTube 临时歌单
+  const playLinkAll = (vids, text, mode) => `<a class="play${mode ? ' alt' : ''}" href="${listUrl(vids.slice(0, LIST_MAX))}" target="_blank" rel="noopener" data-vids="${vids.join(',')}"${mode ? ` data-mode="${mode}"` : ''}>${esc(text)}</a>`;
   const playAll = (list, name = '连播') => {
     const vids = vidsOf(list);
     if (vids.length < 2) return '';
-    const parts = slices(vids);
-    return `<div class="plays">${parts.map((p, i) => playLinkAll(p, parts.length === 1 ? `${name} ${p.length} 首` : p.length === 1 ? `播放第 ${i * LIST_MAX + 1} 首` : `${name}第 ${i * LIST_MAX + 1}—${i * LIST_MAX + p.length} 首`)).join('')}</div>`;
+    return `<div class="plays">${playLinkAll(vids, `${name} ${vids.length} 首`)}${vids.length > 9 ? playLinkAll(vids, '随机', 'shuffle') : ''}</div>`;
   };
   const editionSongs = e => e.groups.flatMap(g => g.items.filter(it => it.id));
   const editionsAt = (yr, l) => D.charts.filter(c => c.track === l).flatMap(c => c.editions.filter(e => e.y === yr).map(e => [c, e]));
@@ -498,8 +596,8 @@ a.card:hover { border-color: var(--accent); }
   const songRow = (x, i) => {
     const s = x.id ? songs[x.id] : null;
     const rank = i == null ? '' : `<span class="no">${String(i + 1).padStart(3, '0')}</span>`;
-    if (s) return `<li>${rank}<span class="ti">${s.al && albums[s.al] ? `<a href="#b-${s.al}">${esc(s.t)}</a>` : esc(s.t)}${x.why || x.n ? `<small>${esc(x.why || x.n)}</small>` : ''}</span><span class="by">${creditOf(s)}</span><span class="yr">${x.y ?? s.y}</span><span class="act">${playLink(s)}</span></li>`;
-    return `<li>${rank}<span class="ti">${esc(x.t)}${x.why || x.n ? `<small>${esc(x.why || x.n)}</small>` : ''}</span><span class="by">${esc(x.a)}</span><span class="yr">${x.y ?? ''}</span><span class="act"><a class="play alt" href="${esc(musicSearch(`${x.a} ${x.t}`))}" target="_blank" rel="noopener">搜索</a></span></li>`;
+    if (s) return `<li>${rank}<span class="ti">${s.al && albums[s.al] ? `<a href="#b-${s.al}">${esc(s.t)}</a>` : esc(s.t)}${x.why || x.n ? `<small>${esc(x.why || x.n)}</small>` : ''}</span><span class="by">${creditOf(s)}</span><span class="yr">${x.y ?? s.y}</span><span class="act">${playLink(x.vid ? { ...s, vid: x.vid, vk: '现场', ne: 0 } : s)}</span></li>`;
+    return `<li>${rank}<span class="ti">${esc(x.t)}${x.why || x.n ? `<small>${esc(x.why || x.n)}</small>` : ''}</span><span class="by">${esc(x.a)}</span><span class="yr">${x.y ?? ''}</span><span class="act">${x.vid ? playLink({ vid: x.vid, t: x.t, vk: '现场' }) : `<a class="play alt" href="${esc(musicSearch(`${x.a} ${x.t}`))}" target="_blank" rel="noopener">搜索</a>`}</span></li>`;
   };
   const songRows = (list, ranked) => `<ul class="tune wide">${list.map((x, i) => songRow(x, ranked ? i : null)).join('')}</ul>`;
   const lineBar = (cur, href) => `<div class="linebar" role="group" aria-label="选择线路">${Object.entries(LINES).map(([k, v]) => `<a class="chip" aria-pressed="${k === cur}" href="${href(k)}">${v}<small>${spanOf(k)}</small></a>`).join('')}</div>`;
@@ -586,13 +684,14 @@ a.card:hover { border-color: var(--accent); }
         <div>
           <p class="tech">Mandopop &amp; Cantopop Encyclopedia · 1997—2012</p>
           <h1><span>千禧年</span><span><em>华语音乐</em></span><span>大百科</span></h1>
-          <p class="lede">内地和港台走的不是同一条时间线，所以这里分成两条来讲：港台线从陶喆到周杰伦，内地线从校园民谣之后到彩铃神曲。逐年大事、历届榜单和歌单，每首歌都直达 YouTube 或 YouTube Music。</p>
+          <p class="lede">内地和港台走的不是同一条时间线，所以这里分成两条来讲：港台线从陶喆到周杰伦，内地线从校园民谣之后到彩铃神曲。逐年大事、历届榜单和歌单都在这里，点一下就在页面里播放，翻到别的页面也不会断。</p>
           <div class="lcd counts">
-            <div><b>${fmt(D.artists.length)}</b><span>组歌手</span></div>
+            <div><b>${fmt(listed.length)}</b><span>组歌手</span></div>
             <div><b>${fmt(D.albums.length)}</b><span>张专辑</span></div>
             <div><b>${fmt(D.songs.length)}</b><span>首歌</span></div>
             <div><b>${fmt(D.charts.reduce((n, c) => n + c.editions.length, 0))}</b><span>届榜单</span></div>
           </div>
+          <div class="plays hero-play"><a class="play big" href="#songs" data-all>随机听全站</a></div>
         </div>
         <div class="disc-box" aria-hidden="true">
           <div class="disc-clip"><div class="disc">
@@ -655,7 +754,7 @@ a.card:hover { border-color: var(--accent); }
     const s = list[Math.floor(Math.random() * list.length)];
     box.innerHTML = `${s.al ? `<a href="#b-${s.al}" aria-label="查看专辑">${cover(albums[s.al])}</a>` : '<span></span>'}
       <div><b>${esc(s.t)}</b><small>${creditOf(s)} · ${s.y}${s.al ? ` · 《${esc(albums[s.al].t)}》` : s.alt ? ` · 《${esc(s.alt)}》` : ''}</small></div>
-      <div class="shuffle-act">${playLink(s, s.vk === '音频' ? '去 YouTube Music 听' : '去 YouTube 听')}<button class="pill" type="button" id="reroll">换一首</button></div>`;
+      <div class="shuffle-act">${playLink(s, '播放这首')}<button class="pill" type="button" id="reroll">换一首</button></div>`;
     document.getElementById('reroll').addEventListener('click', shuffle);
   };
 
@@ -732,9 +831,9 @@ a.card:hover { border-color: var(--accent); }
   const artistFilter = { region: '全部', kind: '全部' };
   const chips = (label, opts, cur, name) => `<div class="frow"><span class="tech">${label}</span>${opts.map(o => `<button type="button" class="chip" data-f="${name}" data-v="${esc(o)}" aria-pressed="${String(o) === String(cur)}">${esc(o)}</button>`).join('')}</div>`;
   const artistsView = () => {
-    const regions = ['全部', ...new Set(D.artists.map(a => a.region))];
+    const regions = ['全部', ...new Set(listed.map(a => a.region))];
     const kinds = ['全部', '男歌手', '女歌手', '组合', '乐团'];
-    const list = D.artists.filter(a => (artistFilter.region === '全部' || a.region === artistFilter.region) && (artistFilter.kind === '全部' || a.kind === artistFilter.kind));
+    const list = listed.filter(a => (artistFilter.region === '全部' || a.region === artistFilter.region) && (artistFilter.kind === '全部' || a.kind === artistFilter.kind));
     const letters = group(list, a => a.py);
     view.innerHTML = `
       <header class="wrap page-h"><h1>歌手库</h1><p>按歌星分类点歌，就像当年的 KTV 点歌本。按拼音首字母排列。</p></header>
@@ -808,7 +907,7 @@ a.card:hover { border-color: var(--accent); }
           <h1>${esc(b.t)}</h1><p class="sub">${artistLink(b.a)} · ${esc(b.d)}${b.tt && b.tt !== b.t ? ` · 原名《${esc(b.tt)}》` : ''}</p></div>
         ${b.note ? `<div class="prose" style="margin-top:14px"><p>${esc(b.note)}</p></div>` : ''}
         ${b.tracks?.length
-          ? `<section class="sec"><div class="sec-h"><h2>曲目</h2><span class="tech">${b.tracks.length} Tracks</span></div><ol class="tracklist">${b.tracks.map(trackRow).join('')}</ol></section>`
+          ? `<section class="sec"><div class="sec-h"><h2>曲目</h2><span class="tech">${b.tracks.length} Tracks</span></div>${playAll(hits, '连播主打')}<ol class="tracklist">${b.tracks.map(trackRow).join('')}</ol></section>`
           : hits.length ? `<section class="sec"><div class="sec-h"><h2>主打歌</h2></div>${tuneList(hits)}</section>` : ''}
         ${others.length ? `<section class="sec"><div class="sec-h"><h2>${esc(a.zh)}的其他专辑</h2></div><div class="albums tight">${others.map(albumCard).join('')}</div></section>` : ''}
       </div>
@@ -840,7 +939,7 @@ a.card:hover { border-color: var(--accent); }
     songFilter.page = Math.min(songFilter.page, pages - 1);
     const shown = list.slice(songFilter.page * PAGE, (songFilter.page + 1) * PAGE);
     view.innerHTML = `
-      <header class="wrap page-h"><h1>点歌台</h1><p>像 KTV 点歌机一样按字数、语种和年份找歌。条目号的前两位是年份。粉色按钮写着 MV 或视频的跳转 YouTube，写着音频或搜索的跳转 YouTube Music。</p></header>
+      <header class="wrap page-h"><h1>点歌台</h1><p>像 KTV 点歌机一样按字数、语种和年份找歌。条目号的前两位是年份。粉色按钮直接在页面里播放，写着搜索的去 YouTube Music 找。按住 Ctrl 点击可以在 YouTube 打开。</p></header>
       <div class="wrap">
         <div class="filters">
           ${chips('线路', ['全部', '港台线', '内地线'], songFilter.line, 'line')}
@@ -849,7 +948,7 @@ a.card:hover { border-color: var(--accent); }
           ${chips('地区', regions, songFilter.region, 'region')}
           ${chips('年份', ['全部', ...YEARS], songFilter.year, 'year')}
         </div>
-        <div class="listing"><span>${fmt(list.length)} 首</span><span>第 ${songFilter.page + 1} / ${pages} 页</span></div>
+        <div class="listing"><span>${fmt(list.length)} 首</span>${playAll(list, '连播筛选结果')}<span>第 ${songFilter.page + 1} / ${pages} 页</span></div>
         ${tuneList(shown)}
         <div class="pager">
           <button class="pill" type="button" id="prev" ${songFilter.page ? '' : 'disabled'}>上一页</button>
@@ -870,16 +969,16 @@ a.card:hover { border-color: var(--accent); }
     return `<div class="scroll"><table class="board"><thead><tr><th scope="col">榜单</th>${ys.map(y => `<th scope="col" class="lcdnum">${String(y).slice(2)}</th>`).join('')}</tr></thead>
       <tbody>${rows.map(c => `<tr><th scope="row"><a href="#c-${c.id}">${esc(c.name)}</a></th>${ys.map(y => {
         const vids = vidsOf(c.editions.filter(e => e.y === y).flatMap(editionSongs));
-        return `<td>${vids.length > 1 ? `<a class="cell" href="${listUrl(vids.slice(0, LIST_MAX))}" target="_blank" rel="noopener" aria-label="连播 ${y} 年${esc(c.name)} ${Math.min(vids.length, LIST_MAX)} 首">${vids.length}</a>` : ''}</td>`;
+        return `<td>${vids.length > 1 ? `<a class="cell" href="${listUrl(vids.slice(0, LIST_MAX))}" target="_blank" rel="noopener" data-vids="${vids.join(',')}" aria-label="连播 ${y} 年${esc(c.name)} ${vids.length} 首">${vids.length}</a>` : ''}</td>`;
       }).join('')}</tr>`).join('')}</tbody></table></div>
-      <p class="credit">点数字直接在 YouTube 连播当届的歌。超过 ${LIST_MAX} 首的届次先放前 ${LIST_MAX} 首，其余到榜单页分段连播。只有个人奖、专辑奖的届次没有歌可连播。</p>`;
+      <p class="credit">点数字就在页面里连播当届的歌。只有个人奖、专辑奖的届次没有歌可连播。</p>`;
   };
   const chartCard = c => {
     const runs = chartRuns(c);
     const total = runs.reduce((n, r) => n + r.vids.length, 0);
     return `<article class="card chart-card"><a href="#c-${c.id}"><span class="tech">${esc(c.org ?? '')}</span><h3>${esc(c.name)}</h3><p>${esc(c.about ?? '')}</p></a>
       <span class="tech">${c.editions.length} 届${total ? ` · ${total} 首可连播` : ' · 只有个人奖和专辑奖'}</span>
-      ${runs.length ? `<div class="plays">${playLinkAll(runs[0].vids, runs[0].text)}${runs.length > 1 ? `<a class="more" href="#c-${c.id}">全部 ${runs.length} 段</a>` : ''}</div>` : ''}</article>`;
+      ${runs.length ? `<div class="plays">${playLinkAll(runs.flatMap(r => r.vids), `连播全榜 ${total} 首`)}${total > 9 ? playLinkAll(runs.flatMap(r => r.vids), '随机', 'shuffle') : ''}</div>` : ''}</article>`;
   };
   const chartsView = l => {
     const list = D.charts.filter(c => c.track === l);
@@ -897,7 +996,7 @@ a.card:hover { border-color: var(--accent); }
     const total = runs.reduce((n, r) => n + r.vids.length, 0);
     view.innerHTML = `<div class="wrap">
       <header class="page-h"><p class="tech" style="margin:0"><a href="#charts-${c.track}">榜单</a> / ${c.track === 'cn' ? '内地榜' : '港台榜'}</p><h1>${esc(c.name)}</h1><p>${esc(c.about ?? '')}</p>
-        ${runs.length ? `<div class="lcd whole"><b>整榜连播</b><span>${total} 首可连播${listed > total ? `，另有 ${listed - total} 首没有直达链接` : ''}。YouTube 的临时歌单一次最多 ${LIST_MAX} 首，所以按年份分段。</span><div class="plays">${runs.map(r => playLinkAll(r.vids, r.text)).join('')}</div></div>` : '<p>这个榜只收了个人奖和专辑奖，没有可连播的歌。</p>'}
+        ${runs.length ? `<div class="lcd whole"><b>整榜连播</b><span>${total} 首可连播${listed > total ? `，另有 ${listed - total} 首没有直达链接` : ''}。</span><div class="plays">${playLinkAll(runs.flatMap(r => r.vids), `连播全榜 ${total} 首`)}${total > 9 ? playLinkAll(runs.flatMap(r => r.vids), '随机', 'shuffle') : ''}</div><details><summary>在 YouTube 打开歌单，每段最多 ${LIST_MAX} 首</summary><div class="plays">${runs.map(r => ytList(r.vids, r.text)).join('')}</div></details></div>` : '<p>这个榜只收了个人奖和专辑奖，没有可连播的歌。</p>'}
         <div class="jump">${eds.map(e => `<button type="button" class="tag lcdnum" data-go="ed-${e.y}-${e.n ?? ''}">${e.y}</button>`).join('')}</div></header>
       ${eds.map(e => `<section class="sec" id="ed-${e.y}-${e.n ?? ''}"><div class="sec-h"><h2>${e.y} · ${esc(e.title ?? '')}</h2>${playAll(editionSongs(e), '连播本届')}${e.date ? `<span class="lcdnum">${esc(e.date)}</span>` : ''}</div>${e.venue || e.note ? `<p class="credit">${esc([e.venue, e.note].filter(Boolean).join('。'))}</p>` : ''}${groupsHtml(e)}${e.src ? `<p class="credit">资料${srcLink(e.src)}</p>` : ''}</section>`).join('')}
     </div>`;
@@ -915,6 +1014,13 @@ a.card:hover { border-color: var(--accent); }
       <div class="wrap"><div class="cards">${list.map(topicCard).join('')}</div></div>`;
     view.querySelectorAll('[data-t]').forEach(c => c.addEventListener('click', () => { topicFilter.track = c.dataset.t; topicsView(); }));
   };
+  // 歌多的专题按年分组，每年单独连播
+  const topicSongs = t => {
+    if (t.songs.length < 100) return playAll(t.songs) + songRows(t.songs);
+    const byYear = group(t.songs, s => s.y);
+    const ys = Object.keys(byYear).sort();
+    return `${playAll(t.songs)}<div class="jump">${ys.map(y => `<button type="button" class="tag lcdnum" data-go="sy-${y}">${y}</button>`).join('')}</div>${ys.map(y => `<h3 class="mon" id="sy-${y}">${y} 年 · ${byYear[y].length} 首</h3>${playAll(byYear[y], '连播本届')}${songRows(byYear[y])}`).join('')}`;
+  };
   const topicPage = id => {
     const t = D.topics.find(x => x.id === id);
     if (!t) return notFound();
@@ -924,7 +1030,7 @@ a.card:hover { border-color: var(--accent); }
       <div class="prose">${t.body.map((s, i) => `${s.h ? `<h2 class="sub" id="s${i}">${esc(s.h)}</h2>` : ''}${(s.p ?? []).map(p => `<p>${esc(p)}</p>`).join('')}`).join('')}</div>
       ${t.timeline.length ? `<section class="sec"><div class="sec-h"><h2>时间线</h2></div><ul class="events">${t.timeline.map(e => `<li><time>${esc(String(e.d ?? '').slice(0, 7))}</time><span>${esc(e.text)}${srcLink(e.src)}</span></li>`).join('')}</ul></section>` : ''}
       ${t.people.length ? `<section class="sec"><div class="sec-h"><h2>关键人物</h2></div><div class="cards">${t.people.map(p => `<article class="card"><span class="tech">${esc(p.role ?? '')}</span><h3>${esc(p.name)}</h3><p>${esc(p.text ?? '')}</p></article>`).join('')}</div></section>` : ''}
-      ${t.songs.length ? `<section class="sec" id="sec-songs"><div class="sec-h"><h2>听这些歌</h2><span class="tech">${t.songs.length} Songs</span></div>${playAll(t.songs)}${songRows(t.songs)}</section>` : ''}
+      ${t.songs.length ? `<section class="sec" id="sec-songs"><div class="sec-h"><h2>听这些歌</h2><span class="tech">${t.songs.length} Songs</span></div>${topicSongs(t)}</section>` : ''}
       ${t.sources.length ? `<section class="sec"><div class="sec-h"><h2>资料来源</h2></div><ul class="prose">${t.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}</ul></section>` : ''}
     </div>`;
     view.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => document.getElementById(b.dataset.go)?.scrollIntoView({ behavior: 'smooth' })));
@@ -942,12 +1048,12 @@ a.card:hover { border-color: var(--accent); }
     view.innerHTML = `<div class="wrap">
       <header class="page-h"><h1>关于本站</h1></header>
       <div class="prose">
-        <p>这是一个非官方的粉丝向音乐资料站。编年史分内地和港台两条线，因为两地的时间节奏不同。B 站纪录片字幕和播客只作线索，事实以其他来源核对为准，评价类内容不当作事实收录。站内文字为本站整理撰写，不收录歌词。音频和视频都不存放在站内，歌曲链接全部跳转到 YouTube 或 YouTube Music。</p>
+        <p>这是一个非官方的粉丝向音乐资料站。编年史分内地和港台两条线，因为两地的时间节奏不同。B 站纪录片字幕和播客只作线索，事实以其他来源核对为准，评价类内容不当作事实收录。站内文字为本站整理撰写，不收录歌词。音频和视频都不存放在站内，歌曲通过 YouTube 官方嵌入播放器在页面里播放。点播放之后才会加载播放器，这时 YouTube 会收到你的访问信息。</p>
         <p><b>收录范围：</b>港台线 1997 至 2009 年，内地线 1997 至 2012 年，覆盖台湾、香港、内地、新加坡和马来西亚。这是一份编辑精选，不是完整目录。</p>
-        <p><b>视频链接：</b>${fmt(m.linked)} 首歌链接到具体的视频或音频，其中 ${fmt(m.official)} 条来自官方、唱片公司频道或 YouTube 官方音频。优先顺序是官方 MV、高播放量的原版 MV、官方音频，最后才是现场版。每条都在 ${esc(m.checked)} 用 YouTube oEmbed 确认过存在。其余歌曲和专辑里的非主打曲目使用 YouTube Music 搜索链接。部分视频有地区限制，打不开时可以用专辑页的搜索链接。</p>
+        <p><b>视频链接：</b>${fmt(m.linked)} 首歌链接到具体的视频或音频，其中 ${fmt(m.official)} 条来自官方、唱片公司频道或 YouTube 官方音频。优先顺序是官方 MV、高播放量的原版 MV、官方音频，最后才是现场版。每条都在 ${esc(m.checked)} 用 YouTube oEmbed 确认过存在。春晚专题优先用 CCTV春晚 官方频道的当届片段。其余歌曲和专辑里的非主打曲目使用 YouTube Music 搜索链接。部分视频有地区限制，打不开时可以用专辑页的搜索链接。</p>
         <p><b>封面与资料：</b>专辑封面、曲目和发行信息取自 iTunes Search API，首发日期参考 MusicBrainz，其中 ${fmt(m.wikiDates)} 张重点专辑的日期再用维基百科校对过。封面版权归各唱片公司所有，这里以缩略图用于资料说明。歌手照片取自维基共享资源，署名见各词条。</p>
         <p><b>奖项：</b>金曲奖名单整理自维基百科各届条目。</p>
-        <p><b>已知局限：</b>iTunes 上缺货的专辑没有封面，用色块代替。曲目来自流媒体版本，可能与原版 CD 有出入。年份以首发为准。约三分之一的链接来自非官方上传，经过规则过滤和抽查，但仍可能有少量挂错版本。部分年份的台湾当年报道和销量数据没有查到，个别事件只有单一来源，每条大事都标了来源，可以点开核对。连播按钮使用 YouTube 的临时歌单，一次最多 50 首，超过的分段播放。</p>
+        <p><b>已知局限：</b>iTunes 上缺货的专辑没有封面，用色块代替。曲目来自流媒体版本，可能与原版 CD 有出入。年份以首发为准。约三分之一的链接来自非官方上传，经过规则过滤和抽查，但仍可能有少量挂错版本。部分年份的台湾当年报道和销量数据没有查到，个别事件只有单一来源，每条大事都标了来源，可以点开核对。站内连播不限首数，遇到禁止嵌入的视频会自动跳过；跳去 YouTube 的临时歌单一次最多 50 首。手机浏览器切到后台时可能暂停。</p>
       </div>
       <section class="sec"><div class="sec-h"><h2>主要数据来源</h2></div>
         <ul class="prose">${m.sources.map(s => `<li><a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a></li>`).join('')}</ul>
@@ -990,6 +1096,155 @@ a.card:hover { border-color: var(--accent); }
 
   /* 路由 */
   const NAV = { home: '#home', years: '#years', artists: '#artists', albums: '#albums', songs: '#songs', charts: '#charts', topics: '#topics', makers: '#makers', about: '#about' };
+  /* 站内播放器。切页不刷新，音乐不会断。YouTube 官方接口会报告播完和禁止嵌入，连播和跳过都靠这两个事件 */
+  const byVid = new Map();
+  D.songs.forEach(s => { if (canEmbed(s) && !byVid.has(s.vid)) byVid.set(s.vid, s); });
+  D.topics.forEach(t => t.songs.forEach(x => { if (x.vid && !byVid.has(x.vid)) byVid.set(x.vid, x.id ? { ...songs[x.id], vid: x.vid, vk: '现场', ne: 0 } : { vid: x.vid, t: x.t, y: x.y, by: [], who: x.a }); }));
+  const $ = id => document.getElementById(id);
+  const dock = $('dock');
+  const P = { yt: null, api: null, base: [], queue: [], pos: -1, shuffle: false, repeat: false, skips: 0, seeking: false };
+  const bad = new Set();
+  const ICON = { play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l14 8-14 8z"/></svg>', pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>' };
+  const clock = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+  const nowSong = () => P.queue[P.pos];
+  let toastTimer = 0;
+  const toast = html => { const t = $('toast'); t.innerHTML = html; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 7000); };
+  const outLink = (s, text) => `<a href="${esc(ytUrl(s))}" target="_blank" rel="noopener">${text}</a>`;
+  const loadApi = () => (P.api ??= new Promise((ok, fail) => {
+    window.onYouTubeIframeAPIReady = ok;
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    tag.onerror = fail;
+    document.head.append(tag);
+    setTimeout(fail, 15000);
+  }).catch(() => { P.api = null; throw new Error('blocked'); }));
+  const markNow = () => {
+    const v = dock.hidden ? null : nowSong()?.vid;
+    document.querySelectorAll('a[data-vid]').forEach(a => a.classList.toggle('on', a.dataset.vid === v));
+  };
+  const paintQueue = () => {
+    const from = Math.max(0, P.pos - 20);
+    const box = $('dock-queue');
+    box.innerHTML = `<ol start="${from + 1}">${P.queue.slice(from, from + 200).map((s, i) => `<li><button type="button" data-q="${from + i}"${from + i === P.pos ? ' aria-current="true"' : ''}><b>${esc(s.t)}</b><small>${esc(artists[s.a]?.zh)} · ${s.y}</small></button></li>`).join('')}</ol>`;
+    box.querySelector('[aria-current]')?.scrollIntoView({ block: 'nearest' });
+  };
+  const paint = () => {
+    const s = nowSong();
+    if (!s) return;
+    $('dock-no').textContent = `${String(P.pos + 1).padStart(3, '0')}/${String(P.queue.length).padStart(3, '0')}`;
+    $('dock-title').textContent = s.t;
+    $('dock-who').innerHTML = creditOf(s) || esc(s.who ?? '');
+    const c = albums[s.al]?.cover;
+    $('dock-disc').innerHTML = c ? `<img src="${esc(c)}" alt="">` : '';
+    $('dk-out').href = ytUrl(s);
+    if (!$('dock-queue').hidden) paintQueue();
+    markNow();
+  };
+  const next = () => {
+    if (P.pos + 1 < P.queue.length) playAt(P.pos + 1);
+    else if (P.repeat) playAt(0);
+    else toast('列表放完了。');
+  };
+  const onState = e => {
+    const on = e.data === YT.PlayerState.PLAYING;
+    dock.classList.toggle('spin', on);
+    $('dk-play').innerHTML = on ? ICON.pause : ICON.play;
+    $('dk-play').setAttribute('aria-label', on ? '暂停' : '播放');
+    if (on) P.skips = 0;
+    if (e.data === YT.PlayerState.ENDED) next();
+  };
+  const onError = e => {
+    const s = nowSong();
+    if (e.data === 153) return toast('当前环境不允许加载 YouTube 播放器。');
+    bad.add(s.vid);
+    if (++P.skips >= 5) return toast('连续 5 首都放不了，已停止，可能是所在地区或网络的限制。');
+    toast(`《${esc(s.t)}》不能站内播放，已跳到下一首。${outLink(s, '去 YouTube 听')}`);
+    next();
+  };
+  const playAt = async i => {
+    P.pos = i;
+    dock.hidden = false;
+    document.body.classList.add('has-dock');
+    paint();
+    const { vid } = nowSong();
+    try { await loadApi(); } catch { return toast(`连不上 YouTube，不能站内播放。${outLink(nowSong(), '在新窗口打开这首')}`); }
+    if (P.yt?.loadVideoById) return P.yt.loadVideoById(vid);
+    if (P.yt) return;
+    P.yt = new YT.Player('yt-slot', {
+      width: '100%', height: '100%', videoId: vid,
+      playerVars: { autoplay: 1, playsinline: 1, rel: 0, origin: location.origin },
+      events: {
+        onReady: e => { if (nowSong()?.vid !== vid) e.target.loadVideoById(nowSong().vid); else e.target.playVideo(); },
+        onStateChange: onState, onError,
+        onAutoplayBlocked: () => toast('浏览器拦下了自动播放，按一下播放键就好。'),
+      },
+    });
+  };
+  const playList = (list, start = 0, mode) => {
+    const clean = list.filter(s => s && !bad.has(s.vid));
+    if (!clean.length) return;
+    P.base = clean;
+    P.shuffle = mode === 'shuffle';
+    $('dk-shuffle').setAttribute('aria-pressed', String(P.shuffle));
+    P.queue = P.shuffle ? sample(clean, clean.length) : clean.slice();
+    playAt(P.shuffle ? 0 : Math.max(0, clean.indexOf(list[start])));
+  };
+  // 点歌：单首接着同一张列表往下放，连播按钮放整张列表。按住 Ctrl 点击仍然去 YouTube
+  document.addEventListener('click', e => {
+    const a = e.target.closest?.('a[data-vid], a[data-vids], a[data-all]');
+    if (!a || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    e.preventDefault();
+    if (a.dataset.all !== undefined) return playList([...byVid.values()], 0, 'shuffle');
+    if (a.dataset.vids) return playList(a.dataset.vids.split(',').map(v => byVid.get(v)), 0, a.dataset.mode);
+    if (!dock.hidden && nowSong()?.vid === a.dataset.vid) return $('dk-play').click();
+    const box = a.closest('ul, ol');
+    const links = box ? [...box.querySelectorAll('a[data-vid]')] : [a];
+    const list = [...new Set(links.map(x => x.dataset.vid))].map(v => byVid.get(v));
+    playList(list, list.indexOf(byVid.get(a.dataset.vid)));
+  });
+  $('dk-play').addEventListener('click', () => {
+    if (!P.yt?.getPlayerState) return;
+    if (P.yt.getPlayerState() === YT.PlayerState.PLAYING) P.yt.pauseVideo(); else P.yt.playVideo();
+  });
+  $('dk-next').addEventListener('click', next);
+  $('dk-prev').addEventListener('click', () => { if (P.yt?.getCurrentTime?.() > 3) P.yt.seekTo(0, true); else playAt(Math.max(0, P.pos - 1)); });
+  $('dk-shuffle').addEventListener('click', () => {
+    const cur = nowSong();
+    P.shuffle = !P.shuffle;
+    $('dk-shuffle').setAttribute('aria-pressed', String(P.shuffle));
+    P.queue = P.shuffle ? [cur, ...sample(P.base.filter(s => s !== cur), P.base.length)] : P.base.slice();
+    P.pos = P.queue.indexOf(cur);
+    paint();
+  });
+  $('dk-repeat').addEventListener('click', e => { P.repeat = !P.repeat; e.currentTarget.setAttribute('aria-pressed', String(P.repeat)); });
+  $('dk-list').addEventListener('click', e => {
+    const box = $('dock-queue');
+    box.hidden = !box.hidden;
+    e.currentTarget.setAttribute('aria-pressed', String(!box.hidden));
+    if (!box.hidden) paintQueue();
+  });
+  $('dock-queue').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b) playAt(+b.dataset.q); });
+  $('dk-size').addEventListener('click', e => { e.currentTarget.textContent = dock.classList.toggle('big') ? '小屏' : '大屏'; });
+  $('dk-close').addEventListener('click', () => {
+    P.yt?.stopVideo?.();
+    dock.hidden = true;
+    dock.classList.remove('spin');
+    document.body.classList.remove('has-dock');
+    markNow();
+  });
+  $('dk-vol').addEventListener('input', e => P.yt?.setVolume?.(+e.target.value));
+  $('dk-seek').addEventListener('input', () => { P.seeking = true; });
+  $('dk-seek').addEventListener('change', e => { P.seeking = false; P.yt?.seekTo?.((P.yt.getDuration() || 0) * e.target.value / 1000, true); });
+  setInterval(() => {
+    if (dock.hidden || P.seeking || !P.yt?.getDuration) return;
+    const d = P.yt.getDuration() || 0, t = P.yt.getCurrentTime() || 0;
+    $('dk-now').textContent = clock(t);
+    $('dk-dur').textContent = clock(d);
+    $('dk-seek').value = d ? Math.round(t / d * 1000) : 0;
+  }, 500);
+  $('dk-play').innerHTML = ICON.play;
+  new MutationObserver(() => { if (!dock.hidden) requestAnimationFrame(markNow); }).observe(view, { childList: true, subtree: true });
+
   const route = () => {
     const h = (location.hash || '#home').slice(1);
     let nav = 'home';
