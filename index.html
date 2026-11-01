@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>千禧时光机</title>
 <script>try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch {}</script>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23a9d0ff'/%3E%3Cpath d='M16 16L31 16A15 15 0 0 1 16 31Z' fill='%23ffc0e7'/%3E%3Cpath d='M16 16L1 16A15 15 0 0 1 16 1Z' fill='%23fff0ae'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%230e1336'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M10 2l6 7 6-8' fill='none' stroke='%236b7690' stroke-width='2' stroke-linecap='round'/%3E%3Crect x='1' y='9' width='30' height='22' rx='5' fill='%23c9d2de'/%3E%3Crect x='4' y='12' width='19' height='16' rx='4' fill='%232f86ee'/%3E%3Ccircle cx='27' cy='17' r='2.2' fill='%23525d76'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Michroma&family=Noto+Sans+SC:wght@400;500;600;700&family=Share+Tech+Mono&family=ZCOOL+QingKe+HuangYou&display=swap">
-<style>/* 概念：千禧年的随身 CD 机。默认是珍珠银机身、蓝光液晶、果冻按钮和光谱条纹光盘；Night 开关切到午夜包厢。
+<style>/* 概念：千禧年的家用电器。默认是珍珠银机身、蓝光液晶和果冻按钮；Night 开关切到午夜包厢。
    装饰只放在框架和首屏，阅读区保持干净。 */
 :root {
   color-scheme: light;
@@ -79,7 +79,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 400; line-height: 1.2; 
 .deck { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 40; background: var(--steel); border-bottom: 1px solid rgba(10, 20, 44, .28); box-shadow: inset 0 1px 0 var(--gloss), 0 4px 14px -6px var(--shadow); }
 .deck-in { display: flex; align-items: center; gap: 16px; padding-block: 8px; }
 .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; color: var(--ink); flex: none; }
-.brand-disc { width: 30px; height: 30px; border-radius: 50%; background: radial-gradient(circle, transparent 0 15%, rgba(255, 255, 255, .85) 16% 20%, transparent 21%), var(--spectrum); box-shadow: 0 0 0 1px rgba(10, 20, 44, .28), 0 1px 3px var(--shadow); -webkit-mask: radial-gradient(circle, transparent 0 13%, #000 14%); mask: radial-gradient(circle, transparent 0 13%, #000 14%); }
+.brand-tv { width: 30px; height: 30px; flex: none; color: var(--mute); filter: drop-shadow(0 1px 1px var(--shadow)); }
 .brand b { font: 400 19px/1 var(--f-display); white-space: nowrap; }
 .nav { display: flex; gap: 1px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
 .nav::-webkit-scrollbar { display: none; }
@@ -94,15 +94,15 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 400; line-height: 1.2; 
 .results a:hover, .results a.on { background: var(--well); }
 .results small { color: var(--mute); display: block; font-size: 12px; }
 .results .none { padding: 12px; color: var(--mute); }
-/* 像 CD 机侧面的拨动开关 */
+/* 机身侧面的拨动开关 */
 .hold { display: inline-flex; align-items: center; gap: 7px; padding: 0; border: 0; background: none; cursor: pointer; flex: none; }
 .hold span { font: 400 8.5px/1 var(--f-tech); letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
 .hold i { position: relative; display: block; width: 34px; height: 18px; border-radius: 4px; background: var(--well); box-shadow: inset 0 1px 3px rgba(10, 20, 44, .34), 0 1px 0 var(--gloss); }
 .hold i::after { content: ""; position: absolute; left: 2px; top: 2px; width: 15px; height: 14px; border-radius: 3px; background: repeating-linear-gradient(90deg, rgba(10, 20, 44, .28) 0 1px, transparent 1px 3px), var(--key); box-shadow: 0 1px 2px var(--shadow); transition: transform .14s ease; }
 .hold[aria-pressed="true"] i::after { transform: translateX(15px); background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .3) 0 1px, transparent 1px 3px), linear-gradient(180deg, #a9dcff, #1270e2); }
 
-/* 首屏：一张带技术标注的光盘 */
-.player { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 44px; align-items: center; padding-block: 44px 36px; }
+/* 首屏：一台调台旋钮刻着年份的老电视 */
+.player { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 44px; align-items: center; padding-block: 44px 36px; }
 .spec { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; }
 .barcode { width: 92px; height: 18px; fill: var(--ink); opacity: .8; margin-left: auto; }
 .player h1 { position: relative; width: fit-content; font-size: clamp(64px, 10.5vw, 144px); line-height: 1.04; }
@@ -116,25 +116,60 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 400; line-height: 1.2; 
 .counts span { font-family: var(--f-body); font-size: 12.5px; }
 .hero-play { margin-top: 16px; }
 
-.disc-box { position: relative; aspect-ratio: 1; width: min(84%, 450px); justify-self: center; }
-.orbit { position: absolute; inset: -21%; width: 142%; height: 142%; color: var(--ink); opacity: .5; pointer-events: none; }
-.orbit text { font: 400 11px var(--f-tech); letter-spacing: .14em; fill: currentColor; }
-.disc-clip { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; background: var(--spectrum); box-shadow: 0 26px 50px -22px var(--shadow), 0 0 0 1px rgba(10, 20, 44, .22), inset 0 0 0 2px rgba(255, 255, 255, .7); }
+.tv { position: relative; margin: 74px 0 26px; min-width: 0; }
+.tv-ant { position: absolute; left: 32%; bottom: calc(100% - 8px); width: 36%; height: auto; fill: #8d97a8; stroke: #8d97a8; stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 2px 2px var(--shadow)); }
+.tv-case { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 20px; padding: 22px 18px 22px 24px; border-radius: 28px; background: linear-gradient(162deg, #f7f9fc 0%, #dfe5ed 36%, #bfc8d5 74%, #d3dae4 100%); box-shadow: inset 0 2px 1px rgba(255, 255, 255, .95), inset 0 -4px 8px rgba(40, 55, 85, .3), 0 0 0 1px rgba(10, 20, 44, .24), 0 38px 44px -28px rgba(24, 40, 80, .6); }
+.tv::after { content: ""; position: absolute; left: 14%; right: 14%; bottom: -13px; height: 14px; border-radius: 0 0 16px 16px; background: linear-gradient(180deg, #8d97a8, #b4bdca); box-shadow: 0 8px 12px -6px var(--shadow); }
+:root[data-theme="dark"] .tv-case { background: linear-gradient(162deg, #454d62 0%, #2c3244 40%, #1b1f2d 78%, #272c3c 100%); box-shadow: inset 0 2px 1px rgba(255, 255, 255, .22), inset 0 -4px 8px rgba(0, 0, 0, .5), 0 0 0 1px rgba(255, 255, 255, .1), 0 38px 44px -28px #000; }
+:root[data-theme="dark"] .tv::after { background: linear-gradient(180deg, #161a26, #2c3244); }
+.tv-screen { position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; padding: 0; border: 0; overflow: hidden; cursor: pointer; color: #fff; text-align: left; background: #05070f; border-radius: 38px / 30px; box-shadow: 0 0 0 9px #14171f, 0 0 0 11px rgba(255, 255, 255, .5); }
+.tv-screen img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(1.12) contrast(1.04); }
+.tv-screen::before { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .16) 0 1px, transparent 1px 3px); }
+.tv-screen::after { content: ""; position: absolute; inset: 0; z-index: 4; pointer-events: none; border-radius: inherit; background: linear-gradient(118deg, rgba(255, 255, 255, .17) 0 21%, transparent 21.4%), radial-gradient(ellipse at center, transparent 54%, rgba(0, 0, 0, .46) 100%); box-shadow: inset 0 0 26px rgba(0, 0, 0, .55); }
+#tv-snow { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; image-rendering: pixelated; }
+#tv-snow[hidden] { display: none; }
+.tv-osd { position: absolute; z-index: 2; left: 34px; right: 34px; top: 22px; display: flex; justify-content: space-between; align-items: baseline; font-family: var(--f-lcd); color: #7dff8e; text-shadow: 0 0 8px rgba(70, 255, 110, .75), 0 1px 0 #000; }
+.tv-osd b { font-weight: 400; font-size: 21px; line-height: 1; }
+.tv-osd b + b { font-size: 34px; }
+.tv-third { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: 26px 0 15px; background: linear-gradient(180deg, transparent, rgba(4, 22, 74, .86) 34%, rgba(4, 22, 74, .94)); }
+.tv-third b { display: block; padding: 0 34px 3px; font: 400 26px/1.15 var(--f-display); text-shadow: 0 2px 4px rgba(0, 0, 0, .5); }
+.tv-roll { display: block; overflow: hidden; margin: 0 22px; font-size: 13px; line-height: 1.5; color: #d9e6ff; }
+.tv-roll i { display: inline-block; font-style: normal; white-space: nowrap; padding-left: 100%; animation: tick var(--t, 40s) linear infinite; }
+@keyframes tick { to { transform: translateX(-100%); } }
+.tv-side { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.tv-brand { margin: 0; font: 400 10.5px/1.4 var(--f-tech); letter-spacing: .1em; color: #2b3448; }
+.tv-brand i { float: right; width: 8px; height: 8px; margin-top: 2px; border-radius: 50%; background: #47e66b; box-shadow: 0 0 7px #47e66b, inset 0 1px 1px rgba(255, 255, 255, .8); }
+.tv-brand small { display: block; font-size: 7.5px; letter-spacing: .2em; color: #566179; }
+.knob { position: relative; width: 100%; aspect-ratio: 1; flex: none; border-radius: 50%; cursor: grab; touch-action: none; --a: 0deg; }
+.knob.held { cursor: grabbing; }
+.knob svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.knob line { stroke: #4d5870; stroke-width: 1.3; }
+.knob text { font: 400 11.5px/1 var(--f-lcd); fill: #2b3448; text-anchor: middle; dominant-baseline: central; transition: fill .12s; }
+.knob text.on { fill: #d41c2e; font-size: 14px; }
+.knob-cap { position: absolute; inset: 21%; border-radius: 50%; background: repeating-conic-gradient(#fdfeff 0deg 5deg, #8b95a7 5deg 10deg); box-shadow: 0 7px 12px -3px rgba(16, 26, 54, .6), 0 0 0 1px rgba(10, 20, 44, .4); transform: rotate(var(--a)); transition: transform .18s cubic-bezier(.3, 1.5, .6, 1); }
+.knob-cap::before { content: ""; position: absolute; inset: 11%; border-radius: 50%; background: conic-gradient(from 20deg, #f7f9fc, #a9b3c3, #eef1f6, #98a3b5, #f7f9fc, #a9b3c3, #eef1f6, #98a3b5, #f7f9fc); box-shadow: inset 0 1px 1px rgba(255, 255, 255, .9), 0 0 0 1px rgba(10, 20, 44, .25); }
+.knob-cap::after { content: ""; position: absolute; left: 50%; top: 4%; width: 6px; height: 36%; margin-left: -3px; border-radius: 3px; background: #d41c2e; box-shadow: 0 0 0 1px rgba(255, 255, 255, .7); }
+:root[data-theme="dark"] .tv-brand, :root[data-theme="dark"] .knob text { color: #dbe4f5; fill: #dbe4f5; }
+:root[data-theme="dark"] .tv-brand small { color: #a4afc6; }
+:root[data-theme="dark"] .knob line { stroke: #a4afc6; }
+:root[data-theme="dark"] .knob text.on { fill: #ff7a86; }
+.tv-keys { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tv-keys button { height: 30px; padding: 0; border: 1px solid rgba(10, 20, 44, .3); border-radius: 7px; font: 400 18px/1 var(--f-lcd); color: #1b2438; background: linear-gradient(180deg, #ffffff, #dde3ec 50%, #c4ccd8); box-shadow: inset 0 1px 0 #fff, 0 1px 2px var(--shadow); cursor: pointer; }
+.tv-keys button:active { transform: translateY(1px); box-shadow: inset 0 1px 2px rgba(10, 20, 44, .3); }
+.tv-grille { flex: 1; min-height: 14px; border-radius: 3px; background: repeating-linear-gradient(0deg, rgba(14, 22, 44, .62) 0 3px, transparent 3px 7px); }
+/* 音乐页的抬头：一张光盘，光谱条纹由光线决定，所以盘面不动，只有印刷文字转 */
+.music-h { position: relative; }
+.music-h > h1, .music-h > p, .music-h > .counts { position: relative; z-index: 1; }
+.music-h > p { max-width: 36em; }
+.disc-box { position: absolute; right: 24px; top: 16px; width: 256px; aspect-ratio: 1; }
+.disc-clip { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; background: var(--spectrum); box-shadow: 0 22px 40px -22px var(--shadow), 0 0 0 1px rgba(10, 20, 44, .22), inset 0 0 0 2px rgba(255, 255, 255, .7); }
 .disc-clip::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: repeating-radial-gradient(circle, rgba(255, 255, 255, .1) 0 1px, rgba(40, 60, 100, .035) 1px 2px); }
-/* 光谱条纹由光线决定，所以盘面不动，只有印刷文字转 */
 .disc { position: absolute; inset: 0; border-radius: 50%; animation: spin 26s linear infinite; }
 .disc svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .disc text { fill: #18233f; font-family: var(--f-tech); font-size: 5.8px; letter-spacing: .17em; }
 .hub { position: absolute; inset: 34%; border-radius: 50%; background: radial-gradient(circle, var(--bg) 0 28%, #6f7c92 28.6% 29.4%, rgba(240, 245, 251, .92) 30% 56%, rgba(160, 175, 195, .7) 56.6% 57.4%, rgba(255, 255, 255, .36) 58% 100%); box-shadow: 0 0 0 1px rgba(10, 20, 44, .16); }
-.seal { position: absolute; left: -3%; top: 6%; width: 21%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(from 40deg, #a8d6ff, #ffc2ec, #fff3a8, #b2ffe2, #b9c2ff, #ffc2ec, #a8d6ff); box-shadow: 0 6px 14px -6px var(--shadow), inset 0 0 0 1px rgba(255, 255, 255, .8), 0 0 0 1px rgba(10, 20, 44, .18); transform: rotate(-12deg); }
-.seal svg { position: absolute; inset: 0; }
-.seal text { font: 400 7.6px var(--f-tech), var(--f-body); letter-spacing: .1em; fill: #18233f; }
-.seal b { font: 400 clamp(11px, 1.3vw, 17px)/1 var(--f-tech); color: #18233f; }
-.year-chip { position: absolute; right: -2%; bottom: 7%; padding: 6px 12px; display: flex; align-items: baseline; gap: 8px; }
-.year-chip i { font: 400 8px/1 var(--f-tech); letter-spacing: .14em; font-style: normal; }
-.year-chip b { font-weight: 400; font-size: clamp(24px, 3vw, 34px); line-height: 1; }
 @keyframes spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .disc, .dock-disc { animation: none !important; } html { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) { .disc, .dock-disc, .tv-roll i { animation: none !important; } .tv-roll i { padding-left: 0; } html { scroll-behavior: auto; } }
 
 /* 按键 */
 .tracks { display: grid; grid-template-columns: repeat(var(--n, 13), minmax(0, 1fr)); gap: 4px; padding: 5px; border-radius: 10px; background: var(--well); box-shadow: inset 0 1px 3px rgba(10, 20, 44, .16), 0 1px 0 var(--gloss); }
@@ -546,6 +581,7 @@ body.has-dock { padding-bottom: 92px; }
   body.has-dock { padding-bottom: 150px; }
 }
 @media (max-width: 980px) {
+  .disc-box { display: none; }
   .deck-in { flex-wrap: wrap; gap: 8px 12px; }
   .nav { order: 3; flex-basis: 100%; }
   .search { flex: 1 1 auto; }
@@ -561,9 +597,28 @@ body.has-dock { padding-bottom: 92px; }
 }
 @media (max-width: 760px) {
   .wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-  .player { grid-template-columns: minmax(0, 1fr); padding-block: 26px 16px; gap: 34px; }
-  .disc-box { width: min(68%, 300px); order: -1; }
-  .orbit .lab { display: none; }
+  .player { grid-template-columns: minmax(0, 1fr); padding-block: 22px 16px; gap: 0; }
+  .player > div:first-child { display: contents; }
+  .player h1 { order: 1; font-size: clamp(52px, 15.5vw, 72px); }
+  .player h1 span { display: inline-block; }
+  .player h1::after { display: none; }
+  .spec { order: 0; margin-bottom: 8px; }
+  .tv { order: 2; margin: 72px 0 34px; }
+  .player .lede, .counts, .hero-play { order: 3; }
+  .player .lede { margin-top: 0; }
+  .tv-case { grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 16px; border-radius: 22px; }
+  .tv-side { display: grid; grid-template-columns: 136px minmax(0, 1fr); gap: 4px 14px; align-items: start; }
+  .tv-brand { grid-column: 2; grid-row: 1; }
+  .knob { grid-column: 1; grid-row: 1 / span 3; }
+  .tv-keys { grid-column: 2; grid-row: 2; }
+  .tv-grille { grid-column: 2; grid-row: 3; align-self: stretch; }
+  .tv-screen { border-radius: 26px / 22px; box-shadow: 0 0 0 6px #14171f, 0 0 0 7px rgba(255, 255, 255, .5); }
+  .tv-osd { left: 22px; right: 22px; top: 14px; }
+  .tv-osd b { font-size: 17px; }
+  .tv-osd b + b { font-size: 26px; }
+  .tv-third { padding: 20px 0 10px; }
+  .tv-third b { padding: 0 22px 2px; font-size: 20px; }
+  .tv-roll { margin: 0 14px; font-size: 12px; }
   .barcode { display: none; }
   .tracks { grid-template-columns: repeat(8, minmax(0, 1fr)); }
   .now-head { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 12px; }
@@ -611,7 +666,7 @@ body.has-dock { padding-bottom: 92px; }
 <body>
 <header class="deck">
   <div class="wrap deck-in">
-    <a class="brand" href="#home"><span class="brand-disc" aria-hidden="true"></span><b>千禧时光机</b></a>
+    <a class="brand" href="#home"><svg class="brand-tv" viewBox="0 0 32 32" aria-hidden="true"><path d="M10 3l6 6 6-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><rect x="1.5" y="9" width="29" height="21" rx="5" fill="#d3dae4" stroke="#6b7690"/><rect x="4" y="11.5" width="19" height="16" rx="4" fill="#2f86ee"/><circle cx="26.8" cy="16" r="2" fill="#525d76"/><path d="M25 21h4M25 23.5h4" stroke="#6b7690"/></svg><b>千禧时光机</b></a>
     <nav class="nav" aria-label="主导航">
       <a href="#home">首页</a><a href="#music">音乐</a><a href="#f-screen">荧屏</a><a href="#f-net">网络</a><a href="#f-school">校园</a><a href="#f-life">生活</a><a href="#f-world">社会</a><a href="#f-sport">体育</a><a href="#f-sub">亚文化</a><a href="#about">关于</a>
     </nav>
@@ -663,7 +718,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=335d497066"></script>
+<script src="data.js?v=6d78b597e8"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -847,17 +902,17 @@ body.has-dock { padding-bottom: 92px; }
     if (!box) return;
     document.getElementById('tracks').innerHTML = D.years.map(v => `<button type="button" data-y="${v.y}" aria-pressed="${v.y === track}" aria-label="${v.y} 年"><small>${v.y < 2000 ? '19' : '20'}</small><b>${String(v.y).slice(2)}</b></button>`).join('');
     document.getElementById('tracks').style.setProperty('--n', D.years.length);
-    document.getElementById('hub').textContent = track;
-    const v = D.years.find(x => x.y === track), l = nowLine(v), y = v[l];
+    tvTune();
+    const v = D.years.find(x => x.y === track), l = nowLine(v), y = v[l], era = D.eras[track];
     const count = (D.culture ?? []).filter(e => e.from <= track && track <= e.to).length;
-    document.getElementById('now-say').textContent = `${track} 年：${y.title}`;
+    document.getElementById('now-say').textContent = `${track} 年：${era.title}`;
     const tabs = [['year', '这一年'], ['music', '音乐'], ...Object.entries(FACETS).filter(([k]) => inFacet(k).length).map(([k, f]) => [k, f.name])];
     box.innerHTML = `
       <div class="now-head">
-        ${artImg(`y${track}-${l}`, 'now-art')}
+        ${artImg(`era-${track}`, 'now-art')}
         <div class="now-copy">
-          <p class="now-tag"><span class="lcd">YEAR ${track}</span><span class="tech">${LINES[l]}</span></p>
-          <h2>${esc(y.title)}</h2><p>${esc(y.lead)}</p>
+          <p class="now-tag"><span class="lcd">YEAR ${track}</span></p>
+          <h2>${esc(era.title)}</h2><p>${esc(era.lead)}</p>
         </div>
         <div class="lcd now-stats">
           <span><b>${count}</b> 件往事</span><span><b>${y.events.length}</b> 条音乐大事</span><span><b>${y.songs.length}</b> 首歌</span>
@@ -879,36 +934,113 @@ body.has-dock { padding-bottom: 92px; }
     const cell = l => (v[l] ? `<a class="era-c" href="#y${v.y}-${l}">${artImg(`y${v.y}-${l}`)}<span><b>${esc(v[l].title)}</b><small>${esc(v[l].lead)}</small><span class="tech">${v[l].events.length} 条大事 · ${v[l].songs.length} 首歌</span></span></a>` : `<span class="era-c none">${LINES[l]}讲到 ${yearsOf(l).at(-1).y} 年</span>`);
     return `<div class="era-row">${cell('hktw')}<a class="era-y" href="#y${v.y}-${v.cn ? 'cn' : 'hktw'}">${v.y}</a>${cell('cn')}</div>`;
   };
+  /* 首页的电视：调台旋钮上的刻度就是年份 */
+  const tvYears = D.years.map(v => v.y);
+  const knobAt = y => tvYears.indexOf(y) * 300 / (tvYears.length - 1) - 150;
+  const knobFace = () => tvYears.map(y => {
+    const a = knobAt(y) * Math.PI / 180, s = Math.sin(a), c = Math.cos(a);
+    return `<line x1="${(80 + 51 * s).toFixed(1)}" y1="${(80 - 51 * c).toFixed(1)}" x2="${(80 + 56 * s).toFixed(1)}" y2="${(80 - 56 * c).toFixed(1)}"/><text data-y="${y}" x="${(80 + 67 * s).toFixed(1)}" y="${(80 - 67 * c).toFixed(1)}">${String(y).slice(2)}</text>`;
+  }).join('');
+  // 字幕：每个切面轮流出一条，只属于这一年的排在前面
+  const tvNews = y => {
+    const lists = ['world', 'screen', 'sport', 'net', 'school', 'life', 'sub'].map(k => inFacet(k, y).sort((a, b) => (a.to - a.from) - (b.to - b.from) || nearer(y)(a, b)));
+    return [0, 1, 2].flatMap(i => lists.map(l => l[i]?.name)).filter(Boolean).slice(0, 15);
+  };
+  let tvOn = null, tvHold = 0;
+  const calm =() => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const tvSnow = () => {
+    const cv = document.getElementById('tv-snow'), end = performance.now() + 240, c = cv.getContext('2d'), img = c.createImageData(cv.width, cv.height);
+    cv.hidden = false;
+    const step = t => {
+      for (let i = 0; i < img.data.length; i += 4) { img.data[i] = img.data[i + 1] = img.data[i + 2] = Math.random() * 255; img.data[i + 3] = 255; }
+      c.putImageData(img, 0, 0);
+      if (t < end) requestAnimationFrame(step); else cv.hidden = true;
+    };
+    requestAnimationFrame(step);
+  };
+  const tvTune = () => {
+    const pic = document.getElementById('tv-pic');
+    if (!pic || tvOn === track) return;
+    const changed = tvOn !== null;
+    tvOn = track;
+    pic.src = `art/tv-${track}.webp`;
+    document.getElementById('tv-y').textContent = track;
+    document.getElementById('tv-ch').textContent = `CH ${String(tvYears.indexOf(track) + 1).padStart(2, '0')}`;
+    document.getElementById('tv-title').textContent = D.eras[track].title;
+    const tick = document.getElementById('tv-tick'), list = tvNews(track);
+    tick.textContent = list.join('　·　');
+    tick.style.setProperty('--t', `${Math.round(list.join('').length / 4)}s`);
+    const knob = document.getElementById('knob');
+    knob.style.setProperty('--a', `${knobAt(track)}deg`);
+    knob.setAttribute('aria-valuenow', track);
+    knob.querySelectorAll('text').forEach(t => t.classList.toggle('on', +t.dataset.y === track));
+    if (changed && !calm()) tvSnow();
+  };
+  const tvGo = (y, later) => {
+    if (y === track) return;
+    track = y;
+    tvTune();
+    clearTimeout(tvHold);
+    if (later) tvHold = setTimeout(renderNow, 140); else renderNow();
+  };
+  const tvBind = () => {
+    const knob = document.getElementById('knob');
+    const turn = e => {
+      const b = knob.getBoundingClientRect(), a = Math.atan2(e.clientX - b.left - b.width / 2, b.top + b.height / 2 - e.clientY) * 180 / Math.PI;
+      if (Math.abs(a) > 165) return;
+      const at = Math.round((Math.max(-150, Math.min(150, a)) + 150) * (tvYears.length - 1) / 300);
+      tvGo(tvYears[at], true);
+    };
+    knob.addEventListener('pointerdown', e => { knob.setPointerCapture(e.pointerId); knob.classList.add('held'); turn(e); });
+    knob.addEventListener('pointermove', e => { if (knob.hasPointerCapture(e.pointerId)) turn(e); });
+    knob.addEventListener('pointerup', () => knob.classList.remove('held'));
+    knob.addEventListener('pointercancel', () => knob.classList.remove('held'));
+    knob.addEventListener('keydown', e => {
+      const i = tvYears.indexOf(track), to = { ArrowRight: i + 1, ArrowUp: i + 1, ArrowLeft: i - 1, ArrowDown: i - 1, Home: 0, End: tvYears.length - 1 }[e.key];
+      if (to == null || !tvYears[to]) return;
+      e.preventDefault();
+      tvGo(tvYears[to]);
+    });
+    view.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => { const y = tvYears[tvYears.indexOf(track) + +b.dataset.step]; if (y) tvGo(y); }));
+    document.getElementById('tv-any').addEventListener('click', () => { const rest = tvYears.filter(y => y !== track); tvGo(rest[Math.floor(Math.random() * rest.length)]); });
+    document.getElementById('tv-screen').addEventListener('click', () => document.getElementById('now').scrollIntoView());
+  };
   const home = () => {
+    tvOn = null;
     view.innerHTML = `
       <section class="wrap player">
         <div>
           <p class="spec"><span class="tech">Millennium Time Machine</span><span class="tech">1997—2012</span>${barcode()}</p>
           <h1><span>千禧</span><span>时光机</span></h1>
-          <p class="lede">回到 1997 到 2012 年。拨到哪一年，就能看到那年的电视、网吧、课堂、街头和社会新闻，听到那年的歌。音乐是其中一面，内地和港台的榜单、专辑和歌单都在。</p>
+          <p class="lede">转动旋钮，回到 1997 到 2012 年的任何一年：那年的电视、网吧、课堂、街头和社会新闻，还有那年的歌。音乐是其中一面，内地和港台的榜单、专辑和歌单都在。</p>
           <div class="lcd counts">
             <div><b>16</b><span>年</span></div>
             <div><b>${fmt(D.culture?.length ?? 0)}</b><span>件往事</span></div>
             <div><b>${fmt(D.songs.length)}</b><span>首歌</span></div>
             <div><b>${fmt(D.albums.length)}</b><span>张专辑</span></div>
           </div>
-          <div class="plays hero-play"><a class="play big" href="#songs" data-all>随机听歌</a></div>
+          <div class="plays hero-play"><button type="button" class="play big" id="tv-any">随便拨一年</button><a class="play big alt" href="#songs" data-all>随机听歌</a></div>
         </div>
-        <div class="disc-box" aria-hidden="true">
-          <svg class="orbit" viewBox="0 0 640 640">
-            <g fill="none" stroke="currentColor" stroke-width="1"><ellipse cx="320" cy="320" rx="312" ry="118" transform="rotate(-20 320 320)"/><ellipse cx="320" cy="320" rx="312" ry="118" transform="rotate(38 320 320)" stroke-dasharray="2 7"/>
-              <path d="M20 40h24M32 28v24M596 40h24M608 28v24M20 600h24M32 588v24M596 600h24M608 588v24"/><path d="M522 214L590 176H632M108 452L52 492H8M498 500L556 548H632"/></g>
-            <circle cx="96" cy="208" r="5" fill="currentColor"/><circle cx="546" cy="448" r="3.5" fill="currentColor"/>
-            <g class="lab"><text x="632" y="168" text-anchor="end">Ø 120 MM</text><text x="8" y="510">16 BIT / 44.1 KHZ</text><text x="632" y="566" text-anchor="end">YEARS 1997—2012</text></g>
-          </svg>
-          <div class="disc-clip">
-            <div class="disc"><svg viewBox="0 0 200 200"><defs><path id="ring" d="M100 100m-84 0a84 84 0 1 1 168 0a84 84 0 1 1-168 0"/></defs>
-              <text><textPath href="#ring">MILLENNIUM TIME MACHINE · COMPACT DISC DIGITAL AUDIO · 1997—2012 · ONE ERA ·</textPath></text></svg></div>
-            <div class="hub"></div>
+        <figure class="tv">
+          <svg class="tv-ant" viewBox="0 0 300 120" aria-hidden="true"><path d="M150 118L34 8M150 118L270 16"/><circle cx="34" cy="8" r="4.5"/><circle cx="270" cy="16" r="4.5"/></svg>
+          <div class="tv-case">
+            <button type="button" class="tv-screen" id="tv-screen" aria-label="看这一年的内容">
+              <img id="tv-pic" alt="" width="640" height="640">
+              <canvas id="tv-snow" width="160" height="120" hidden></canvas>
+              <span class="tv-osd"><b id="tv-ch"></b><b id="tv-y"></b></span>
+              <span class="tv-third"><b id="tv-title"></b><span class="tv-roll"><i id="tv-tick"></i></span></span>
+            </button>
+            <div class="tv-side">
+              <p class="tv-brand"><i aria-hidden="true"></i>MILLENNIUM<small>TIME MACHINE</small></p>
+              <div class="knob" id="knob" role="slider" tabindex="0" aria-label="拨到哪一年" aria-valuemin="${tvYears[0]}" aria-valuemax="${tvYears.at(-1)}">
+                <svg viewBox="0 0 160 160" aria-hidden="true">${knobFace()}</svg>
+                <i class="knob-cap"></i>
+              </div>
+              <div class="tv-keys"><button type="button" data-step="-1" aria-label="上一年">−</button><button type="button" data-step="1" aria-label="下一年">+</button></div>
+              <i class="tv-grille" aria-hidden="true"></i>
+            </div>
           </div>
-          <div class="seal"><svg viewBox="0 0 100 100"><defs><path id="seal" d="M50 50m-36 0a36 36 0 1 1 72 0a36 36 0 1 1-72 0"/></defs><text><textPath href="#seal">16 YEARS · TIME MACHINE · 全程收录 · </textPath></text></svg><b>Y2K</b></div>
-          <div class="lcd year-chip"><i>YEAR</i><b id="hub">${track}</b></div>
-        </div>
+        </figure>
       </section>
       <section class="wrap">
         <div class="frow dial-h"><span class="tech">Dial</span><b>拨到哪一年</b></div>
@@ -941,11 +1073,14 @@ body.has-dock { padding-bottom: 92px; }
       if (to) { line = to.dataset.to; renderNow(); }
     });
     renderNow();
+    tvBind();
     shuffle();
   };
   /* 音乐是时光机的一面，内容都在这里 */
   const musicView = () => {
-    view.innerHTML = `<header class="wrap page-h"><h1 data-en="Music">音乐</h1><p>内地和港台走的不是同一条时间线，所以分成两条来讲：港台线从陶喆到周杰伦，内地线从校园民谣到彩铃神曲。逐年大事、历届榜单和歌单都在这里。</p>
+    view.innerHTML = `<header class="wrap page-h music-h"><div class="disc-box" aria-hidden="true"><div class="disc-clip"><div class="disc"><svg viewBox="0 0 200 200"><defs><path id="ring" d="M100 100m-84 0a84 84 0 1 1 168 0a84 84 0 1 1-168 0"/></defs>
+          <text><textPath href="#ring">MILLENNIUM TIME MACHINE · COMPACT DISC DIGITAL AUDIO · 1997—2012 · ONE ERA ·</textPath></text></svg></div><div class="hub"></div></div></div>
+        <h1 data-en="Music">音乐</h1><p>内地和港台走的不是同一条时间线，所以分成两条来讲：港台线从陶喆到周杰伦，内地线从校园民谣到彩铃神曲。逐年大事、历届榜单和歌单都在这里。</p>
         <div class="lcd counts">
           <div><b>${fmt(listed.length)}</b><span>组歌手</span></div>
           <div><b>${fmt(D.albums.length)}</b><span>张专辑</span></div>
