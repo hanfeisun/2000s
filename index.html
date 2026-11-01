@@ -366,7 +366,7 @@ a.card:hover { border-color: var(--accent); }
     if (vids.length < 2) return '';
     const parts = [];
     for (let i = 0; i < vids.length; i += 50) parts.push(vids.slice(i, i + 50));
-    return `<div class="plays">${parts.map((p, i) => `<a class="play" href="https://www.youtube.com/watch_videos?video_ids=${p.join(',')}" target="_blank" rel="noopener">${parts.length > 1 ? `连播第 ${i * 50 + 1}—${i * 50 + p.length} 首` : `连播 ${p.length} 首`}</a>`).join('')}</div>`;
+    return `<div class="plays">${parts.map((p, i) => `<a class="play" href="https://www.youtube.com/watch_videos?video_ids=${p.join(',')}" target="_blank" rel="noopener">${parts.length === 1 ? `连播 ${p.length} 首` : p.length === 1 ? `播放第 ${i * 50 + 1} 首` : `连播第 ${i * 50 + 1}—${i * 50 + p.length} 首`}</a>`).join('')}</div>`;
   };
   const artistLink = id => artists[id] ? `<a href="#a-${id}">${esc(artists[id].zh)}</a>` : '';
   const creditOf = s => (s.by ?? [s.a]).map(artistLink).join(' / ') + (s.feat ? ` feat. ${esc(s.feat)}` : '');
