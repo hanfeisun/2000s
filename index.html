@@ -486,6 +486,25 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .ent-idx a:hover { color: var(--accent); text-decoration: underline; }
 .ent-idx small { flex: none; font-size: 11.5px; color: var(--mute); }
 .year-h { font: 400 30px/1.1 var(--f-lcd); margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); max-width: 46rem; }
+/* 专栏文章里的照片和影像 */
+.col-text figure { margin: 22px 0 24px; }
+.col-text figcaption { margin-top: 7px; color: var(--mute); font-size: 13.5px; line-height: 1.65; }
+.col-text figcaption b { display: block; color: var(--ink); font-weight: 600; font-size: 14.5px; }
+.col-text figcaption small { display: block; font-size: 11.5px; opacity: .85; }
+.ph img { width: 100%; height: auto; border-radius: 6px; box-shadow: 0 12px 24px -16px var(--shadow), 0 0 0 1px var(--line); }
+.md { max-width: 500px; }
+.md-tv { position: relative; display: block; width: 100%; padding: 13px; border: 0; border-radius: 18px; cursor: pointer; background: linear-gradient(162deg, #f7f9fc 0%, #dfe5ed 36%, #bfc8d5 74%, #d3dae4 100%); box-shadow: inset 0 2px 1px rgba(255, 255, 255, .95), inset 0 -3px 6px rgba(40, 55, 85, .3), 0 0 0 1px rgba(10, 20, 44, .24), 0 16px 24px -16px rgba(16, 26, 54, .6); }
+:root[data-theme="dark"] .md-tv { background: linear-gradient(162deg, #454d62 0%, #2c3244 40%, #1b1f2d 78%, #272c3c 100%); }
+.md-tv img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; background: #05070f; border-radius: 22px / 18px; box-shadow: 0 0 0 5px #14171f; }
+.md-bili { min-height: 200px; }
+.md-bili:not(:has(img)) { background: linear-gradient(135deg, #fb7299, #23ade5); }
+.md-bili img { aspect-ratio: 16 / 10; }
+.md-go { position: absolute; left: 50%; top: 50%; width: 62px; height: 62px; margin: -31px 0 0 -31px; border-radius: 50%; background: linear-gradient(180deg, #7cc4ff 0%, #2b89ee 48%, #0f62d8 52%, #39a2ff 100%); box-shadow: inset 0 -3px 6px rgba(170, 232, 255, .6), 0 3px 9px rgba(0, 20, 70, .6); }
+.md-go::after { content: ""; position: absolute; left: 24px; top: 18px; border-style: solid; border-width: 13px 0 13px 21px; border-color: transparent transparent transparent #fff; }
+.md-tv:hover .md-go { filter: brightness(1.12); }
+.md-frame { aspect-ratio: 16 / 10; border-radius: 12px; overflow: hidden; background: #000; }
+.md-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
+.col-top .plays { margin-top: 8px; }
 /* 专栏文章 */
 .col-h h1 { font-size: clamp(32px, 4.4vw, 52px); }
 .col-top { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 26px; align-items: center; margin-top: 10px; }
@@ -570,9 +589,26 @@ body.has-dock { padding-bottom: 92px; }
 .dock { position: fixed; inset: auto 0 0; z-index: 45; pointer-events: none; }
 .dock[hidden] { display: none; }
 .dock-bar { pointer-events: auto; display: grid; grid-template-columns: 56px minmax(170px, 1fr) auto minmax(170px, 1fr) auto; gap: 12px; align-items: center; padding: 8px 16px calc(8px + env(safe-area-inset-bottom, 0px)); background: var(--steel); border-top: 1px solid rgba(10, 20, 44, .3); box-shadow: inset 0 1px 0 var(--gloss), 0 -6px 20px -8px var(--shadow); }
-.dock-stage { pointer-events: auto; position: absolute; right: 16px; bottom: calc(100% + 10px); width: 356px; display: grid; gap: 8px; }
-.dock.big .dock-stage { width: min(640px, calc(100vw - 32px)); }
-.dock-video { aspect-ratio: 16 / 9; min-height: 200px; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 14px 30px -10px var(--shadow), 0 0 0 1px rgba(10, 20, 44, .34); }
+.dock-stage { pointer-events: auto; position: absolute; right: 16px; bottom: calc(100% + 12px); width: 372px; display: grid; gap: 8px; }
+.dock.big .dock-stage { width: min(720px, calc(100vw - 32px)); }
+/* 视频窗是一台小电视。平时移到屏幕外继续放声音，打开才进画面 */
+.dock-tv { position: relative; }
+.dock:not(.tv-on) .dock-tv { position: fixed; left: -1400px; top: 0; width: 356px; pointer-events: none; }
+.dock:not(.tv-on) #dk-size { display: none; }
+.dock-ant { position: absolute; left: 30%; bottom: calc(100% - 6px); width: 32%; }
+.dock-case { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 54px; gap: 12px; padding: 13px 10px 13px 15px; border-radius: 18px; background: linear-gradient(162deg, #f7f9fc 0%, #dfe5ed 36%, #bfc8d5 74%, #d3dae4 100%); box-shadow: inset 0 2px 1px rgba(255, 255, 255, .95), inset 0 -3px 6px rgba(40, 55, 85, .3), 0 0 0 1px rgba(10, 20, 44, .24), 0 20px 30px -14px rgba(16, 26, 54, .6); }
+:root[data-theme="dark"] .dock-case { background: linear-gradient(162deg, #454d62 0%, #2c3244 40%, #1b1f2d 78%, #272c3c 100%); box-shadow: inset 0 2px 1px rgba(255, 255, 255, .22), inset 0 -3px 6px rgba(0, 0, 0, .5), 0 0 0 1px rgba(255, 255, 255, .1), 0 20px 30px -14px #000; }
+.dock-video { position: relative; aspect-ratio: 4 / 3; min-height: 200px; background: #05070f; border-radius: 26px / 20px; overflow: hidden; box-shadow: 0 0 0 6px #14171f, 0 0 0 7px rgba(255, 255, 255, .5); }
+.dock-video::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .1) 0 1px, transparent 1px 3px); box-shadow: inset 0 0 18px rgba(0, 0, 0, .55); }
+.dock-side { display: flex; flex-direction: column; align-items: center; gap: 7px; min-height: 0; }
+.dock-led { align-self: flex-end; width: 7px; height: 7px; border-radius: 50%; background: #47e66b; box-shadow: 0 0 6px #47e66b; }
+.dock-ch { font-size: 11.5px; color: #2b3448; }
+:root[data-theme="dark"] .dock-ch { color: #dbe4f5; }
+.dock-knob { position: relative; width: 40px; height: 40px; flex: none; border-radius: 50%; background: repeating-conic-gradient(#fdfeff 0deg 9deg, #8b95a7 9deg 18deg); box-shadow: 0 3px 6px -1px rgba(16, 26, 54, .6), 0 0 0 1px rgba(10, 20, 44, .4); }
+.dock-knob::before { content: ""; position: absolute; inset: 13%; border-radius: 50%; background: conic-gradient(from 20deg, #f7f9fc, #a9b3c3, #eef1f6, #98a3b5, #f7f9fc); }
+.dock-knob::after { content: ""; position: absolute; left: 50%; top: 8%; width: 3px; height: 34%; margin-left: -1.5px; border-radius: 2px; background: #d41c2e; }
+.dock-side .tv-grille { width: 100%; min-height: 12px; }
+#dk-tvoff { width: 100%; height: 24px; padding: 0; border: 1px solid rgba(10, 20, 44, .3); border-radius: 6px; font-size: 12px; color: #1b2438; background: linear-gradient(180deg, #ffffff, #dde3ec 50%, #c4ccd8); box-shadow: inset 0 1px 0 #fff, 0 1px 2px var(--shadow); cursor: pointer; }
 .dock-video iframe { display: block; width: 100%; height: 100%; border: 0; }
 .dock-queue { max-height: 40vh; overflow-y: auto; background: var(--solid); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 14px 30px -10px var(--shadow); scrollbar-width: thin; }
 .dock-queue[hidden] { display: none; }
@@ -692,10 +728,11 @@ body.has-dock { padding-bottom: 92px; }
   .dock-keys button.go { width: 42px; height: 42px; }
   .dock-seek, .dock-tools { grid-column: 1 / -1; }
   .dock-tools { justify-content: space-between; }
-  .dock-stage { right: 8px; width: 200px; }
+  .dock-stage { right: 8px; width: min(320px, calc(100vw - 16px)); }
+  .dock-case { grid-template-columns: minmax(0, 1fr) 44px; gap: 10px; padding: 10px 8px 10px 12px; border-radius: 14px; }
   .dock-video { aspect-ratio: auto; height: 200px; }
   .dock.big .dock-stage { width: calc(100vw - 16px); }
-  .dock.big .dock-video { aspect-ratio: 16 / 9; height: auto; }
+  .dock-knob { width: 32px; height: 32px; }
   .dock-queue { position: fixed; left: 8px; right: 8px; bottom: 362px; max-height: calc(100vh - 500px); min-height: 120px; }
   body.has-dock { padding-bottom: 170px; }
   .toast { bottom: 150px; }
@@ -735,7 +772,19 @@ body.has-dock { padding-bottom: 92px; }
 <aside class="dock" id="dock" aria-label="播放器" hidden>
   <div class="dock-stage">
     <div class="dock-queue" id="dock-queue" hidden></div>
-    <div class="dock-video"><div id="yt-slot"></div></div>
+    <div class="dock-tv" id="dock-tv">
+      <svg class="tv-ant dock-ant" viewBox="0 0 300 120" aria-hidden="true"><path d="M150 118L34 8M150 118L270 16"/><circle cx="34" cy="8" r="4.5"/><circle cx="270" cy="16" r="4.5"/></svg>
+      <div class="dock-case">
+        <div class="dock-video"><div id="yt-slot"></div></div>
+        <div class="dock-side">
+          <span class="dock-led" aria-hidden="true"></span>
+          <span class="lcdnum dock-ch" id="dock-ch">CH 01</span>
+          <i class="dock-knob" aria-hidden="true"></i>
+          <i class="tv-grille" aria-hidden="true"></i>
+          <button type="button" id="dk-tvoff" aria-label="收起电视，只听声音">关</button>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="dock-bar">
     <span class="dock-disc" id="dock-disc" aria-hidden="true"></span>
@@ -751,13 +800,14 @@ body.has-dock { padding-bottom: 92px; }
       <button type="button" class="chip" id="dk-shuffle" aria-pressed="false">随机</button>
       <button type="button" class="chip" id="dk-repeat" aria-pressed="false">循环</button>
       <button type="button" class="chip" id="dk-list" aria-pressed="false">列表</button>
+      <button type="button" class="chip" id="dk-tv" aria-pressed="false">电视</button>
       <button type="button" class="chip" id="dk-size">大屏</button>
       <a class="chip" id="dk-out" target="_blank" rel="noopener">YouTube</a>
       <button type="button" class="chip" id="dk-close" aria-label="关闭播放器">关闭</button>
     </div>
   </div>
 </aside>
-<script src="data.js?v=277dd50566"></script>
+<script src="data.js?v=5b9ef77a05"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -1457,7 +1507,7 @@ body.has-dock { padding-bottom: 92px; }
   const columnsOf = k => (D.columns ?? []).filter(c => c.facet === k);
   const eventsOf = k => D.facetEvents?.[k] ?? [];
   // 专栏一览：目录式排版，不用卡片
-  const colIndex = list => `<ol class="cols">${list.map((c, i) => `<li><a href="#col-${c.id}"><img class="col-c" src="art/col-${c.id}.webp" alt="" loading="lazy" width="800" height="600" data-art="col-${c.id}"><span class="col-b"><span class="tech">${String(i + 1).padStart(2, '0')} · ${esc(c.kicker ?? '')} · ${span(c)}</span><b>${esc(c.title)}</b><small>${esc(c.summary)}</small><span class="col-m lcdnum">${fmt(c.words)} 字</span></span></a></li>`).join('')}</ol>`;
+  const colIndex = list => `<ol class="cols">${list.map((c, i) => `<li><a href="#col-${c.id}"><img class="col-c" src="art/col-${c.id}.webp" alt="" loading="lazy" width="800" height="600" data-art="col-${c.id}"><span class="col-b"><span class="tech">${String(i + 1).padStart(2, '0')} · ${esc(c.kicker ?? '')} · ${span(c)}</span><b>${esc(c.title)}</b><small>${esc(c.summary)}</small><span class="col-m lcdnum">${fmt(c.words)} 字${c.media.length ? ` · ${c.media.length} 段影像` : ''}${c.photos.length ? ` · ${c.photos.length} 张照片` : ''}${c.songs.length ? ` · ${c.songs.length} 首歌` : ''}</span></span></a></li>`).join('')}</ol>`;
   const entryIndex = list => { const by = group(list, e => e.cat); return `<div class="ent-idx">${Object.keys(by).map(c => `<section><h3>${esc(c)}</h3><ul>${by[c].map(e => `<li><a href="#e-${e.id}">${esc(e.name)}</a><small class="lcdnum">${span(e)}</small></li>`).join('')}</ul></section>`).join('')}</div>`; };
   const eventRow = e => `<li><time>${esc(String(e.d ?? '').slice(5) || '—')}</time><span><span class="tag">${esc(e.c)}</span> ${esc(e.t)}${srcLink(e.s)}</span></li>`;
   const chronicle = list => { const by = group(list, e => String(e.d).slice(0, 4)); return Object.keys(by).sort().map(y => `<h3 class="year-h">${y}</h3><ul class="events">${by[y].map(eventRow).join('')}</ul>`).join('') || '<p class="prose">这一格没有大事。</p>'; };
@@ -1499,15 +1549,20 @@ body.has-dock { padding-bottom: 92px; }
     }, { signal: viewBound() });
     paint();
   };
+  const photoFig = p => `<figure class="ph"><img src="art/${esc(p.src)}" alt="${esc(p.caption ?? '')}" loading="lazy" width="${p.w ?? 900}" height="${p.h ?? 600}"><figcaption>${esc(p.caption ?? '')}<small>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.author || '维基共享资源')}</a>` : esc(p.author ?? '')}${p.license ? `，${esc(p.license)}` : ''}</small></figcaption></figure>`;
+  const mediaFig = m => `<figure class="md">${m.kind === 'bili'
+    ? `<button type="button" class="md-tv md-bili" data-bili="${esc(m.id)}" aria-label="播放：${esc(m.title)}">${m.pic ? `<img src="${esc(m.pic)}" alt="" loading="lazy" referrerpolicy="no-referrer" width="480" height="300">` : ''}<span class="md-go"></span></button>`
+    : `<button type="button" class="md-tv" data-tv="${esc(m.id)}" aria-label="在电视里放：${esc(m.title)}"><img src="https://i.ytimg.com/vi/${esc(m.id)}/hqdefault.jpg" alt="" loading="lazy" width="480" height="360"><span class="md-go"></span></button>`}
+    <figcaption><b>${esc(m.title)}</b>${m.note ? `${esc(m.note)}` : ''}<small>${m.kind === 'bili' ? `<a href="https://www.bilibili.com/video/${esc(m.id)}" target="_blank" rel="noopener">哔哩哔哩</a>` : `<a href="https://www.youtube.com/watch?v=${esc(m.id)}" target="_blank" rel="noopener">YouTube</a>`}${m.ch ? ` · ${esc(m.ch)}` : ''}</small></figcaption></figure>`;
   const columnPage = id => {
     const c = (D.columns ?? []).find(x => x.id === id);
     if (!c) return notFound();
     const f = FACETS[c.facet], sibs = columnsOf(c.facet), i = sibs.indexOf(c), list = c.songs.map(s => songs[s]).filter(Boolean), ents = c.entries.map(id => (D.culture ?? []).find(e => e.id === id)).filter(Boolean);
     view.innerHTML = `<div class="wrap col-page">
       <header class="page-h col-h"><p class="tech" style="margin:0"><a href="#f-${c.facet}">${f.name}</a> / ${esc(c.kicker ?? '')}</p>
-        <div class="col-top"><img class="col-c" src="art/col-${c.id}.webp" alt="" width="800" height="600" data-art="col-${c.id}"><div><h1>${esc(c.title)}</h1><p>${esc(c.summary)}</p><p class="lcdnum ent-y">${span(c)} · ${fmt(c.words)} 字</p></div></div>
+        <div class="col-top"><img class="col-c" src="art/col-${c.id}.webp" alt="" width="800" height="600" data-art="col-${c.id}"><div><h1>${esc(c.title)}</h1><p>${esc(c.summary)}</p><p class="lcdnum ent-y">${span(c)} · ${fmt(c.words)} 字</p>${list.length ? playAll(list, '边听边读') : '<button type="button" class="play" data-bgm>边听边读</button>'}</div></div>
         <div class="jump">${c.body.filter(s => s.h).map((s, n) => `<button type="button" class="chip" data-go="s${n}">${esc(s.h)}</button>`).join('')}</div></header>
-      <div class="prose col-text">${c.body.map((s, n) => `${s.h ? `<h2 class="sub" id="s${n}">${esc(s.h)}</h2>` : ''}${s.p.map(p => `<p>${esc(p)}</p>`).join('')}`).join('')}</div>
+      <div class="prose col-text">${c.body.map((s, n) => `${s.h ? `<h2 class="sub" id="s${n}">${esc(s.h)}</h2>` : ''}${s.p.map(p => `<p>${esc(p)}</p>`).join('')}${c.photos.filter(p => p.at === n).map(photoFig).join('')}${c.media.filter(m => m.at === n).map(mediaFig).join('')}`).join('')}</div>
       ${c.timeline.length ? `<section class="sec"><div class="sec-h"><h2>时间线</h2></div><ul class="events">${c.timeline.map(e => `<li><time>${esc(String(e.d ?? '').slice(0, 7))}</time><span>${esc(e.text)}${srcLink(e.src)}</span></li>`).join('')}</ul></section>` : ''}
       ${list.length ? `<section class="sec"><div class="sec-h"><h2>听这些歌</h2><span class="tech">${list.length} Songs</span></div>${playAll(list)}${tuneList(list)}</section>` : ''}
       ${ents.length ? `<section class="sec"><div class="sec-h"><h2>相关词条</h2></div>${entryIndex(ents)}</section>` : ''}
@@ -1601,6 +1656,10 @@ body.has-dock { padding-bottom: 92px; }
   D.songs.forEach(s => { if (canEmbed(s) && !byVid.has(s.vid)) byVid.set(s.vid, s); });
   D.topics.forEach(t => t.songs.forEach(x => { if (x.vid && !byVid.has(x.vid)) byVid.set(x.vid, x.id ? { ...songs[x.id], vid: x.vid, vk: '现场', ne: 0 } : { vid: x.vid, t: x.t, y: x.y, by: [], who: x.a }); }));
   const $ = id => document.getElementById(id);
+  // 读专栏时的背景音乐，不是年代歌单的一部分
+  const BGM = { vid: 'VBvfXo77f8s', t: 'Nop (Lofi Version)', who: '陈越龙', by: [], y: '' };
+  byVid.set(BGM.vid, BGM);
+  (D.columns ?? []).forEach(c => c.media.forEach(m => { if (m.kind === 'yt' && !byVid.has(m.id)) byVid.set(m.id, { vid: m.id, t: m.title, who: m.ch ?? '', by: [], y: c.from }); }));
   const dock = $('dock');
   const P = { yt: null, api: null, base: [], queue: [], pos: -1, shuffle: false, repeat: false, skips: 0, seeking: false };
   const bad = new Set();
@@ -1632,6 +1691,7 @@ body.has-dock { padding-bottom: 92px; }
     const s = nowSong();
     if (!s) return;
     $('dock-no').textContent = `${String(P.pos + 1).padStart(3, '0')}/${String(P.queue.length).padStart(3, '0')}`;
+    $('dock-ch').textContent = `CH ${String((P.pos % 99) + 1).padStart(2, '0')}`;
     $('dock-title').textContent = s.t;
     $('dock-who').innerHTML = creditOf(s) || esc(s.who ?? '');
     const c = albums[s.al]?.cover;
@@ -1723,9 +1783,23 @@ body.has-dock { padding-bottom: 92px; }
   });
   $('dock-queue').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b) playAt(+b.dataset.q); });
   $('dk-size').addEventListener('click', e => { e.currentTarget.textContent = dock.classList.toggle('big') ? '小屏' : '大屏'; });
+  // 平时只留控制条听声音，电视按需打开
+  const tvShow = on => { dock.classList.toggle('tv-on', on); $('dk-tv').setAttribute('aria-pressed', String(on)); };
+  $('dk-tv').addEventListener('click', () => { P.adTv = false; tvShow(!dock.classList.contains('tv-on')); });
+  $('dk-tvoff').addEventListener('click', () => { P.adTv = false; tvShow(false); });
+  document.addEventListener('click', e => {
+    const tv = e.target.closest('[data-tv]'), bili = e.target.closest('[data-bili]'), bgm = e.target.closest('[data-bgm]');
+    if (tv) { P.adTv = false; playList([byVid.get(tv.dataset.tv)], 0); tvShow(true); }
+    else if (bili) {
+      if (dock.classList.contains('spin')) $('dk-play').click();
+      bili.outerHTML = `<div class="md-frame"><iframe src="https://player.bilibili.com/player.html?bvid=${esc(bili.dataset.bili)}&autoplay=1&danmaku=0&high_quality=1" title="哔哩哔哩播放器" allowfullscreen referrerpolicy="no-referrer"></iframe></div>`;
+    } else if (bgm) { P.repeat = true; $('dk-repeat').setAttribute('aria-pressed', 'true'); playList([BGM], 0); }
+  });
   $('dk-close').addEventListener('click', () => {
     P.yt?.stopVideo?.();
     dock.hidden = true;
+    P.adTv = false;
+    tvShow(false);
     dock.classList.remove('spin');
     document.body.classList.remove('has-dock');
     markNow();
@@ -1744,7 +1818,10 @@ body.has-dock { padding-bottom: 92px; }
       $('dk-play').innerHTML = on ? ICON.pause : ICON.play;
       $('dk-play').setAttribute('aria-label', on ? '暂停' : '播放');
     }
-    if (ad && !P.adSeen) { P.adSeen = true; toast('YouTube 正在放片头广告，能跳过时在视频窗口里点“跳过”。'); }
+    // 片头广告要在画面里才点得到“跳过”，所以先打开电视，放完再收起
+    if (ad && !dock.classList.contains('tv-on')) { P.adTv = true; tvShow(true); }
+    if (!ad && P.adTv) { P.adTv = false; tvShow(false); }
+    if (ad && !P.adSeen) { P.adSeen = true; toast('YouTube 在放片头广告，能跳过时点电视里的“跳过”，放完电视会自动收起。'); }
     $('dk-seek').disabled = ad;
     if (P.seeking) return;
     $('dk-now').textContent = ad ? '广告' : clock(t);
