@@ -507,7 +507,8 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .md-go { position: absolute; left: 50%; top: 50%; width: 62px; height: 62px; margin: -31px 0 0 -31px; border-radius: 50%; background: linear-gradient(180deg, #7cc4ff 0%, #2b89ee 48%, #0f62d8 52%, #39a2ff 100%); box-shadow: inset 0 -3px 6px rgba(170, 232, 255, .6), 0 3px 9px rgba(0, 20, 70, .6); }
 .md-go::after { content: ""; position: absolute; left: 24px; top: 18px; border-style: solid; border-width: 13px 0 13px 21px; border-color: transparent transparent transparent #fff; }
 .md-tv:hover .md-go { filter: brightness(1.12); }
-.md-frame { aspect-ratio: 16 / 10; border-radius: 12px; overflow: hidden; background: #000; }
+.md-on { cursor: default; }
+.md-frame { aspect-ratio: 4 / 3; border-radius: 22px / 18px; overflow: hidden; background: #000; box-shadow: 0 0 0 5px #14171f; }
 .md-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
 .col-top .plays { margin-top: 8px; }
 /* 专栏文章 */
@@ -813,7 +814,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=6ee4515b56"></script>
+<script src="data.js?v=51260e7453"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -1586,7 +1587,7 @@ body.has-dock { padding-bottom: 92px; }
   const photoFig = p => `<figure class="ph"><img src="art/${esc(p.src)}" alt="${esc(p.caption ?? '')}" loading="lazy" width="${p.w ?? 900}" height="${p.h ?? 600}"><figcaption>${esc(p.caption ?? '')}<small>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.author || '维基共享资源')}</a>` : esc(p.author ?? '')}${p.license ? `，${esc(p.license)}` : ''}</small></figcaption></figure>`;
   const mediaFig = m => `<figure class="md">${m.kind === 'bili'
     ? `<button type="button" class="md-tv md-bili" data-bili="${esc(m.id)}" aria-label="播放：${esc(m.title)}">${m.pic ? `<img src="${esc(m.pic)}" alt="" loading="lazy" referrerpolicy="no-referrer" width="480" height="300">` : ''}<span class="md-go"></span></button>`
-    : `<button type="button" class="md-tv" data-tv="${esc(m.id)}" aria-label="在电视里放：${esc(m.title)}"><img src="https://i.ytimg.com/vi/${esc(m.id)}/hqdefault.jpg" alt="" loading="lazy" width="480" height="360"><span class="md-go"></span></button>`}
+    : `<button type="button" class="md-tv" data-tv="${esc(m.id)}" aria-label="播放：${esc(m.title)}"><img src="https://i.ytimg.com/vi/${esc(m.id)}/hqdefault.jpg" alt="" loading="lazy" width="480" height="360"><span class="md-go"></span></button>`}
     <figcaption><b>${esc(m.title)}</b>${m.note ? `${esc(m.note)}` : ''}<small>${m.kind === 'bili' ? `<a href="https://www.bilibili.com/video/${esc(m.id)}" target="_blank" rel="noopener">哔哩哔哩</a>` : `<a href="https://www.youtube.com/watch?v=${esc(m.id)}" target="_blank" rel="noopener">YouTube</a>`}${m.ch ? ` · ${esc(m.ch)}` : ''}</small></figcaption></figure>`;
   const columnPage = id => {
     const c = (D.columns ?? []).find(x => x.id === id);
@@ -1702,6 +1703,15 @@ body.has-dock { padding-bottom: 92px; }
   const ICON = { play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l14 8-14 8z"/></svg>', pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>' };
   const clock = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
   const nowSong = () => P.queue[P.pos];
+  // 文章里的视频就地放，同一时间只响一个：放视频时暂停音乐，再放别的就把上一个收回缩略图
+  const stopInline = () => { if (P.inline?.box.isConnected) P.inline.box.outerHTML = P.inline.was; P.inline = null; };
+  const playInline = (btn, src, title) => {
+    stopInline();
+    if (dock.classList.contains('spin')) $('dk-play').click();
+    const was = btn.outerHTML;
+    btn.outerHTML = `<div class="md-tv md-on"><div class="md-frame"><iframe src="${src}" title="${title}" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div></div>`;
+    P.inline = { box: view.querySelector('.md-on'), was };
+  };
   let toastTimer = 0;
   const toast = html => { const t = $('toast'); t.innerHTML = html; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 7000); };
   const outLink = (s, text) => `<a href="${esc(ytUrl(s))}" target="_blank" rel="noopener">${text}</a>`;
@@ -1754,6 +1764,7 @@ body.has-dock { padding-bottom: 92px; }
     next();
   };
   const playAt = async i => {
+    stopInline();
     P.pos = i;
     P.held = false;
     dock.hidden = false;
@@ -1806,7 +1817,7 @@ body.has-dock { padding-bottom: 92px; }
   $('dk-play').addEventListener('click', () => {
     if (!P.yt?.getPlayerState) return;
     P.held = dock.classList.contains('spin');
-    if (P.held) P.yt.pauseVideo(); else P.yt.playVideo();
+    if (P.held) P.yt.pauseVideo(); else { stopInline(); P.yt.playVideo(); }
   });
   $('dk-next').addEventListener('click', next);
   $('dk-prev').addEventListener('click', () => { if (P.yt?.getCurrentTime?.() > 3) P.yt.seekTo(0, true); else playAt(Math.max(0, P.pos - 1)); });
@@ -1833,11 +1844,9 @@ body.has-dock { padding-bottom: 92px; }
   $('dk-tvoff').addEventListener('click', () => { P.adTv = false; tvShow(false); });
   document.addEventListener('click', e => {
     const tv = e.target.closest('[data-tv]'), bili = e.target.closest('[data-bili]'), bgm = e.target.closest('[data-bgm]');
-    if (tv) { P.adTv = false; playList([byVid.get(tv.dataset.tv)], 0); tvShow(true); }
-    else if (bili) {
-      if (dock.classList.contains('spin')) $('dk-play').click();
-      bili.outerHTML = `<div class="md-frame"><iframe src="https://player.bilibili.com/player.html?bvid=${esc(bili.dataset.bili)}&autoplay=1&danmaku=0&high_quality=1" title="哔哩哔哩播放器" allowfullscreen referrerpolicy="no-referrer"></iframe></div>`;
-    } else if (bgm) playBgm();
+    if (tv) playInline(tv, `https://www.youtube.com/embed/${esc(tv.dataset.tv)}?autoplay=1&rel=0&playsinline=1`, 'YouTube 播放器');
+    else if (bili) playInline(bili, `https://player.bilibili.com/player.html?bvid=${esc(bili.dataset.bili)}&autoplay=1&danmaku=0&high_quality=1`, '哔哩哔哩播放器');
+    else if (bgm) playBgm();
   });
   const playBgm = () => { P.bgm = true; P.repeat = true; $('dk-repeat').setAttribute('aria-pressed', 'true'); playList([BGM], 0); };
   const keep = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch {} return null; };
