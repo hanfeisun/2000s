@@ -486,6 +486,11 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .ent-idx a:hover { color: var(--accent); text-decoration: underline; }
 .ent-idx small { flex: none; font-size: 11.5px; color: var(--mute); }
 .year-h { font: 400 30px/1.1 var(--f-lcd); margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); max-width: 46rem; }
+/* 文中提到的歌：点一下切到这首 */
+.sl { color: inherit; text-decoration: underline dotted var(--accent); text-underline-offset: 3px; }
+.sl::after { content: "♪"; margin-left: 1px; font-size: .72em; color: var(--accent); vertical-align: .22em; }
+.sl:hover, .sl.on { color: var(--accent); }
+.sl.on { font-weight: 600; }
 /* 专栏文章里的照片和影像 */
 .col-text figure { margin: 22px 0 24px; }
 .col-text figcaption { margin-top: 7px; color: var(--mute); font-size: 13.5px; line-height: 1.65; }
@@ -800,6 +805,7 @@ body.has-dock { padding-bottom: 92px; }
       <button type="button" class="chip" id="dk-shuffle" aria-pressed="false">随机</button>
       <button type="button" class="chip" id="dk-repeat" aria-pressed="false">循环</button>
       <button type="button" class="chip" id="dk-list" aria-pressed="false">列表</button>
+      <button type="button" class="chip" id="dk-follow" aria-pressed="true" title="翻到年份和专题时，把歌换成这一页的">随页换歌</button>
       <button type="button" class="chip" id="dk-tv" aria-pressed="false">电视</button>
       <button type="button" class="chip" id="dk-size">大屏</button>
       <a class="chip" id="dk-out" target="_blank" rel="noopener">YouTube</a>
@@ -895,6 +901,27 @@ body.has-dock { padding-bottom: 92px; }
     else if (e.target.dataset?.art) e.target.remove();
   }, true);
   // 年度和专题的封面插画，文件缺失时直接隐藏
+  // 文中的《歌名》变成能点的链接。先看这一页的歌单，再看同一句有没有歌手；音乐页里同名只有一首时也算。拿不准就不加
+  const bareTitle = t => String(t).replace(/[（(].*$/, '').trim();
+  const tuneIdx = new Map();
+  D.songs.forEach(s => { if (canEmbed(s)) { const k = bareTitle(s.t); tuneIdx.set(k, [...(tuneIdx.get(k) ?? []), s]); } });
+  let tuneCtx = new Map(), tuneLoose = false;
+  const setTunes = (list, loose) => {
+    tuneCtx = new Map();
+    tuneLoose = loose;
+    list.forEach(x => { const s = x.id ? (x.vid ? { ...songs[x.id], vid: x.vid, ne: 0 } : songs[x.id]) : x; if (s && canEmbed(s) && !tuneCtx.has(bareTitle(s.t))) tuneCtx.set(bareTitle(s.t), s); });
+  };
+  const tuneOf = (title, sentence) => {
+    const k = bareTitle(title);
+    if (tuneCtx.has(k)) return tuneCtx.get(k);
+    const cands = tuneIdx.get(k) ?? [];
+    return cands.find(s => { const z = artists[s.a]?.zh; return z?.length > 1 && sentence.includes(z); }) ?? (tuneLoose && cands.length === 1 ? cands[0] : null);
+  };
+  const NOT_SONG = /(电影|电视剧|连续剧|动画片?|专辑|唱片|合辑|节目|纪录片|杂志|小说|报纸|晚会|大片|影片|新片|周刊)$/;
+  const rich = text => String(text ?? '').split(/(?<=[。！？；])/).map(sent => sent.split(/(《[^《》]{1,40}》)/).map((part, i, all) => {
+    const m = /^《(.+)》$/.exec(part), s = m && !NOT_SONG.test(all[i - 1] ?? '') && tuneOf(m[1], sent);
+    return s ? `<a class="sl" href="${esc(ytUrl(s))}" target="_blank" rel="noopener" data-vid="${s.vid}" title="切到这首歌">${esc(part)}</a>` : esc(part);
+  }).join('')).join('');
   const artImg = (id, cls = '') => `<img class="art ${cls}" src="art/${id}.webp" data-art="${id}" alt="" loading="lazy" width="800" height="800">`;
   const albumCard = b => `<a class="alb" href="#b-${b.id}">${cover(b)}<span><b>${esc(b.t)}</b><small>${esc(artists[b.a]?.zh)} · ${b.y}</small></span></a>`;
   // 年度专辑里没有专辑页的，点开去 YouTube Music 搜
@@ -944,6 +971,7 @@ body.has-dock { padding-bottom: 92px; }
   };
   const musicTab = (v, l) => {
     const y = v[l], yr = v.y, other = l === 'cn' ? 'hktw' : 'cn';
+    setTunes(y.songs, true);
     const bs = heavy((albumsAt[yr] ?? []).filter(b => lineOfArtist(b.a) === l));
     const spare = y.albums.filter(x => !x.id && !bs.some(b => b.t === x.t));
     const shelf = [...bs.map(albumCard), ...spare.filter(x => x.cover).map(x => spareCard(x, yr))];
@@ -954,8 +982,8 @@ body.has-dock { padding-bottom: 92px; }
     return `<div class="frow"><span class="tech">音乐分两条线</span>${Object.entries(LINES).map(([k, n]) => (v[k] ? `<button type="button" class="chip" data-to="${k}" aria-pressed="${k === l}">${n}</button>` : '')).join('')}<a class="more" href="#y${yr}-${l}">整页阅读 →</a></div>
       <section>
         <div class="sec-h"><h2>这一年的音乐</h2><span class="tech">Overview</span></div>
-        <div class="prose two">${y.overview.slice(0, 3).map(p => `<p>${esc(p)}</p>`).join('')}</div>
-        ${y.overview.length > 3 ? `<details class="more-text"><summary>继续读，还有 ${y.overview.length - 3} 段</summary><div class="prose two">${y.overview.slice(3).map(p => `<p>${esc(p)}</p>`).join('')}</div></details>` : ''}
+        <div class="prose two">${y.overview.slice(0, 3).map(p => `<p>${rich(p)}</p>`).join('')}</div>
+        ${y.overview.length > 3 ? `<details class="more-text"><summary>继续读，还有 ${y.overview.length - 3} 段</summary><div class="prose two">${y.overview.slice(3).map(p => `<p>${rich(p)}</p>`).join('')}</div></details>` : ''}
       </section>
       <details class="fold">
         <summary><b>大事记</b><span class="lcdnum">${y.events.length}</span><span class="tech">Events</span><span class="fold-hint"></span></summary>
@@ -994,6 +1022,7 @@ body.has-dock { padding-bottom: 92px; }
     tvTune();
     const v = D.years.find(x => x.y === track), l = nowLine(v), y = v[l], era = D.eras[track];
     const count = (D.culture ?? []).filter(e => e.from <= track && track <= e.to).length;
+    setTunes(y.songs, false);
     document.getElementById('now-say').textContent = `${track} 年：${era.title}`;
     const tabs = [['year', '这一年'], ['music', '音乐'], ...Object.entries(FACETS).filter(([k]) => inFacet(k).length).map(([k, f]) => [k, f.name])];
     box.innerHTML = `
@@ -1001,7 +1030,7 @@ body.has-dock { padding-bottom: 92px; }
         ${artImg(`era-${track}`, 'now-art')}
         <div class="now-copy">
           <p class="now-tag"><span class="lcd">YEAR ${track}</span></p>
-          <h2>${esc(era.title)}</h2><p>${esc(era.lead)}</p>
+          <h2>${esc(era.title)}</h2><p>${rich(era.lead)}</p>
         </div>
         <div class="lcd now-stats">
           <span><b>${count}</b> 件往事</span><span><b>${y.events.length}</b> 条音乐大事</span><span><b>${y.songs.length}</b> 首歌</span>
@@ -1009,6 +1038,7 @@ body.has-dock { padding-bottom: 92px; }
       </div>
       <div class="tabs" role="tablist" aria-label="这一年的切面">${tabs.map(([k, n]) => `<button type="button" role="tab" data-tab="${k}" aria-selected="${k === nowTab}">${n}</button>`).join('')}</div>
       <div class="now-tab">${nowTab === 'year' ? digest(v, l) : nowTab === 'music' ? musicTab(v, l) : facetYear(nowTab, track)}</div>`;
+    followPage();
   };
   // 首页的榜单卡片：列出第一个有歌的奖项，下面放本届连播
   const edMini = (c, e) => {
@@ -1230,7 +1260,7 @@ body.has-dock { padding-bottom: 92px; }
   const eventsHtml = (list, cat) => {
     const shown = cat === '全部' ? list : list.filter(e => e.c === cat);
     const by = group(shown, e => monthOf(e.d));
-    return Object.keys(by).map(Number).sort((a, b) => (a || 99) - (b || 99)).map(m => `<h3 class="mon">${MONTHS[m]}</h3><ul class="events">${by[m].map(e => `<li><time>${esc(String(e.d ?? '').slice(5) || '—')}</time><span><span class="tag">${esc(e.c)}</span> ${esc(e.t)}${srcLink(e.s)}</span></li>`).join('')}</ul>`).join('') || '<p class="prose">这个分类下没有条目。</p>';
+    return Object.keys(by).map(Number).sort((a, b) => (a || 99) - (b || 99)).map(m => `<h3 class="mon">${MONTHS[m]}</h3><ul class="events">${by[m].map(e => `<li><time>${esc(String(e.d ?? '').slice(5) || '—')}</time><span><span class="tag">${esc(e.c)}</span> ${rich(e.t)}${srcLink(e.s)}</span></li>`).join('')}</ul>`).join('') || '<p class="prose">这个分类下没有条目。</p>';
   };
   // 只有一个奖项有歌时，本届连播已经包含它，不重复放按钮
   const groupsHtml = e => {
@@ -1244,12 +1274,13 @@ body.has-dock { padding-bottom: 92px; }
     if (!v[l]) l = v.hktw ? 'hktw' : 'cn';
     const y = v[l], list = yearsOf(l), i = list.findIndex(x => x.y === yr), other = l === 'cn' ? 'hktw' : 'cn';
     const editions = editionsAt(yr, l);
+    setTunes(y.songs, true);
     const cats = ['全部', ...new Set(y.events.map(e => e.c))];
     const jump = [['综述', y.overview.length], ['大事记', y.events.length], ['专辑', y.albums.length], ['歌单', y.songs.length], ['榜单', editions.length], ['日子', nearby(yr, 1).length], ['来源', v.sources.length]].filter(x => x[1]);
     view.innerHTML = `<div class="wrap">
       <header class="page-h year-h">
         <p class="tech" style="margin:0"><a href="#years-${l}">编年史</a> / ${LINES[l]}</p>
-        <div class="year-big">${artImg(`y${yr}-${l}`)}<div><span class="lcdnum">${yr}</span><h1>${esc(y.title)}</h1><p>${esc(y.lead)}</p></div></div>
+        <div class="year-big">${artImg(`y${yr}-${l}`)}<div><span class="lcdnum">${yr}</span><h1>${esc(y.title)}</h1><p>${rich(y.lead)}</p></div></div>
         <div class="frow">
           ${list[i - 1] ? `<a class="pill" href="#y${list[i - 1].y}-${l}">← ${list[i - 1].y}</a>` : ''}
           ${list[i + 1] ? `<a class="pill" href="#y${list[i + 1].y}-${l}">${list[i + 1].y} →</a>` : ''}
@@ -1257,7 +1288,7 @@ body.has-dock { padding-bottom: 92px; }
         </div>
         <div class="jump">${jump.map(([k]) => `<button type="button" class="chip" data-go="sec-${k}">${k}</button>`).join('')}</div>
       </header>
-      ${y.overview.length ? `<section class="sec" id="sec-综述"><div class="sec-h"><h2>年度综述</h2></div><div class="prose">${y.overview.map(p => `<p>${esc(p)}</p>`).join('')}</div></section>` : ''}
+      ${y.overview.length ? `<section class="sec" id="sec-综述"><div class="sec-h"><h2>年度综述</h2></div><div class="prose">${y.overview.map(p => `<p>${rich(p)}</p>`).join('')}</div></section>` : ''}
       <section class="sec" id="sec-大事记"><div class="sec-h"><h2>大事记</h2><span class="tech">${y.events.length} Events</span></div>
         <div class="frow" id="cats">${cats.map(c => `<button type="button" class="chip" data-cat="${esc(c)}" aria-pressed="${c === '全部'}">${esc(c)}</button>`).join('')}</div>
         <div id="evlist">${eventsHtml(y.events, '全部')}</div></section>
@@ -1309,12 +1340,13 @@ body.has-dock { padding-bottom: 92px; }
     if (!a) return notFound();
     const bs = (albumsOf[id] ?? []).slice().sort((x, y) => x.d.localeCompare(y.d));
     const ss = (songsOf[id] ?? []).slice().sort((x, y) => x.y - y.y);
+    setTunes(ss, true);
     view.innerHTML = `<div class="wrap entry">
       <div>
         <div class="entry-h"><p class="tech" style="margin:0"><a href="#artists">歌手库</a> / ${esc(a.region)} / ${esc(a.kind)}</p>
           <h1>${esc(a.zh)}</h1><p class="sub">${esc(a.en)}${a.tw !== a.zh ? ` · ${esc(a.tw)}` : ''}</p>
           <div class="tags">${(a.tags ?? []).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div></div>
-        <div class="prose" style="margin-top:16px">${(a.blurb ?? '').split('\n').map(p => `<p>${esc(p)}</p>`).join('')}</div>
+        <div class="prose" style="margin-top:16px">${(a.blurb ?? '').split('\n').map(p => `<p>${rich(p)}</p>`).join('')}</div>
         ${bs.length ? `<section class="sec"><div class="sec-h"><h2>千禧年间的专辑</h2><span class="tech">${bs.length} Albums</span></div><div class="albums">${bs.map(albumCard).join('')}</div></section>` : ''}
         ${ss.length ? `<section class="sec"><div class="sec-h"><h2>代表歌曲</h2><span class="tech">${ss.length} Songs</span></div>${playAll(ss)}${tuneList(ss)}</section>` : ''}
       </div>
@@ -1474,12 +1506,13 @@ body.has-dock { padding-bottom: 92px; }
   const topicPage = id => {
     const t = D.topics.find(x => x.id === id);
     if (!t) return notFound();
+    setTunes(t.songs, true);
     view.innerHTML = `<div class="wrap">
-      <header class="page-h"><p class="tech" style="margin:0"><a href="#topics">专题</a> / ${esc(t.kicker ?? '')} / ${trackName[t.track] ?? ''}</p><div class="year-big">${artImg(`t-${t.id}`)}<div><h1>${esc(t.title)}</h1><p>${esc(t.summary)}</p></div></div>
+      <header class="page-h"><p class="tech" style="margin:0"><a href="#topics">专题</a> / ${esc(t.kicker ?? '')} / ${trackName[t.track] ?? ''}</p><div class="year-big">${artImg(`t-${t.id}`)}<div><h1>${esc(t.title)}</h1><p>${rich(t.summary)}</p></div></div>
         <div class="jump">${t.body.filter(s => s.h).map((s, i) => `<button type="button" class="chip" data-go="s${i}">${esc(s.h)}</button>`).join('')}${t.songs.length ? '<button type="button" class="chip" data-go="sec-songs">歌单</button>' : ''}</div></header>
-      <div class="prose">${t.body.map((s, i) => `${s.h ? `<h2 class="sub" id="s${i}">${esc(s.h)}</h2>` : ''}${(s.p ?? []).map(p => `<p>${esc(p)}</p>`).join('')}`).join('')}</div>
-      ${t.timeline.length ? `<section class="sec"><div class="sec-h"><h2>时间线</h2></div><ul class="events">${t.timeline.map(e => `<li><time>${esc(String(e.d ?? '').slice(0, 7))}</time><span>${esc(e.text)}${srcLink(e.src)}</span></li>`).join('')}</ul></section>` : ''}
-      ${t.people.length ? `<section class="sec"><div class="sec-h"><h2>关键人物</h2></div><div class="cards">${t.people.map(p => `<article class="card"><span class="tech">${esc(p.role ?? '')}</span><h3>${esc(p.name)}</h3><p>${esc(p.text ?? '')}</p></article>`).join('')}</div></section>` : ''}
+      <div class="prose">${t.body.map((s, i) => `${s.h ? `<h2 class="sub" id="s${i}">${esc(s.h)}</h2>` : ''}${(s.p ?? []).map(p => `<p>${rich(p)}</p>`).join('')}`).join('')}</div>
+      ${t.timeline.length ? `<section class="sec"><div class="sec-h"><h2>时间线</h2></div><ul class="events">${t.timeline.map(e => `<li><time>${esc(String(e.d ?? '').slice(0, 7))}</time><span>${rich(e.text)}${srcLink(e.src)}</span></li>`).join('')}</ul></section>` : ''}
+      ${t.people.length ? `<section class="sec"><div class="sec-h"><h2>关键人物</h2></div><div class="cards">${t.people.map(p => `<article class="card"><span class="tech">${esc(p.role ?? '')}</span><h3>${esc(p.name)}</h3><p>${rich(p.text ?? '')}</p></article>`).join('')}</div></section>` : ''}
       ${t.songs.length ? `<section class="sec" id="sec-songs"><div class="sec-h"><h2>听这些歌</h2><span class="tech">${t.songs.length} Songs</span></div>${topicSongs(t)}</section>` : ''}
       ${t.sources.length ? `<section class="sec"><div class="sec-h"><h2>资料来源</h2></div><ul class="prose">${t.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}</ul></section>` : ''}
     </div>`;
@@ -1509,7 +1542,7 @@ body.has-dock { padding-bottom: 92px; }
   // 专栏一览：目录式排版，不用卡片
   const colIndex = list => `<ol class="cols">${list.map((c, i) => `<li><a href="#col-${c.id}"><img class="col-c" src="art/col-${c.id}.webp" alt="" loading="lazy" width="800" height="600" data-art="col-${c.id}"><span class="col-b"><span class="tech">${String(i + 1).padStart(2, '0')} · ${esc(c.kicker ?? '')} · ${span(c)}</span><b>${esc(c.title)}</b><small>${esc(c.summary)}</small><span class="col-m lcdnum">${fmt(c.words)} 字${c.media.length ? ` · ${c.media.length} 段影像` : ''}${c.photos.length ? ` · ${c.photos.length} 张照片` : ''}${c.songs.length ? ` · ${c.songs.length} 首歌` : ''}</span></span></a></li>`).join('')}</ol>`;
   const entryIndex = list => { const by = group(list, e => e.cat); return `<div class="ent-idx">${Object.keys(by).map(c => `<section><h3>${esc(c)}</h3><ul>${by[c].map(e => `<li><a href="#e-${e.id}">${esc(e.name)}</a><small class="lcdnum">${span(e)}</small></li>`).join('')}</ul></section>`).join('')}</div>`; };
-  const eventRow = e => `<li><time>${esc(String(e.d ?? '').slice(5) || '—')}</time><span><span class="tag">${esc(e.c)}</span> ${esc(e.t)}${srcLink(e.s)}</span></li>`;
+  const eventRow = e => `<li><time>${esc(String(e.d ?? '').slice(5) || '—')}</time><span><span class="tag">${esc(e.c)}</span> ${rich(e.t)}${srcLink(e.s)}</span></li>`;
   const chronicle = list => { const by = group(list, e => String(e.d).slice(0, 4)); return Object.keys(by).sort().map(y => `<h3 class="year-h">${y}</h3><ul class="events">${by[y].map(eventRow).join('')}</ul>`).join('') || '<p class="prose">这一格没有大事。</p>'; };
   // 首页年份面板里的切面标签：这一年的专栏、大事记和词条
   const facetYear = (k, y) => {
@@ -1529,6 +1562,7 @@ body.has-dock { padding-bottom: 92px; }
     view.innerHTML = `<header class="wrap page-h"><h1 data-en="${f.en}">${f.name}</h1><p>${esc(f.lede)}</p></header>
       <div class="wrap"><div class="tabs" role="tablist" aria-label="${f.name}">${tabs.map(([t, n, c]) => `<button type="button" role="tab" data-ft="${t}">${n}<small class="lcdnum"> ${c}</small></button>`).join('')}</div></div>
       <div class="wrap f-body" id="f-body"></div>`;
+    setTunes([], false);
     const chips = (name, list, cur) => list.map(x => `<button type="button" class="chip" data-${name}="${esc(x)}" aria-pressed="${String(x) === String(cur)}">${esc(x)}</button>`).join('');
     const paint = () => {
       view.querySelectorAll('[data-ft]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.ft === fFilter.tab)));
@@ -1558,12 +1592,13 @@ body.has-dock { padding-bottom: 92px; }
     const c = (D.columns ?? []).find(x => x.id === id);
     if (!c) return notFound();
     const f = FACETS[c.facet], sibs = columnsOf(c.facet), i = sibs.indexOf(c), list = c.songs.map(s => songs[s]).filter(Boolean), ents = c.entries.map(id => (D.culture ?? []).find(e => e.id === id)).filter(Boolean);
+    setTunes(list, false);
     view.innerHTML = `<div class="wrap col-page">
       <header class="page-h col-h"><p class="tech" style="margin:0"><a href="#f-${c.facet}">${f.name}</a> / ${esc(c.kicker ?? '')}</p>
         <div class="col-top"><img class="col-c" src="art/col-${c.id}.webp" alt="" width="800" height="600" data-art="col-${c.id}"><div><h1>${esc(c.title)}</h1><p>${esc(c.summary)}</p><p class="lcdnum ent-y">${span(c)} · ${fmt(c.words)} 字</p>${list.length ? playAll(list, '边听边读') : '<button type="button" class="play" data-bgm>边听边读</button>'}</div></div>
         <div class="jump">${c.body.filter(s => s.h).map((s, n) => `<button type="button" class="chip" data-go="s${n}">${esc(s.h)}</button>`).join('')}</div></header>
-      <div class="prose col-text">${c.body.map((s, n) => `${s.h ? `<h2 class="sub" id="s${n}">${esc(s.h)}</h2>` : ''}${s.p.map(p => `<p>${esc(p)}</p>`).join('')}${c.photos.filter(p => p.at === n).map(photoFig).join('')}${c.media.filter(m => m.at === n).map(mediaFig).join('')}`).join('')}</div>
-      ${c.timeline.length ? `<section class="sec"><div class="sec-h"><h2>时间线</h2></div><ul class="events">${c.timeline.map(e => `<li><time>${esc(String(e.d ?? '').slice(0, 7))}</time><span>${esc(e.text)}${srcLink(e.src)}</span></li>`).join('')}</ul></section>` : ''}
+      <div class="prose col-text">${c.body.map((s, n) => `${s.h ? `<h2 class="sub" id="s${n}">${esc(s.h)}</h2>` : ''}${s.p.map(p => `<p>${rich(p)}</p>`).join('')}${c.photos.filter(p => p.at === n).map(photoFig).join('')}${c.media.filter(m => m.at === n).map(mediaFig).join('')}`).join('')}</div>
+      ${c.timeline.length ? `<section class="sec"><div class="sec-h"><h2>时间线</h2></div><ul class="events">${c.timeline.map(e => `<li><time>${esc(String(e.d ?? '').slice(0, 7))}</time><span>${rich(e.text)}${srcLink(e.src)}</span></li>`).join('')}</ul></section>` : ''}
       ${list.length ? `<section class="sec"><div class="sec-h"><h2>听这些歌</h2><span class="tech">${list.length} Songs</span></div>${playAll(list)}${tuneList(list)}</section>` : ''}
       ${ents.length ? `<section class="sec"><div class="sec-h"><h2>相关词条</h2></div>${entryIndex(ents)}</section>` : ''}
       ${c.sources.length ? `<section class="sec"><div class="sec-h"><h2>资料来源</h2></div><ul class="prose">${c.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}</ul></section>` : ''}
@@ -1576,10 +1611,11 @@ body.has-dock { padding-bottom: 92px; }
     const e = (D.culture ?? []).find(x => x.id === id);
     if (!e) return notFound();
     const k = facetOf(e), list = (e.songs ?? []).map(s => songs[s]).filter(Boolean);
+    setTunes(list, false);
     const near = nearby(e.peak, 40).filter(x => x !== e && facetOf(x) !== k).slice(0, 8);
     view.innerHTML = `<div class="wrap"><header class="page-h ent-h"><p class="tech" style="margin:0"><a href="#f-${k}">${FACETS[k]?.name ?? ''}</a> / ${esc(e.cat)}</p>
         <h1>${esc(e.name)}</h1><p class="lcdnum ent-y">${span(e)}</p></header>
-      <div class="prose"><p>${esc(e.text)}</p>${e.scene ? `<p class="ent-scene">${esc(e.scene)}</p>` : ''}</div>
+      <div class="prose"><p>${rich(e.text)}</p>${e.scene ? `<p class="ent-scene">${rich(e.scene)}</p>` : ''}</div>
       ${(D.columns ?? []).some(c => c.entries.includes(e.id)) ? `<section class="sec"><div class="sec-h"><h2>读专栏</h2></div>${colIndex(D.columns.filter(c => c.entries.includes(e.id)))}</section>` : ''}
       ${list.length ? `<section class="sec"><div class="sec-h"><h2>相关的歌</h2><span class="tech">${list.length} Songs</span></div>${playAll(list)}${tuneList(list)}</section>` : ''}
       ${near.length ? `<section class="sec"><div class="sec-h"><h2>同一时候还有</h2></div><div class="ent-grid">${near.map(entryCard).join('')}</div></section>` : ''}
@@ -1706,7 +1742,7 @@ body.has-dock { padding-bottom: 92px; }
     else toast('列表放完了。');
   };
   const onState = e => {
-    if (e.data === YT.PlayerState.PLAYING) { P.skips = 0; P.held = false; }
+    if (e.data === YT.PlayerState.PLAYING) { P.skips = 0; P.held = false; P.boot = false; }
     if (e.data === YT.PlayerState.ENDED) next();
   };
   const onError = e => {
@@ -1733,7 +1769,7 @@ body.has-dock { padding-bottom: 92px; }
       events: {
         onReady: e => { if (nowSong()?.vid !== vid) e.target.loadVideoById(nowSong().vid); else e.target.playVideo(); },
         onStateChange: onState, onError,
-        onAutoplayBlocked: () => toast('浏览器拦下了自动播放，按一下播放键就好。'),
+        onAutoplayBlocked: () => toast(P.boot ? '浏览器不让网页一打开就出声，点一下页面，这首歌就开始放。' : '浏览器拦下了自动播放，按一下播放键就好。'),
       },
     });
   };
@@ -1754,6 +1790,14 @@ body.has-dock { padding-bottom: 92px; }
     if (a.dataset.all !== undefined) return playList([...byVid.values()], 0, 'shuffle');
     if (a.dataset.vids) return playList(a.dataset.vids.split(',').map(v => byVid.get(v)), 0, a.dataset.mode);
     if (!dock.hidden && nowSong()?.vid === a.dataset.vid) return $('dk-play').click();
+    if (a.classList.contains('sl')) {
+      const s = byVid.get(a.dataset.vid), at = P.queue.findIndex(x => x.vid === s.vid);
+      if (P.bgm) { P.bgm = false; P.repeat = false; $('dk-repeat').setAttribute('aria-pressed', 'false'); return playList([s], 0); }
+      if (dock.hidden) return playList([s], 0);
+      if (at >= 0) return playAt(at);
+      P.queue.splice(P.pos + 1, 0, s);
+      return playAt(P.pos + 1);
+    }
     const box = a.closest('ul, ol');
     const links = box ? [...box.querySelectorAll('a[data-vid]')] : [a];
     const list = [...new Set(links.map(x => x.dataset.vid))].map(v => byVid.get(v));
@@ -1793,9 +1837,62 @@ body.has-dock { padding-bottom: 92px; }
     else if (bili) {
       if (dock.classList.contains('spin')) $('dk-play').click();
       bili.outerHTML = `<div class="md-frame"><iframe src="https://player.bilibili.com/player.html?bvid=${esc(bili.dataset.bili)}&autoplay=1&danmaku=0&high_quality=1" title="哔哩哔哩播放器" allowfullscreen referrerpolicy="no-referrer"></iframe></div>`;
-    } else if (bgm) { P.repeat = true; $('dk-repeat').setAttribute('aria-pressed', 'true'); playList([BGM], 0); }
+    } else if (bgm) playBgm();
   });
+  const playBgm = () => { P.bgm = true; P.repeat = true; $('dk-repeat').setAttribute('aria-pressed', 'true'); playList([BGM], 0); };
+  const keep = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch {} return null; };
+  // 歌随页面换：年份、专题和专栏页把播放列表换成这一页的歌，用户可以关掉
+  const pageSongs = () => {
+    const h = (location.hash || '#home').slice(1), year = /^y(\d{4})(?:-(hktw|cn))?$/.exec(h);
+    if (h === 'home' || h === '') { const v = D.years.find(x => x.y === track), l = nowLine(v); return [`y${track}-${l}`, v[l].songs, `${track} 年`]; }
+    if (year) { const v = D.years.find(x => x.y === +year[1]), l = year[2] ?? 'hktw'; return v?.[l] ? [`y${v.y}-${l}`, v[l].songs, `${v.y} 年`] : null; }
+    if (h.startsWith('t-')) { const t = D.topics.find(x => x.id === h.slice(2)); return t ? [h, t.songs, `《${t.title}》`] : null; }
+    if (h.startsWith('col-')) { const c = (D.columns ?? []).find(x => x.id === h.slice(4)); return c ? [h, c.songs.map(id => songs[id]).filter(Boolean), `《${c.title}》`] : null; }
+    return null;
+  };
+  const followPage = () => {
+    const page = pageSongs();
+    if (!page) return;
+    const [key, list, name] = page, same = P.pageKey === key;
+    P.pageKey = key;
+    if (same || !P.follow || dock.hidden) return;
+    const fresh = vidsOf(list).map(v => byVid.get(v)).filter(s => s && !bad.has(s.vid));
+    if (!fresh.length) return;
+    if (P.bgm) { P.bgm = false; P.repeat = false; $('dk-repeat').setAttribute('aria-pressed', 'false'); }
+    P.boot = false;
+    const cur = nowSong(), at = fresh.findIndex(s => s.vid === cur?.vid);
+    P.base = fresh;
+    // 正在放的歌也在新列表里就不打断，暂停时只换列表，等用户按播放
+    if (at >= 0) { P.queue = P.shuffle ? [fresh[at], ...sample(fresh.filter((_, i) => i !== at), fresh.length)] : fresh; P.pos = P.shuffle ? 0 : at; paint(); }
+    else if (P.held) { P.queue = P.shuffle ? sample(fresh, fresh.length) : fresh; P.pos = 0; paint(); P.yt?.cueVideoById?.(nowSong().vid); }
+    else playList(fresh, 0, P.shuffle ? 'shuffle' : undefined);
+    if (!P.followTold) { P.followTold = true; toast(`已换成${esc(name)}的 ${fresh.length} 首歌。不想跟着换，点控制条上的“随页换歌”。`); }
+  };
+  P.follow = keep('follow') !== '0';
+  $('dk-follow').setAttribute('aria-pressed', String(P.follow));
+  $('dk-follow').addEventListener('click', e => {
+    P.follow = !P.follow;
+    keep('follow', P.follow ? '1' : '0');
+    e.currentTarget.setAttribute('aria-pressed', String(P.follow));
+    toast(P.follow ? '翻到年份和专题时，歌会换成这一页的。' : '换页时不再换歌，现在的列表接着放。');
+    if (P.follow) { P.pageKey = null; followPage(); }
+  });
+  // 首页第一次打开放背景音乐。浏览器不让无声以外的自动播放时，等用户第一次点击或按键
+  const bootBgm = () => {
+    if (!['', '#home'].includes(location.hash) || keep('bgm-off') === '1') return;
+    P.boot = true;
+    playBgm();
+    const kick = () => {
+      removeEventListener('pointerdown', kick, true);
+      removeEventListener('keydown', kick, true);
+      if (P.boot && nowSong() === BGM) P.yt?.playVideo?.();
+    };
+    addEventListener('pointerdown', kick, true);
+    addEventListener('keydown', kick, true);
+  };
   $('dk-close').addEventListener('click', () => {
+    if (nowSong() === BGM) keep('bgm-off', '1');
+    P.boot = false;
     P.yt?.stopVideo?.();
     dock.hidden = true;
     P.adTv = false;
@@ -1919,9 +2016,11 @@ body.has-dock { padding-bottom: 92px; }
     $('subnav').hidden = !inMusic;
     document.querySelectorAll('#subnav a').forEach(a => (a.getAttribute('href') === `#${nav}` ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
     window.scrollTo({ top: 0, behavior: 'instant' });
+    followPage();
   };
   addEventListener('hashchange', route);
   route();
+  bootBgm();
 })();
 </script>
 </body>
