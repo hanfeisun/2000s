@@ -432,6 +432,26 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .b88.gel { background: linear-gradient(180deg, #7cc4ff, #2b89ee 48%, #0f62d8 52%, #39a2ff); color: #fff; }
 .b88.ink { background: #0c1328; color: #e9eefb; flex-direction: column; gap: 3px; font-size: 6.6px; }
 .b88.ink b { font-size: 6.6px; opacity: .7; }
+/* 投币支持：游戏厅的投币口，下面是赞赏码和咖啡链接 */
+.coin-panel { display: flex; align-items: center; gap: 16px; max-width: 520px; margin: 6px 0 22px; padding: 16px; border-radius: 16px; background: var(--steel); box-shadow: inset 0 1px 0 var(--gloss), 0 0 0 1px var(--line), 0 10px 24px var(--shadow); }
+.coin-lcd { flex: 1; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 22px; }
+.coin-lcd b { font-weight: 400; animation: coin-blink 1.2s steps(2, start) infinite; }
+.coin-lcd span { font-size: 13px; opacity: .75; }
+@keyframes coin-blink { to { visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .coin-lcd b { animation: none; } }
+.coin-slot { position: relative; flex: none; width: 46px; height: 64px; border-radius: 10px; background: linear-gradient(180deg, #3a4256, #1b2030); box-shadow: inset 0 2px 4px rgba(0, 0, 0, .6), 0 1px 0 var(--gloss); }
+.coin-slot::before { content: ""; position: absolute; left: 50%; top: 12px; bottom: 12px; width: 6px; margin-left: -3px; border-radius: 3px; background: #05070c; box-shadow: 0 0 0 2px #c9a227; }
+.coin-ways { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 22px; }
+.coin-code { display: flex; flex-direction: column; align-items: center; width: 260px; margin: 0; padding: 0 0 14px; border-radius: 14px; overflow: hidden; background: var(--solid); box-shadow: 0 0 0 1px var(--line), 0 8px 20px var(--shadow); text-align: center; }
+.coin-code figcaption { align-self: stretch; padding: 8px; color: #fff; font-weight: 700; letter-spacing: .12em; background: linear-gradient(180deg, #2bd47d, #07a854); }
+.coin-code img { width: 220px; height: 220px; margin: 14px auto 8px; padding: 6px; border-radius: 8px; background: #fff; object-fit: contain; }
+.coin-code small { padding: 0 14px; color: var(--mute); font-size: 12px; line-height: 1.5; }
+.coin-coffee { justify-content: center; gap: 6px; min-height: 120px; padding: 18px 14px; color: #1d1d1d; text-decoration: none; background: linear-gradient(180deg, #ffe066, #ffdd00 50%, #f5c400); }
+.coin-coffee b { font-size: 19px; }
+.coin-coffee small { color: #4a3d00; }
+.coin-cup { font-size: 34px; line-height: 1; }
+.coin-coffee:hover { filter: brightness(1.05); }
+
 /* 老式访客计数器：一格一个数字，中间一道接缝像翻牌计数器 */
 .foot-site { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 0 0 6px; font-size: 14px; color: var(--ink); }
 .odo { display: inline-flex; gap: 2px; padding: 3px; border-radius: 4px; background: #1a1a1a; box-shadow: inset 0 1px 2px rgba(0, 0, 0, .6), 0 0 0 1px rgba(10, 20, 44, .34), 0 1px 0 var(--gloss); }
@@ -805,7 +825,7 @@ body.has-dock { padding-bottom: 92px; }
   </div>
   <p class="foot-site" id="foot-site" hidden>欢迎光临！你是本站第 <span class="odo lcdnum" id="site-uv"></span> 位访客</p>
   <p class="foot-count">这台电脑来过 <b class="lcdnum" id="visits">1</b> 次<span id="foot-pv" hidden>，本站累计被翻开 <b class="lcdnum" id="site-pv"></b> 次</span>。本站建议以 1024×768 分辨率、真彩色浏览。</p>
-  <p>千禧时光机，非官方年代资料站。音乐版权归原权利人所有，歌曲由 YouTube 官方播放器播放。<a href="#about">资料来源</a></p>
+  <p>千禧时光机，非官方年代资料站。音乐版权归原权利人所有，歌曲由 YouTube 官方播放器播放。<a href="#about">资料来源</a><span id="foot-donate" hidden> · <a href="#donate">投币支持</a></span></p>
 </div></footer>
 <div class="dream" id="dream" hidden></div>
 <div class="toast" id="toast" role="status" hidden></div>
@@ -848,7 +868,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=a2f61432ea"></script>
+<script src="data.js?v=535493aafa"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -1720,6 +1740,7 @@ body.has-dock { padding-bottom: 92px; }
         <p><b>奖项：</b>金曲奖名单整理自维基百科各届条目。</p>
         <p><b>专栏的图片和影像：</b>专栏封面多数取自当年的新闻照片、节目和视频截图、杂志和实物照片，少数由本站绘制；文中照片来自维基共享资源。每张图都在文末注明出处，版权归原权利人。文中的影像是 YouTube 和哔哩哔哩上公开的视频，由官方播放器嵌入，不存放在站内，其中一部分是网友上传的老节目录屏，版权归原权利人。边听边读的背景音乐是陈越龙的《Nop (Lofi Version)》和《午后的梦》，不属于年代歌单。</p>
         <p><b>访问统计：</b>页脚的访客数由不蒜子计数，从 2026 年 11 月开始算；同一个人换了浏览器或清了缓存，会被当成新访客。${GA_ID ? '本站还用 Google Analytics 统计常看的页面、点播的歌和搜索词，用来决定接下来补什么内容。' : ''}这些统计都不收集姓名、手机号这类个人信息。</p>
+        ${donateOn ? `<p><b>投币支持：</b>喜欢这个站的话，可以<a href="#donate">投个币</a>，帮我把网站和接下来的小游戏做得更好。</p>` : ''}
         <p><b>选题线索：</b>2008 到 2012 年的部分内娱选题，线索来自播客《过刊》的《内娱过往》系列。事实都另行查证，文字由本站撰写，不含节目内容。</p>
         <p><b>专栏和词条：</b>${fmt((D.columns ?? []).length)} 篇专栏和 ${fmt(D.culture.length)} 条词条取自网上公开资料，每篇每条都列了来源。不少条目只有一两个来源，“场景”写的是报道和回忆里的日常细节，不代表每个地方都一样。说法不一的数字会写出范围或两种说法。</p>
         <p><b>已知局限：</b>iTunes 上缺货的专辑没有封面，用色块代替。曲目来自流媒体版本，可能与原版 CD 有出入。年份以首发为准。约三分之一的链接来自非官方上传，经过规则过滤和抽查，但仍可能有少量挂错版本。部分年份的台湾当年报道和销量数据没有查到，个别事件只有单一来源，每条大事都标了来源，可以点开核对。站内连播不限首数，遇到禁止嵌入的视频会自动跳过；YouTube 可能在歌曲前插片头广告，本站没有收入，也不能去掉；跳去 YouTube 的临时歌单一次最多 50 首。手机浏览器切到后台时可能暂停。</p>
@@ -1765,6 +1786,26 @@ body.has-dock { padding-bottom: 92px; }
       .catch(() => { const box = $('fb-list'); if (box) box.innerHTML = '<p class="credit">暂时读不到留言，可能是网络原因，稍后再试。</p>'; });
   };
 
+  /* 投币支持：微信赞赏码放在 src/donate/，填上文件名和 Buy Me a Coffee 的链接后，页脚和关于页才会出现入口 */
+  const DONATE = { wechat: '', coffee: '' };
+  const donateOn = Boolean(DONATE.wechat || DONATE.coffee);
+  const donateView = () => {
+    const wx = /MicroMessenger/i.test(navigator.userAgent);
+    const how = wx ? '长按图片识别' : PHONE ? '截图保存，在微信“扫一扫”里从相册识别' : '用手机微信扫一扫';
+    view.innerHTML = `<div class="wrap">
+      <header class="page-h"><h1 data-en="Insert Coin">投币支持</h1><p>千禧时光机是一个人业余做的，不放广告，也不收费。如果它让你想起了什么，可以投个币，帮我把网站和接下来的小游戏做得更好。</p></header>
+      <div class="coin-panel" aria-hidden="true"><div class="lcd coin-lcd"><b>INSERT COIN</b><span>CREDIT 00</span></div><i class="coin-slot"></i></div>
+      <div class="coin-ways">
+        ${DONATE.wechat ? `<figure class="coin-code"><figcaption>微信赞赏</figcaption><img src="donate/${esc(DONATE.wechat)}" alt="微信赞赏码" width="220" height="220"><small>${how}</small></figure>` : ''}
+        ${DONATE.coffee ? `<a class="coin-code coin-coffee" href="${esc(DONATE.coffee)}" target="_blank" rel="noopener"><span class="coin-cup" aria-hidden="true">☕</span><b>Buy Me a Coffee</b><small>海外访客用银行卡或 PayPal</small></a>` : ''}
+      </div>
+      <div class="prose">
+        <p>多少都行。五毛钱是当年一包辣条，十块钱是网吧一次包夜。</p>
+        <p><b>钱会用在：</b>买查资料用的旧杂志、旧报纸和老碟，做接下来的小游戏，以后换独立域名和服务器。</p>
+        <p class="credit">完全自愿，不投币也能看全部内容。这是个人项目，不开发票，也没有会员特权。</p>
+      </div>
+    </div>`;
+  };
   const notFound = () => { view.innerHTML = `<div class="wrap page-h"><h1 data-en="Not Found">这里什么都没有</h1><p>这扇门后面只有下午的太阳。你可以再待一会儿，或者<a href="#home">回到首页</a>。</p></div>`; };
 
   /* 全站搜索：只搜专栏和词条，找歌用点歌台，找剧用荧屏的剧集栏 */
@@ -2083,6 +2124,7 @@ body.has-dock { padding-bottom: 92px; }
     localStorage.setItem('visits', n);
     $('visits').textContent = n;
   } catch {}
+  $('foot-donate').hidden = !donateOn;
   // 页脚的全站访客计数，数字来自不蒜子（国内不挂代理也能访问），连不上就只留本机次数。
   // 不蒜子按 Referer 计数，GitHub Pages 默认只发域名，所以这一个请求要求带完整地址
   {
@@ -2163,6 +2205,7 @@ body.has-dock { padding-bottom: 92px; }
     else if (h.startsWith('e-')) { entryPage(h.slice(2)); const e = (D.culture ?? []).find(x => x.id === h.slice(2)); if (e) nav = `f-${facetOf(e)}`; }
     else if (h === 'makers') { makersView(); nav = 'makers'; }
     else if (h === 'about') { aboutView(); nav = 'about'; }
+    else if (h === 'donate' && donateOn) { donateView(); nav = 'about'; }
     else if (h.startsWith('a-')) { artistPage(h.slice(2)); nav = 'artists'; }
     else if (h.startsWith('b-')) { albumPage(h.slice(2)); nav = 'albums'; }
     else if (h.startsWith('c-')) { chartPage(h.slice(2)); nav = 'charts'; }
