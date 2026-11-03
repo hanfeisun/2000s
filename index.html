@@ -485,6 +485,21 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .ent-idx a { color: var(--ink); text-decoration: none; }
 .ent-idx a:hover { color: var(--accent); text-decoration: underline; }
 .ent-idx small { flex: none; font-size: 11.5px; color: var(--mute); }
+/* 剧集年表 */
+.drs { list-style: none; margin: 0 0 18px; padding: 0; max-width: 46rem; }
+.dr { padding: 14px 0 12px; border-bottom: 1px solid var(--hair); scroll-margin-top: 90px; }
+.dr.hit { background: var(--well); box-shadow: -10px 0 0 var(--well), 10px 0 0 var(--well); }
+.dr-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 8px; }
+.dr-h b { font-size: 17px; margin-right: 2px; }
+.dr-e { font-size: 13px; color: var(--mute); }
+.dr-m { margin: 4px 0 0; font-size: 13.5px; line-height: 1.6; color: var(--mute); }
+.dr-n { margin: 6px 0 0; line-height: 1.75; }
+.dr-s { margin: 6px 0 0; font-size: 14px; line-height: 1.7; }
+.dr-s small { margin-left: 4px; color: var(--mute); }
+.dr-s .dot { color: var(--mute); }
+.dr-chips { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0; max-width: 46rem; line-height: 1.7; }
+.dr-chips small { margin-left: 4px; font-size: 11.5px; color: var(--mute); }
+.year-h small { font-size: 14px; color: var(--mute); }
 .year-h { font: 400 30px/1.1 var(--f-lcd); margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); max-width: 46rem; }
 /* 文中提到的歌：点一下切到这首 */
 .sl { color: inherit; text-decoration: underline dotted var(--accent); text-underline-offset: 3px; }
@@ -753,7 +768,7 @@ body.has-dock { padding-bottom: 92px; }
       <a href="#home">首页</a><a href="#music">音乐</a><a href="#f-screen">荧屏</a><a href="#f-net">网络</a><a href="#f-school">校园</a><a href="#f-life">生活</a><a href="#f-world">社会</a><a href="#f-sport">体育</a><a href="#f-sub">亚文化</a><a href="#about">关于</a>
     </nav>
     <div class="search" role="search">
-      <input id="q" type="search" placeholder="搜专栏、专题、词条" aria-label="搜索全站" autocomplete="off">
+      <input id="q" type="search" placeholder="搜专栏、剧集、词条" aria-label="搜索全站" autocomplete="off">
       <div class="results" id="results" hidden></div>
     </div>
     <button type="button" class="hold" id="theme" aria-label="切换午夜模式" aria-pressed="false"><span>Night</span><i></i></button>
@@ -814,7 +829,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=5c26d83682"></script>
+<script src="data.js?v=fba096919f"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -1548,18 +1563,31 @@ body.has-dock { padding-bottom: 92px; }
   // 首页年份面板里的切面标签：这一年的专栏、大事记和词条
   const facetYear = (k, y) => {
     const cols = columnsOf(k).filter(c => c.from <= y && y <= c.to), ev = eventsOf(k).filter(e => String(e.d).startsWith(String(y))), list = inFacet(k, y);
-    return `${cols.length ? `<section><div class="sec-h"><h2>这一年的专栏</h2><a class="more" href="#f-${k}">全部专栏</a></div>${colIndex(cols)}</section>` : ''}
+    const tv = k === 'screen' ? (D.dramas ?? []).filter(d => d.y === y) : [];
+    return `${tv.length ? `<section><div class="sec-h"><h2>这一年的电视剧</h2><a class="more" href="#tv-${y}">全部 ${tv.length} 部</a></div><p class="dr-chips">${tv.map(d => `<a href="#tv-${y}-${d.id}">${esc(d.title)}<small>${esc(d.region)}</small></a>`).join('')}</p></section>` : ''}${cols.length ? `<section><div class="sec-h"><h2>这一年的专栏</h2><a class="more" href="#f-${k}">全部专栏</a></div>${colIndex(cols)}</section>` : ''}
       ${ev.length ? `<section><div class="sec-h"><h2>大事记</h2><span class="tech">${ev.length} Events</span></div>${eventsHtml(ev, '全部')}</section>` : ''}
       ${list.length ? `<section><div class="sec-h"><h2>词条</h2><span class="tech">${list.length} Entries</span></div>${entryIndex(list)}</section>` : `<p class="prose">这一年的${FACETS[k].name}还没有收录内容。</p>`}`;
   };
   const dayBlock = () => ((D.days ?? []).length ? `<section class="wrap sec" id="k-days"><div class="sec-h"><h2>千禧年的一天</h2><span class="tech">A Day in the Life</span></div><p class="credit">根据当时的规定、调查和报道整理的典型情况，各地差别很大。</p><div class="days">${D.days.map(d => `<article class="day"><h3>${esc(d.who)}</h3><p class="tech">${esc(d.when)}</p><ol>${d.steps.map(s => `<li><time class="lcdnum">${esc(s.t)}</time><span>${s.ref && D.culture.some(e => e.id === s.ref) ? `<a href="#e-${esc(s.ref)}">${esc(s.text)}</a>` : esc(s.text)}${srcLink(s.src)}</span></li>`).join('')}</ol></article>`).join('')}</div></section>` : '');
-  const fFilter = { tab: 'cols', c: '全部', y: '全部' };
-  const facetView = k => {
+  // 剧集年表：一行一部剧，主题曲能直接点播
+  const dramaSong = x => {
+    const s = x.id && songs[x.id];
+    if (!s) return x.t ? `${esc(x.role ?? '')}《${esc(x.t)}》<small>${esc(x.a ?? '')}</small>` : '';
+    const name = canEmbed(s) ? `<a class="sl" href="${esc(ytUrl(s))}" target="_blank" rel="noopener" data-vid="${s.vid}" title="切到这首歌">《${esc(s.t)}》</a>` : `《${esc(s.t)}》`;
+    return `${esc(x.role ?? '')}${name}<small>${creditOf(s)}</small>`;
+  };
+  const dramaRow = d => `<li class="dr" id="dr-${d.id}"><div class="dr-h"><b>${esc(d.title)}</b><span class="tag">${esc(d.region)}</span>${d.genre ? `<span class="tag">${esc(d.genre)}</span>` : ''}${d.eps ? `<span class="lcdnum dr-e">${d.eps} 集</span>` : ''}</div>
+    <p class="dr-m">${esc(d.air ?? '')}${d.cn ? `；${esc(d.cn)}` : ''}${d.cast.length ? `<br>主演：${esc(d.cast.join('、'))}` : ''}</p>
+    ${d.note ? `<p class="dr-n">${esc(d.note)}</p>` : ''}${d.songs.length ? `<p class="dr-s">${d.songs.map(dramaSong).filter(Boolean).join('<span class="dot"> · </span>')}</p>` : ''}</li>`;
+  const dramaList = list => { const by = group(list, d => d.y); return Object.keys(by).sort().map(y => `<h3 class="year-h">${y}<small class="lcdnum"> ${by[y].length} 部</small></h3><ol class="drs">${by[y].map(dramaRow).join('')}</ol>`).join('') || '<p class="prose">这一格没有收录剧集。</p>'; };
+  const dramaSongs = y => (D.dramas ?? []).filter(d => !y || d.y === y).flatMap(d => d.songs.map(x => x.id && songs[x.id]).filter(Boolean));
+  const fFilter = { tab: 'cols', c: '全部', y: '全部', r: '全部' };
+  const facetView = (k, opt = {}) => {
     const f = FACETS[k];
     if (!f) return notFound();
-    const cols = columnsOf(k), evs = eventsOf(k), all = inFacet(k);
-    const tabs = [['cols', '专栏', cols.length], ['events', '大事记', evs.length], ['index', '词条', all.length]].filter(t => t[2]);
-    Object.assign(fFilter, { tab: tabs[0][0], c: '全部', y: '全部' });
+    const cols = columnsOf(k), evs = eventsOf(k), all = inFacet(k), dramas = k === 'screen' ? D.dramas ?? [] : [];
+    const tabs = [['cols', '专栏', cols.length], ['tv', '剧集', dramas.length], ['events', '大事记', evs.length], ['index', '词条', all.length]].filter(t => t[2]);
+    Object.assign(fFilter, { tab: opt.tab ?? tabs[0][0], c: '全部', y: opt.y ?? '全部', r: '全部' });
     view.innerHTML = `<header class="wrap page-h"><h1 data-en="${f.en}">${f.name}</h1><p>${esc(f.lede)}</p></header>
       <div class="wrap"><div class="tabs" role="tablist" aria-label="${f.name}">${tabs.map(([t, n, c]) => `<button type="button" role="tab" data-ft="${t}">${n}<small class="lcdnum"> ${c}</small></button>`).join('')}</div></div>
       <div class="wrap f-body" id="f-body"></div>`;
@@ -1569,20 +1597,27 @@ body.has-dock { padding-bottom: 92px; }
       view.querySelectorAll('[data-ft]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.ft === fFilter.tab)));
       const box = $('f-body');
       if (fFilter.tab === 'cols') box.innerHTML = `${colIndex(cols)}${k === 'school' ? dayBlock() : ''}`;
+      else if (fFilter.tab === 'tv') {
+        const list = dramas.filter(d => (fFilter.y === '全部' || d.y === +fFilter.y) && (fFilter.r === '全部' || d.region === fFilter.r));
+        box.innerHTML = `<div class="filters"><div class="frow"><span class="tech">年份</span>${chips('ky', ['全部', ...YEARS], fFilter.y)}</div><div class="frow"><span class="tech">地区</span>${chips('kr', ['全部', ...new Set(dramas.map(d => d.region))], fFilter.r)}</div></div><p class="credit">按原产地首播年排。点主题曲的名字，播放器就切到这首歌。</p>${dramaList(list)}`;
+      }
       else if (fFilter.tab === 'events') {
         const list = evs.filter(e => (fFilter.c === '全部' || e.c === fFilter.c) && (fFilter.y === '全部' || String(e.d).startsWith(String(fFilter.y))));
         box.innerHTML = `<div class="filters"><div class="frow"><span class="tech">类别</span>${chips('kc', ['全部', ...new Set(evs.map(e => e.c))], fFilter.c)}</div><div class="frow"><span class="tech">年份</span>${chips('ky', ['全部', ...YEARS], fFilter.y)}</div></div>${chronicle(list)}`;
       } else box.innerHTML = `<div class="filters"><div class="frow"><span class="tech">年份</span>${chips('ky', ['全部', ...YEARS], fFilter.y)}</div></div>${entryIndex(inFacet(k, fFilter.y === '全部' ? null : +fFilter.y))}`;
     };
     view.addEventListener('click', e => {
-      const t = e.target.closest('[data-ft]'), c = e.target.closest('[data-kc]'), y = e.target.closest('[data-ky]');
-      if (t) Object.assign(fFilter, { tab: t.dataset.ft, c: '全部', y: '全部' });
+      const t = e.target.closest('[data-ft]'), c = e.target.closest('[data-kc]'), y = e.target.closest('[data-ky]'), r = e.target.closest('[data-kr]');
+      if (t) Object.assign(fFilter, { tab: t.dataset.ft, c: '全部', y: '全部', r: '全部' });
+      else if (r) fFilter.r = r.dataset.kr;
       else if (c) fFilter.c = c.dataset.kc;
       else if (y) fFilter.y = y.dataset.ky;
       else return;
       paint();
     }, { signal: viewBound() });
     paint();
+    const hit = opt.id && document.getElementById(`dr-${opt.id}`);
+    if (hit) { hit.classList.add('hit'); hit.scrollIntoView({ block: 'center' }); }
   };
   const photoFig = p => `<figure class="ph"><img src="art/${esc(p.src)}" alt="${esc(p.caption ?? '')}" loading="lazy" width="${p.w ?? 900}" height="${p.h ?? 600}"><figcaption>${esc(p.caption ?? '')}<small>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.author || '维基共享资源')}</a>` : esc(p.author ?? '')}${p.license ? `，${esc(p.license)}` : ''}</small></figcaption></figure>`;
   const mediaFig = m => `<figure class="md">${m.kind === 'bili'
@@ -1659,6 +1694,7 @@ body.has-dock { padding-bottom: 92px; }
   const index = [
     ...(D.columns ?? []).map(c => ({ k: `${c.title} ${c.kicker ?? ''} ${c.summary ?? ''} ${heads(c)}`.toLowerCase(), key2: `${c.title} ${c.kicker ?? ''}`.toLowerCase(), href: `#col-${c.id}`, name: c.title, sub: `专栏 · ${FACETS[c.facet]?.name ?? ''}`, mark: '专栏', icon: `<span class="lcdnum">${String(c.from).slice(2)}</span>`, rank: 0 })),
     ...(D.topics ?? []).map(t => ({ k: `${t.title} ${t.kicker ?? ''} ${t.summary ?? ''} ${heads(t)}`.toLowerCase(), key2: `${t.title} ${t.kicker ?? ''}`.toLowerCase(), href: `#t-${t.id}`, name: t.title, sub: `专题 · ${t.kicker ?? ''}`, mark: '专题', icon: `<span class="lcdnum">专</span>`, rank: 0 })),
+    ...(D.dramas ?? []).map(d => ({ k: `${d.title} ${d.cast.join(' ')} ${d.genre ?? ''}`.toLowerCase(), key2: d.title.toLowerCase(), href: `#tv-${d.y}-${d.id}`, name: d.title, sub: `剧集 · ${d.y} · ${d.region}${d.genre ? ` · ${d.genre}` : ''}`, mark: '剧集', icon: `<span class="lcdnum">${String(d.y).slice(2)}</span>`, rank: 0 })),
     ...(D.culture ?? []).map(e => ({ k: `${e.name} ${e.cat} ${e.group ?? ''} ${e.text ?? ''}`.toLowerCase(), key2: e.name.toLowerCase(), href: `#e-${e.id}`, name: e.name, sub: `${e.cat} · ${e.from === e.to ? e.from : `${e.from}—${e.to}`}`, mark: '词条', icon: `<span class="lcdnum">${String(e.peak).slice(2)}</span>`, rank: 0 })),
     ...D.artists.map(a => ({ k: `${a.zh} ${a.tw} ${a.en}`.toLowerCase(), href: `#a-${a.id}`, name: a.zh, sub: `${a.en} · ${a.kind}`, mark: '歌手', icon: face(a), rank: 1 })),
   ];
@@ -1858,6 +1894,8 @@ body.has-dock { padding-bottom: 92px; }
     if (year) { const v = D.years.find(x => x.y === +year[1]), l = year[2] ?? 'hktw'; return v?.[l] ? [`y${v.y}-${l}`, v[l].songs, `${v.y} 年`] : null; }
     if (h.startsWith('t-')) { const t = D.topics.find(x => x.id === h.slice(2)); return t ? [h, t.songs, `《${t.title}》`] : null; }
     if (h.startsWith('col-')) { const c = (D.columns ?? []).find(x => x.id === h.slice(4)); return c ? [h, c.songs.map(id => songs[id]).filter(Boolean), `《${c.title}》`] : null; }
+    const tv = /^tv(?:-(\d{4}))?/.exec(h);
+    if (tv) { const list = dramaSongs(tv[1] ? +tv[1] : 0); return list.length ? [`tv-${tv[1] ?? ''}`, list, tv[1] ? `${tv[1]} 年的电视剧` : '电视剧主题曲'] : null; }
     return null;
   };
   const followPage = () => {
@@ -2001,6 +2039,7 @@ body.has-dock { padding-bottom: 92px; }
     if (yearHit) { yearPage(+yearHit[1], yearHit[2] ?? 'hktw'); nav = 'years'; }
     else if (h === 'music') { musicView(); nav = 'music'; }
     else if (h.startsWith('f-')) { facetView(h.slice(2)); nav = h; }
+    else if (/^tv(-|$)/.test(h)) { const [, y, id] = /^tv(?:-(\d{4}))?(?:-(.+))?$/.exec(h) ?? []; facetView('screen', { tab: 'tv', y: y ?? '全部', id }); nav = 'f-screen'; }
     else if (h === 'home' || h === '') home();
     else if (h === 'years' || h === 'years-hktw') { years('hktw'); nav = 'years'; }
     else if (h === 'years-cn') { years('cn'); nav = 'years'; }
