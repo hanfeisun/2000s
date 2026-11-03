@@ -432,6 +432,11 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .b88.gel { background: linear-gradient(180deg, #7cc4ff, #2b89ee 48%, #0f62d8 52%, #39a2ff); color: #fff; }
 .b88.ink { background: #0c1328; color: #e9eefb; flex-direction: column; gap: 3px; font-size: 6.6px; }
 .b88.ink b { font-size: 6.6px; opacity: .7; }
+/* 老式访客计数器：一格一个数字，中间一道接缝像翻牌计数器 */
+.foot-site { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 0 0 6px; font-size: 14px; color: var(--ink); }
+.odo { display: inline-flex; gap: 2px; padding: 3px; border-radius: 4px; background: #1a1a1a; box-shadow: inset 0 1px 2px rgba(0, 0, 0, .6), 0 0 0 1px rgba(10, 20, 44, .34), 0 1px 0 var(--gloss); }
+.odo i { width: 15px; height: 22px; font: 400 17px/22px var(--f-lcd); font-style: normal; text-align: center; color: #ff4a3a; text-shadow: 0 0 5px rgba(255, 60, 40, .7); border-radius: 2px;
+  background: linear-gradient(180deg, #262626 0 48%, #050505 48% 52%, #1c1c1c 52% 100%); box-shadow: inset 0 0 0 1px #3a3a3a; }
 .foot-count b { padding: 1px 6px; border-radius: 3px; font-weight: 400; color: var(--lcd-ink); background: linear-gradient(180deg, var(--lcd), var(--lcd-b)); box-shadow: inset 0 1px 2px rgba(4, 30, 70, .3); }
 
 /* 千禧生活 */
@@ -798,7 +803,8 @@ body.has-dock { padding-bottom: 92px; }
     <span class="b88 gel">PLAY<b>▶</b></span>
     <span class="b88 ink">1024×768<b>BEST VIEW</b></span>
   </div>
-  <p class="foot-count">你是这台电脑的第 <b class="lcdnum" id="visits">000001</b> 次到访。本站建议以 1024×768 分辨率、真彩色浏览。</p>
+  <p class="foot-site" id="foot-site" hidden>欢迎光临！你是本站第 <span class="odo lcdnum" id="site-uv"></span> 位访客</p>
+  <p class="foot-count">这台电脑来过 <b class="lcdnum" id="visits">1</b> 次<span id="foot-pv" hidden>，本站累计被翻开 <b class="lcdnum" id="site-pv"></b> 次</span>。本站建议以 1024×768 分辨率、真彩色浏览。</p>
   <p>千禧时光机，非官方年代资料站。音乐版权归原权利人所有，歌曲由 YouTube 官方播放器播放。<a href="#about">资料来源</a></p>
 </div></footer>
 <div class="dream" id="dream" hidden></div>
@@ -1713,7 +1719,7 @@ body.has-dock { padding-bottom: 92px; }
         <p><b>封面与资料：</b>专辑封面、曲目和发行信息取自 iTunes Search API，首发日期参考 MusicBrainz，其中 ${fmt(m.wikiDates)} 张重点专辑的日期再用维基百科校对过。封面版权归各唱片公司所有，这里以缩略图用于资料说明。歌手照片取自维基共享资源，署名见各词条。</p>
         <p><b>奖项：</b>金曲奖名单整理自维基百科各届条目。</p>
         <p><b>专栏的图片和影像：</b>专栏封面多数取自当年的新闻照片、节目和视频截图、杂志和实物照片，少数由本站绘制；文中照片来自维基共享资源。每张图都在文末注明出处，版权归原权利人。文中的影像是 YouTube 和哔哩哔哩上公开的视频，由官方播放器嵌入，不存放在站内，其中一部分是网友上传的老节目录屏，版权归原权利人。边听边读的背景音乐是陈越龙的《Nop (Lofi Version)》和《午后的梦》，不属于年代歌单。</p>
-        ${GA_ID ? `<p><b>访问统计：</b>本站用 Google Analytics 统计访问量、常看的页面、点播的歌和搜索词，用来决定接下来补什么内容，不收集姓名、手机号这类个人信息。</p>` : ''}
+        <p><b>访问统计：</b>页脚的访客数由不蒜子计数，从 2026 年 11 月开始算；同一个人换了浏览器或清了缓存，会被当成新访客。${GA_ID ? '本站还用 Google Analytics 统计常看的页面、点播的歌和搜索词，用来决定接下来补什么内容。' : ''}这些统计都不收集姓名、手机号这类个人信息。</p>
         <p><b>选题线索：</b>2008 到 2012 年的部分内娱选题，线索来自播客《过刊》的《内娱过往》系列。事实都另行查证，文字由本站撰写，不含节目内容。</p>
         <p><b>专栏和词条：</b>${fmt((D.columns ?? []).length)} 篇专栏和 ${fmt(D.culture.length)} 条词条取自网上公开资料，每篇每条都列了来源。不少条目只有一两个来源，“场景”写的是报道和回忆里的日常细节，不代表每个地方都一样。说法不一的数字会写出范围或两种说法。</p>
         <p><b>已知局限：</b>iTunes 上缺货的专辑没有封面，用色块代替。曲目来自流媒体版本，可能与原版 CD 有出入。年份以首发为准。约三分之一的链接来自非官方上传，经过规则过滤和抽查，但仍可能有少量挂错版本。部分年份的台湾当年报道和销量数据没有查到，个别事件只有单一来源，每条大事都标了来源，可以点开核对。站内连播不限首数，遇到禁止嵌入的视频会自动跳过；YouTube 可能在歌曲前插片头广告，本站没有收入，也不能去掉；跳去 YouTube 的临时歌单一次最多 50 首。手机浏览器切到后台时可能暂停。</p>
@@ -2075,8 +2081,28 @@ body.has-dock { padding-bottom: 92px; }
   try {
     const n = (+localStorage.getItem('visits') || 0) + 1;
     localStorage.setItem('visits', n);
-    $('visits').textContent = String(n).padStart(6, '0');
+    $('visits').textContent = n;
   } catch {}
+  // 页脚的全站访客计数，数字来自不蒜子（国内不挂代理也能访问），连不上就只留本机次数。
+  // 不蒜子按 Referer 计数，GitHub Pages 默认只发域名，所以这一个请求要求带完整地址
+  {
+    const cb = `BusuanziCallback_${Date.now()}`;
+    const odo = n => String(n).padStart(7, '0').split('').map(d => `<i>${d}</i>`).join('');
+    window[cb] = d => {
+      delete window[cb];
+      if (!d?.site_uv) return;
+      $('site-uv').innerHTML = odo(d.site_uv);
+      $('site-pv').textContent = fmt(d.site_pv);
+      $('foot-site').hidden = false;
+      $('foot-pv').hidden = false;
+    };
+    const s = document.createElement('script');
+    s.src = `https://busuanzi.ibruce.info/busuanzi?jsonpCallback=${cb}`;
+    s.referrerPolicy = 'no-referrer-when-downgrade';
+    s.async = true;
+    s.onerror = () => { delete window[cb]; };
+    document.body.append(s);
+  }
 
   /* 千禧一梦：只有走进去时才加载 3D 场景。屋里的东西全部来自站内数据 */
   const dreamLine = y => { const v = D.years.find(x => x.y === y); return v.cn ?? v.hktw; };
