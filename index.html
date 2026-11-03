@@ -485,6 +485,18 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .ent-idx a { color: var(--ink); text-decoration: none; }
 .ent-idx a:hover { color: var(--accent); text-decoration: underline; }
 .ent-idx small { flex: none; font-size: 11.5px; color: var(--mute); }
+/* 关于页的补充留言 */
+.fb { display: grid; gap: 12px; max-width: 46rem; margin: 4px 0 20px; }
+.fb label { display: grid; gap: 6px; font-size: 14px; color: var(--mute); }
+.fb select, .fb textarea, .fb input { font: inherit; color: var(--ink); background: var(--solid); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; max-width: 100%; }
+.fb textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+.fb-go { justify-self: start; padding: 8px 20px; border: 0; border-radius: 999px; background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 600; cursor: pointer; }
+.fb-h { margin: 8px 0; font-size: 17px; }
+.fb-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; max-width: 46rem; }
+.fb-items li { padding: 12px 14px; border: 1px solid var(--hair); border-radius: 12px; background: var(--well); }
+.fb-items p { margin: 0 0 4px; line-height: 1.7; }
+.fb-items small { color: var(--mute); }
+
 /* 剧集年表 */
 .drs { list-style: none; margin: 0 0 18px; padding: 0; max-width: 46rem; }
 .dr { padding: 14px 0 12px; border-bottom: 1px solid var(--hair); scroll-margin-top: 90px; }
@@ -519,6 +531,7 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .md-bili { min-height: 200px; }
 .md-bili:not(:has(img)) { background: linear-gradient(135deg, #fb7299, #23ade5); }
 .md-bili img { aspect-ratio: 16 / 10; }
+.md-out { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); padding: 3px 12px; border-radius: 999px; background: rgba(5, 10, 24, .72); color: #fff; font-size: 13px; white-space: nowrap; }
 .md-go { position: absolute; left: 50%; top: 50%; width: 62px; height: 62px; margin: -31px 0 0 -31px; border-radius: 50%; background: linear-gradient(180deg, #7cc4ff 0%, #2b89ee 48%, #0f62d8 52%, #39a2ff 100%); box-shadow: inset 0 -3px 6px rgba(170, 232, 255, .6), 0 3px 9px rgba(0, 20, 70, .6); }
 .md-go::after { content: ""; position: absolute; left: 24px; top: 18px; border-style: solid; border-width: 13px 0 13px 21px; border-color: transparent transparent transparent #fff; }
 .md-tv:hover .md-go { filter: brightness(1.12); }
@@ -768,7 +781,7 @@ body.has-dock { padding-bottom: 92px; }
       <a href="#home">首页</a><a href="#music">音乐</a><a href="#f-screen">荧屏</a><a href="#f-net">网络</a><a href="#f-school">校园</a><a href="#f-life">生活</a><a href="#f-world">社会</a><a href="#f-sport">体育</a><a href="#f-sub">亚文化</a><a href="#about">关于</a>
     </nav>
     <div class="search" role="search">
-      <input id="q" type="search" placeholder="搜专栏、剧集、词条" aria-label="搜索全站" autocomplete="off">
+      <input id="q" type="search" placeholder="搜专栏、词条" aria-label="搜索全站" autocomplete="off">
       <div class="results" id="results" hidden></div>
     </div>
     <button type="button" class="hold" id="theme" aria-label="切换午夜模式" aria-pressed="false"><span>Night</span><i></i></button>
@@ -829,7 +842,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=28417d3584"></script>
+<script src="data.js?v=34b94c563a"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -1620,8 +1633,13 @@ body.has-dock { padding-bottom: 92px; }
     if (hit) { hit.classList.add('hit'); hit.scrollIntoView({ block: 'center' }); }
   };
   const photoFig = p => `<figure class="ph"><img src="art/${esc(p.src)}" alt="${esc(p.caption ?? '')}" loading="lazy" width="${p.w ?? 900}" height="${p.h ?? 600}"><figcaption>${esc(p.caption ?? '')}<small>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.author || '维基共享资源')}</a>` : esc(p.author ?? '')}${p.license ? `，${esc(p.license)}` : ''}</small></figcaption></figure>`;
+  // B 站的外链播放器在手机上只放一段 16 秒的报错视频，手机上改成去 B 站手机页看
+  const PHONE = /Android|iPhone|iPad|iPod|Mobile|HarmonyOS/i.test(navigator.userAgent);
+  const biliPic = m => (m.pic ? `<img src="${esc(m.pic)}" alt="" loading="lazy" referrerpolicy="no-referrer" width="480" height="300">` : '');
   const mediaFig = m => `<figure class="md">${m.kind === 'bili'
-    ? `<button type="button" class="md-tv md-bili" data-bili="${esc(m.id)}" aria-label="播放：${esc(m.title)}">${m.pic ? `<img src="${esc(m.pic)}" alt="" loading="lazy" referrerpolicy="no-referrer" width="480" height="300">` : ''}<span class="md-go"></span></button>`
+    ? PHONE
+      ? `<a class="md-tv md-bili" href="https://m.bilibili.com/video/${esc(m.id)}" target="_blank" rel="noopener" aria-label="到 B 站看：${esc(m.title)}">${biliPic(m)}<span class="md-go"></span><span class="md-out">到 B 站看</span></a>`
+      : `<button type="button" class="md-tv md-bili" data-bili="${esc(m.id)}" aria-label="播放：${esc(m.title)}">${biliPic(m)}<span class="md-go"></span></button>`
     : `<button type="button" class="md-tv" data-tv="${esc(m.id)}" aria-label="播放：${esc(m.title)}"><img src="https://i.ytimg.com/vi/${esc(m.id)}/hqdefault.jpg" alt="" loading="lazy" width="480" height="360"><span class="md-go"></span></button>`}
     <figcaption><b>${esc(m.title)}</b>${m.note ? `${esc(m.note)}` : ''}<small>${m.kind === 'bili' ? `<a href="https://www.bilibili.com/video/${esc(m.id)}" target="_blank" rel="noopener">哔哩哔哩</a>` : `<a href="https://www.youtube.com/watch?v=${esc(m.id)}" target="_blank" rel="noopener">YouTube</a>`}${m.ch ? ` · ${esc(m.ch)}` : ''}</small></figcaption></figure>`;
   const columnPage = id => {
@@ -1676,27 +1694,58 @@ body.has-dock { padding-bottom: 92px; }
         <p><b>视频链接：</b>${fmt(m.linked)} 首歌链接到具体的视频或音频，其中 ${fmt(m.official)} 条来自官方、唱片公司频道或 YouTube 官方音频。优先顺序是官方 MV、高播放量的原版 MV、官方音频，最后才是现场版。每条都在 ${esc(m.checked)} 用 YouTube oEmbed 确认过存在。春晚专题优先用 CCTV春晚 官方频道的当届片段。其余歌曲和专辑里的非主打曲目使用 YouTube Music 搜索链接。部分视频有地区限制，打不开时可以用专辑页的搜索链接。</p>
         <p><b>封面与资料：</b>专辑封面、曲目和发行信息取自 iTunes Search API，首发日期参考 MusicBrainz，其中 ${fmt(m.wikiDates)} 张重点专辑的日期再用维基百科校对过。封面版权归各唱片公司所有，这里以缩略图用于资料说明。歌手照片取自维基共享资源，署名见各词条。</p>
         <p><b>奖项：</b>金曲奖名单整理自维基百科各届条目。</p>
-        <p><b>专栏的图片和影像：</b>封面和文中照片来自维基共享资源，按授权署名，其余封面由本站绘制。新闻照片和剧照有版权，这里没有使用。文中的影像是 YouTube 和哔哩哔哩上公开的视频，由官方播放器嵌入，不存放在站内，其中一部分是网友上传的老节目录屏，版权归原权利人。边听边读的背景音乐是陈越龙的《Nop (Lofi Version)》，不属于年代歌单。</p>
+        <p><b>专栏的图片和影像：</b>封面和文中照片来自维基共享资源，按授权署名，其余封面由本站绘制。新闻照片和剧照有版权，这里没有使用。文中的影像是 YouTube 和哔哩哔哩上公开的视频，由官方播放器嵌入，不存放在站内，其中一部分是网友上传的老节目录屏，版权归原权利人。边听边读的背景音乐是陈越龙的《Nop (Lofi Version)》和《午后的梦》，不属于年代歌单。</p>
         <p><b>选题线索：</b>2008 到 2012 年的部分内娱选题，线索来自播客《过刊》的《内娱过往》系列。事实都另行查证，文字由本站撰写，不含节目内容。</p>
         <p><b>专栏和词条：</b>${fmt((D.columns ?? []).length)} 篇专栏和 ${fmt(D.culture.length)} 条词条取自网上公开资料，每篇每条都列了来源。不少条目只有一两个来源，“场景”写的是报道和回忆里的日常细节，不代表每个地方都一样。说法不一的数字会写出范围或两种说法。</p>
         <p><b>已知局限：</b>iTunes 上缺货的专辑没有封面，用色块代替。曲目来自流媒体版本，可能与原版 CD 有出入。年份以首发为准。约三分之一的链接来自非官方上传，经过规则过滤和抽查，但仍可能有少量挂错版本。部分年份的台湾当年报道和销量数据没有查到，个别事件只有单一来源，每条大事都标了来源，可以点开核对。站内连播不限首数，遇到禁止嵌入的视频会自动跳过；YouTube 可能在歌曲前插片头广告，本站没有收入，也不能去掉；跳去 YouTube 的临时歌单一次最多 50 首。手机浏览器切到后台时可能暂停。</p>
       </div>
+      ${feedbackBlock()}
       <section class="sec"><div class="sec-h"><h2>主要数据来源</h2></div>
         <ul class="prose">${m.sources.map(s => `<li><a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a></li>`).join('')}</ul>
       </section>
     </div>`;
+    bindFeedback();
+  };
+
+  // 补充遗漏：留言发到 GitHub 仓库的 issue，站长打上“已采纳”标签后才显示在这里
+  const FEEDBACK_REPO = 'hanfeisun/2000s', FEEDBACK_OK = '已采纳', FEEDBACK_TAIL = '（来自千禧时光机关于页）';
+  const feedbackBlock = () => `<section class="sec" id="feedback"><div class="sec-h"><h2>补充遗漏</h2><span class="tech">Feedback</span></div>
+    <div class="prose"><p>觉得哪段年代记忆漏掉了、哪里写错了，可以在这里留言，最好附上来源。留言提交到本站在 GitHub 上的留言板，需要登录 GitHub；站长审核采纳后，才会显示在下面的“网友补充”里。</p></div>
+    <form class="fb" id="fb-form">
+      <label>属于哪一块<select name="part">${['音乐', ...Object.values(FACETS).map(f => f.name), '其他'].map(x => `<option>${esc(x)}</option>`).join('')}</select></label>
+      <label>想补充或更正的内容<textarea name="text" rows="5" maxlength="2000" required placeholder="比如：哪一年的哪部剧、哪首歌、哪件事没有收，或者哪里写错了"></textarea></label>
+      <label>署名（可不填）<input name="who" maxlength="40"></label>
+      <button type="submit" class="fb-go">提交留言</button>
+    </form>
+    <h3 class="fb-h">网友补充</h3><div id="fb-list"><p class="credit">正在读取……</p></div></section>`;
+  const bindFeedback = () => {
+    $('fb-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const f = new FormData(e.target), text = String(f.get('text') ?? '').trim(), part = f.get('part'), who = String(f.get('who') ?? '').trim();
+      if (!text) return;
+      const title = `[${part}] ${text.replace(/\s+/g, ' ').slice(0, 30)}`;
+      const body = `${text}\n\n——${who || '匿名'}\n${FEEDBACK_TAIL}`;
+      window.open(`https://github.com/${FEEDBACK_REPO}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`, '_blank', 'noopener');
+    });
+    fetch(`https://api.github.com/repos/${FEEDBACK_REPO}/issues?labels=${encodeURIComponent(FEEDBACK_OK)}&state=all&per_page=50`)
+      .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then(list => {
+        const box = $('fb-list');
+        if (!box) return;
+        box.innerHTML = list.length
+          ? `<ol class="fb-items">${list.map(i => `<li><p>${esc(String(i.body ?? '').split(FEEDBACK_TAIL).join('').trim()).replace(/\n/g, '<br>')}</p><small>${esc(String(i.created_at).slice(0, 10))}</small></li>`).join('')}</ol>`
+          : '<p class="credit">还没有采纳的补充。</p>';
+      })
+      .catch(() => { const box = $('fb-list'); if (box) box.innerHTML = '<p class="credit">暂时读不到留言，可能是网络原因，稍后再试。</p>'; });
   };
 
   const notFound = () => { view.innerHTML = `<div class="wrap page-h"><h1 data-en="Not Found">这里什么都没有</h1><p>这扇门后面只有下午的太阳。你可以再待一会儿，或者<a href="#home">回到首页</a>。</p></div>`; };
 
-  /* 全站搜索：搜专栏、专题、词条和歌手，找歌用点歌台 */
+  /* 全站搜索：只搜专栏和词条，找歌用点歌台，找剧用荧屏的剧集栏 */
   const heads = x => (x.body ?? []).map(b => b.h ?? '').join(' ');
   const index = [
     ...(D.columns ?? []).map(c => ({ k: `${c.title} ${c.kicker ?? ''} ${c.summary ?? ''} ${heads(c)}`.toLowerCase(), key2: `${c.title} ${c.kicker ?? ''}`.toLowerCase(), href: `#col-${c.id}`, name: c.title, sub: `专栏 · ${FACETS[c.facet]?.name ?? ''}`, mark: '专栏', icon: `<span class="lcdnum">${String(c.from).slice(2)}</span>`, rank: 0 })),
-    ...(D.topics ?? []).map(t => ({ k: `${t.title} ${t.kicker ?? ''} ${t.summary ?? ''} ${heads(t)}`.toLowerCase(), key2: `${t.title} ${t.kicker ?? ''}`.toLowerCase(), href: `#t-${t.id}`, name: t.title, sub: `专题 · ${t.kicker ?? ''}`, mark: '专题', icon: `<span class="lcdnum">专</span>`, rank: 0 })),
-    ...(D.dramas ?? []).map(d => ({ k: `${d.title} ${d.cast.join(' ')} ${d.genre ?? ''}`.toLowerCase(), key2: d.title.toLowerCase(), href: `#tv-${d.y}-${d.id}`, name: d.title, sub: `剧集 · ${d.y} · ${d.region}${d.genre ? ` · ${d.genre}` : ''}`, mark: '剧集', icon: `<span class="lcdnum">${String(d.y).slice(2)}</span>`, rank: 0 })),
     ...(D.culture ?? []).map(e => ({ k: `${e.name} ${e.cat} ${e.group ?? ''} ${e.text ?? ''}`.toLowerCase(), key2: e.name.toLowerCase(), href: `#e-${e.id}`, name: e.name, sub: `${e.cat} · ${e.from === e.to ? e.from : `${e.from}—${e.to}`}`, mark: '词条', icon: `<span class="lcdnum">${String(e.peak).slice(2)}</span>`, rank: 0 })),
-    ...D.artists.map(a => ({ k: `${a.zh} ${a.tw} ${a.en}`.toLowerCase(), href: `#a-${a.id}`, name: a.zh, sub: `${a.en} · ${a.kind}`, mark: '歌手', icon: face(a), rank: 1 })),
   ];
   const q = document.getElementById('q');
   const res = document.getElementById('results');
@@ -1731,8 +1780,13 @@ body.has-dock { padding-bottom: 92px; }
   D.topics.forEach(t => t.songs.forEach(x => { if (x.vid && !byVid.has(x.vid)) byVid.set(x.vid, x.id ? { ...songs[x.id], vid: x.vid, vk: '现场', ne: 0 } : { vid: x.vid, t: x.t, y: x.y, by: [], who: x.a }); }));
   const $ = id => document.getElementById(id);
   // 读专栏时的背景音乐，不是年代歌单的一部分
-  const BGM = { vid: 'VBvfXo77f8s', t: 'Nop (Lofi Version)', who: '陈越龙', by: [], y: '' };
-  byVid.set(BGM.vid, BGM);
+  // 首页的背景音乐：陈越龙的两首，连着循环
+  const BGMS = [
+    { vid: 'VBvfXo77f8s', t: 'Nop (Lofi Version)', who: '陈越龙', by: [], y: '' },
+    { vid: 'zBKIJzc90x0', t: '午后的梦', who: '陈越龙', by: [], y: '' },
+  ];
+  BGMS.forEach(s => byVid.set(s.vid, s));
+  const isBgm = s => BGMS.includes(s);
   (D.columns ?? []).forEach(c => c.media.forEach(m => { if (m.kind === 'yt' && !byVid.has(m.id)) byVid.set(m.id, { vid: m.id, t: m.title, who: m.ch ?? '', by: [], y: c.from }); }));
   const dock = $('dock');
   const P = { yt: null, api: null, base: [], queue: [], pos: -1, shuffle: false, repeat: false, skips: 0, seeking: false };
@@ -1885,7 +1939,7 @@ body.has-dock { padding-bottom: 92px; }
     else if (bili) playInline(bili, `https://player.bilibili.com/player.html?bvid=${esc(bili.dataset.bili)}&autoplay=1&danmaku=0&high_quality=1`, '哔哩哔哩播放器');
     else if (bgm) playBgm();
   });
-  const playBgm = () => { P.bgm = true; P.repeat = true; $('dk-repeat').setAttribute('aria-pressed', 'true'); playList([BGM], 0); };
+  const playBgm = () => { P.bgm = true; P.repeat = true; $('dk-repeat').setAttribute('aria-pressed', 'true'); playList(BGMS, 0); };
   const keep = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch {} return null; };
   // 歌随页面换：年份、专题和专栏页把播放列表换成这一页的歌，用户可以关掉
   const pageSongs = () => {
@@ -1933,13 +1987,13 @@ body.has-dock { padding-bottom: 92px; }
     const kick = () => {
       removeEventListener('pointerdown', kick, true);
       removeEventListener('keydown', kick, true);
-      if (P.boot && nowSong() === BGM) P.yt?.playVideo?.();
+      if (P.boot && isBgm(nowSong())) P.yt?.playVideo?.();
     };
     addEventListener('pointerdown', kick, true);
     addEventListener('keydown', kick, true);
   };
   $('dk-close').addEventListener('click', () => {
-    if (nowSong() === BGM) keep('bgm-off', '1');
+    if (isBgm(nowSong())) keep('bgm-off', '1');
     P.boot = false;
     P.yt?.stopVideo?.();
     dock.hidden = true;
