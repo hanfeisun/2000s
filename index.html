@@ -753,7 +753,7 @@ body.has-dock { padding-bottom: 92px; }
       <a href="#home">首页</a><a href="#music">音乐</a><a href="#f-screen">荧屏</a><a href="#f-net">网络</a><a href="#f-school">校园</a><a href="#f-life">生活</a><a href="#f-world">社会</a><a href="#f-sport">体育</a><a href="#f-sub">亚文化</a><a href="#about">关于</a>
     </nav>
     <div class="search" role="search">
-      <input id="q" type="search" placeholder="搜歌手、专辑、歌名" aria-label="搜索全站" autocomplete="off">
+      <input id="q" type="search" placeholder="搜专栏、专题、词条" aria-label="搜索全站" autocomplete="off">
       <div class="results" id="results" hidden></div>
     </div>
     <button type="button" class="hold" id="theme" aria-label="切换午夜模式" aria-pressed="false"><span>Night</span><i></i></button>
@@ -814,7 +814,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=e24cb8c921"></script>
+<script src="data.js?v=5c26d83682"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -934,10 +934,10 @@ body.has-dock { padding-bottom: 92px; }
     <span class="no">${esc(s.n)}</span>
     <span class="ti">${s.al && albums[s.al] ? `<a href="#b-${s.al}">${esc(s.t)}</a><small>《${esc(albums[s.al].t)}》</small>` : `${esc(s.t)}${s.alt ? `<small>《${esc(s.alt)}》</small>` : ''}`}</span>
     <span class="by">${creditOf(s)}</span>
-    <span class="yr">${s.y}</span>
+    <span class="yr">${s.y || ''}</span>
     <span class="lg">${esc(s.lang)}</span>
     <span class="act">${playLink(s)}</span></li>`;
-  const tuneShort = s => `<li><span class="ti">${esc(s.t)}<small>${esc(artists[s.a]?.zh)} · ${s.y}</small></span><span class="act">${playLink(s)}</span></li>`;
+  const tuneShort = s => `<li><span class="ti">${esc(s.t)}<small>${esc(artists[s.a]?.zh)}${s.y ? ` · ${s.y}` : ''}</small></span><span class="act">${playLink(s)}</span></li>`;
   const tuneList = (list, short) => `<ul class="tune${short ? ' short' : ''}">${list.map(short ? tuneShort : tuneRow).join('')}</ul>`;
 
   const sample = (list, n, seed = Date.now()) => {
@@ -954,7 +954,7 @@ body.has-dock { padding-bottom: 92px; }
   const songRow = (x, i) => {
     const s = x.id ? songs[x.id] : null;
     const rank = i == null ? '' : `<span class="no">${String(i + 1).padStart(3, '0')}</span>`;
-    if (s) return `<li>${rank}<span class="ti">${s.al && albums[s.al] ? `<a href="#b-${s.al}">${esc(s.t)}</a>` : esc(s.t)}${x.why || x.n ? `<small>${esc(x.why || x.n)}</small>` : ''}</span><span class="by">${creditOf(s)}</span><span class="yr">${x.y ?? s.y}</span><span class="act">${playLink(x.vid ? { ...s, vid: x.vid, vk: '现场', ne: 0 } : s)}</span></li>`;
+    if (s) return `<li>${rank}<span class="ti">${s.al && albums[s.al] ? `<a href="#b-${s.al}">${esc(s.t)}</a>` : esc(s.t)}${x.why || x.n ? `<small>${esc(x.why || x.n)}</small>` : ''}</span><span class="by">${creditOf(s)}</span><span class="yr">${x.y ?? s.y ?? ''}</span><span class="act">${playLink(x.vid ? { ...s, vid: x.vid, vk: '现场', ne: 0 } : s)}</span></li>`;
     return `<li>${rank}<span class="ti">${esc(x.t)}${x.why || x.n ? `<small>${esc(x.why || x.n)}</small>` : ''}</span><span class="by">${esc(x.a)}</span><span class="yr">${x.y ?? ''}</span><span class="act">${x.vid ? playLink({ vid: x.vid, t: x.t, vk: '现场' }) : `<a class="play alt" href="${esc(musicSearch(`${x.a} ${x.t}`))}" target="_blank" rel="noopener">搜索</a>`}</span></li>`;
   };
   const songRows = (list, ranked) => `<ul class="tune wide">${list.map((x, i) => songRow(x, ranked ? i : null)).join('')}</ul>`;
@@ -1233,7 +1233,7 @@ body.has-dock { padding-bottom: 92px; }
     const list = pool.length ? pool : D.songs;
     const s = list[Math.floor(Math.random() * list.length)];
     box.innerHTML = `${s.al ? `<a href="#b-${s.al}" aria-label="查看专辑">${cover(albums[s.al])}</a>` : '<span></span>'}
-      <div><b>${esc(s.t)}</b><small>${creditOf(s)} · ${s.y}${s.al ? ` · 《${esc(albums[s.al].t)}》` : s.alt ? ` · 《${esc(s.alt)}》` : ''}</small></div>
+      <div><b>${esc(s.t)}</b><small>${creditOf(s)}${s.y ? ` · ${s.y}` : ''}${s.al ? ` · 《${esc(albums[s.al].t)}》` : s.alt ? ` · 《${esc(s.alt)}》` : ''}</small></div>
       <div class="shuffle-act">${playLink(s, '播放这首')}<button class="pill" type="button" id="reroll">换一首</button></div>`;
     document.getElementById('reroll').addEventListener('click', shuffle);
   };
@@ -1340,7 +1340,7 @@ body.has-dock { padding-bottom: 92px; }
     const a = artists[id];
     if (!a) return notFound();
     const bs = (albumsOf[id] ?? []).slice().sort((x, y) => x.d.localeCompare(y.d));
-    const ss = (songsOf[id] ?? []).slice().sort((x, y) => x.y - y.y);
+    const ss = (songsOf[id] ?? []).slice().sort((x, y) => (x.y || 9999) - (y.y || 9999));
     setTunes(ss, true);
     view.innerHTML = `<div class="wrap entry">
       <div>
@@ -1541,7 +1541,7 @@ body.has-dock { padding-bottom: 92px; }
   const columnsOf = k => (D.columns ?? []).filter(c => c.facet === k);
   const eventsOf = k => D.facetEvents?.[k] ?? [];
   // 专栏一览：目录式排版，不用卡片
-  const colIndex = list => `<ol class="cols">${list.map((c, i) => `<li><a href="#col-${c.id}"><img class="col-c" src="art/col-${c.id}.webp" alt="" loading="lazy" width="800" height="600" data-art="col-${c.id}"><span class="col-b"><span class="tech">${String(i + 1).padStart(2, '0')} · ${esc(c.kicker ?? '')} · ${span(c)}</span><b>${esc(c.title)}</b><small>${esc(c.summary)}</small><span class="col-m lcdnum">${fmt(c.words)} 字${c.media.length ? ` · ${c.media.length} 段影像` : ''}${c.photos.length ? ` · ${c.photos.length} 张照片` : ''}${c.songs.length ? ` · ${c.songs.length} 首歌` : ''}</span></span></a></li>`).join('')}</ol>`;
+  const colIndex = list => `<ol class="cols">${list.map((c, i) => `<li><a href="#col-${c.id}"><img class="col-c" src="art/col-${c.id}.webp" alt="" loading="lazy" width="800" height="600" data-art="col-${c.id}"><span class="col-b"><span class="tech">${String(i + 1).padStart(2, '0')} · ${esc(c.kicker ?? '')} · ${span(c)}</span><b>${esc(c.title)}</b><small>${esc(c.summary)}</small><span class="col-m lcdnum">${[c.media.length ? `${c.media.length} 段影像` : '', c.photos.length ? `${c.photos.length} 张照片` : '', c.songs.length ? `${c.songs.length} 首歌` : ''].filter(Boolean).join(' · ')}</span></span></a></li>`).join('')}</ol>`;
   const entryIndex = list => { const by = group(list, e => e.cat); return `<div class="ent-idx">${Object.keys(by).map(c => `<section><h3>${esc(c)}</h3><ul>${by[c].map(e => `<li><a href="#e-${e.id}">${esc(e.name)}</a><small class="lcdnum">${span(e)}</small></li>`).join('')}</ul></section>`).join('')}</div>`; };
   const eventRow = e => `<li><time>${esc(String(e.d ?? '').slice(5) || '—')}</time><span><span class="tag">${esc(e.c)}</span> ${rich(e.t)}${srcLink(e.s)}</span></li>`;
   const chronicle = list => { const by = group(list, e => String(e.d).slice(0, 4)); return Object.keys(by).sort().map(y => `<h3 class="year-h">${y}</h3><ul class="events">${by[y].map(eventRow).join('')}</ul>`).join('') || '<p class="prose">这一格没有大事。</p>'; };
@@ -1596,7 +1596,7 @@ body.has-dock { padding-bottom: 92px; }
     setTunes(list, false);
     view.innerHTML = `<div class="wrap col-page">
       <header class="page-h col-h"><p class="tech" style="margin:0"><a href="#f-${c.facet}">${f.name}</a> / ${esc(c.kicker ?? '')}</p>
-        <div class="col-top"><img class="col-c" src="art/col-${c.id}.webp" alt="" width="800" height="600" data-art="col-${c.id}"><div><h1>${esc(c.title)}</h1><p>${esc(c.summary)}</p><p class="lcdnum ent-y">${span(c)} · ${fmt(c.words)} 字</p>${list.length ? playAll(list, '边听边读') : '<button type="button" class="play" data-bgm>边听边读</button>'}</div></div>
+        <div class="col-top"><img class="col-c" src="art/col-${c.id}.webp" alt="" width="800" height="600" data-art="col-${c.id}"><div><h1>${esc(c.title)}</h1><p>${esc(c.summary)}</p><p class="lcdnum ent-y">${span(c)}</p>${list.length ? playAll(list, '边听边读') : '<button type="button" class="play" data-bgm>边听边读</button>'}</div></div>
         <div class="jump">${c.body.filter(s => s.h).map((s, n) => `<button type="button" class="chip" data-go="s${n}">${esc(s.h)}</button>`).join('')}</div></header>
       <div class="prose col-text">${c.body.map((s, n) => `${s.h ? `<h2 class="sub" id="s${n}">${esc(s.h)}</h2>` : ''}${s.p.map(p => `<p>${rich(p)}</p>`).join('')}${c.photos.filter(p => p.at === n).map(photoFig).join('')}${c.media.filter(m => m.at === n).map(mediaFig).join('')}`).join('')}</div>
       ${c.timeline.length ? `<section class="sec"><div class="sec-h"><h2>时间线</h2></div><ul class="events">${c.timeline.map(e => `<li><time>${esc(String(e.d ?? '').slice(0, 7))}</time><span>${rich(e.text)}${srcLink(e.src)}</span></li>`).join('')}</ul></section>` : ''}
@@ -1654,20 +1654,20 @@ body.has-dock { padding-bottom: 92px; }
 
   const notFound = () => { view.innerHTML = `<div class="wrap page-h"><h1 data-en="Not Found">这里什么都没有</h1><p>这扇门后面只有下午的太阳。你可以再待一会儿，或者<a href="#home">回到首页</a>。</p></div>`; };
 
-  /* 全站搜索 */
+  /* 全站搜索：搜专栏、专题、词条和歌手，找歌用点歌台 */
+  const heads = x => (x.body ?? []).map(b => b.h ?? '').join(' ');
   const index = [
-    ...D.artists.map(a => ({ k: `${a.zh} ${a.tw} ${a.en}`.toLowerCase(), href: `#a-${a.id}`, name: a.zh, sub: `${a.en} · ${a.kind}`, mark: '歌手', icon: face(a), rank: 0 })),
-    ...D.albums.map(b => ({ k: `${b.t} ${b.tt ?? ''} ${artists[b.a]?.zh} ${artists[b.a]?.tw}`.toLowerCase(), key2: `${b.t} ${b.tt ?? ''}`.toLowerCase(), href: `#b-${b.id}`, name: b.t, sub: `${artists[b.a]?.zh} · ${b.y}`, mark: '专辑', icon: cover(b), rank: 1 })),
-    ...(D.columns ?? []).map(c => ({ k: `${c.title} ${c.kicker ?? ''}`.toLowerCase(), key2: c.title.toLowerCase(), href: `#col-${c.id}`, name: c.title, sub: `专栏 · ${FACETS[c.facet]?.name ?? ''}`, mark: '专栏', icon: `<span class="lcdnum">${String(c.from).slice(2)}</span>`, rank: 2 })),
-    ...(D.culture ?? []).map(e => ({ k: `${e.name} ${e.cat}`.toLowerCase(), key2: e.name.toLowerCase(), href: `#e-${e.id}`, name: e.name, sub: `${e.cat} · ${e.from === e.to ? e.from : `${e.from}—${e.to}`}`, mark: '千禧', icon: `<span class="lcdnum">${String(e.peak).slice(2)}</span>`, rank: 1 })),
-    ...D.songs.map(s => ({ k: `${s.t} ${s.tw ?? ''} ${artists[s.a]?.zh} ${artists[s.a]?.tw} ${artists[s.a]?.en}`.toLowerCase(), key2: `${s.t} ${s.tw ?? ''}`.toLowerCase(), href: s.al ? `#b-${s.al}` : `#a-${s.a}`, ext: ytUrl(s), name: s.t, sub: `${artists[s.a]?.zh} · ${s.y}`, mark: '歌曲', icon: `<span class="lcdnum">${String(s.y).slice(2)}</span>`, rank: 2 })),
+    ...(D.columns ?? []).map(c => ({ k: `${c.title} ${c.kicker ?? ''} ${c.summary ?? ''} ${heads(c)}`.toLowerCase(), key2: `${c.title} ${c.kicker ?? ''}`.toLowerCase(), href: `#col-${c.id}`, name: c.title, sub: `专栏 · ${FACETS[c.facet]?.name ?? ''}`, mark: '专栏', icon: `<span class="lcdnum">${String(c.from).slice(2)}</span>`, rank: 0 })),
+    ...(D.topics ?? []).map(t => ({ k: `${t.title} ${t.kicker ?? ''} ${t.summary ?? ''} ${heads(t)}`.toLowerCase(), key2: `${t.title} ${t.kicker ?? ''}`.toLowerCase(), href: `#t-${t.id}`, name: t.title, sub: `专题 · ${t.kicker ?? ''}`, mark: '专题', icon: `<span class="lcdnum">专</span>`, rank: 0 })),
+    ...(D.culture ?? []).map(e => ({ k: `${e.name} ${e.cat} ${e.group ?? ''} ${e.text ?? ''}`.toLowerCase(), key2: e.name.toLowerCase(), href: `#e-${e.id}`, name: e.name, sub: `${e.cat} · ${e.from === e.to ? e.from : `${e.from}—${e.to}`}`, mark: '词条', icon: `<span class="lcdnum">${String(e.peak).slice(2)}</span>`, rank: 0 })),
+    ...D.artists.map(a => ({ k: `${a.zh} ${a.tw} ${a.en}`.toLowerCase(), href: `#a-${a.id}`, name: a.zh, sub: `${a.en} · ${a.kind}`, mark: '歌手', icon: face(a), rank: 1 })),
   ];
   const q = document.getElementById('q');
   const res = document.getElementById('results');
   const lookup = term => {
     const parts = term.toLowerCase().trim().split(/\s+/);
     const hits = index.filter(x => parts.every(p => x.k.includes(p)));
-    const score = x => x.rank * 2 - ((x.key2 ?? x.k).startsWith(parts[0]) ? 3 : 0);
+    const score = x => { const name = x.key2 ?? x.k; return x.rank * 2 - (name.startsWith(parts[0]) ? 4 : name.includes(parts[0]) ? 3 : 0); };
     return hits.sort((x, y) => score(x) - score(y)).slice(0, 14);
   };
   const close = () => { res.hidden = true; };
@@ -1676,8 +1676,8 @@ body.has-dock { padding-bottom: 92px; }
     if (!term) return close();
     const hits = lookup(term);
     res.innerHTML = hits.length
-      ? hits.map(h => `<a href="${esc(h.ext ?? h.href)}"${h.ext ? ' target="_blank" rel="noopener"' : ''}>${h.icon}<span>${esc(h.name)}<small>${esc(h.sub)}</small></span><span class="tech">${h.mark}</span></a>`).join('')
-      : `<div class="none">没有找到“${esc(term)}”。可以试试歌手名或歌名，繁简都能搜。</div>`;
+      ? hits.map(h => `<a href="${esc(h.href)}">${h.icon}<span>${esc(h.name)}<small>${esc(h.sub)}</small></span><span class="tech">${h.mark}</span></a>`).join('')
+      : `<div class="none">没有找到“${esc(term)}”。可以换个关键词，或者到点歌台找歌。</div>`;
     res.hidden = false;
   });
   q.addEventListener('keydown', e => {
@@ -1731,7 +1731,7 @@ body.has-dock { padding-bottom: 92px; }
   const paintQueue = () => {
     const from = Math.max(0, P.pos - 20);
     const box = $('dock-queue');
-    box.innerHTML = `<ol start="${from + 1}">${P.queue.slice(from, from + 200).map((s, i) => `<li><button type="button" data-q="${from + i}"${from + i === P.pos ? ' aria-current="true"' : ''}><b>${esc(s.t)}</b><small>${esc(artists[s.a]?.zh)} · ${s.y}</small></button></li>`).join('')}</ol>`;
+    box.innerHTML = `<ol start="${from + 1}">${P.queue.slice(from, from + 200).map((s, i) => `<li><button type="button" data-q="${from + i}"${from + i === P.pos ? ' aria-current="true"' : ''}><b>${esc(s.t)}</b><small>${esc(artists[s.a]?.zh)}${s.y ? ` · ${s.y}` : ''}</small></button></li>`).join('')}</ol>`;
     box.querySelector('[aria-current]')?.scrollIntoView({ block: 'nearest' });
   };
   const paint = () => {
