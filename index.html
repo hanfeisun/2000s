@@ -852,6 +852,22 @@ body.has-dock { padding-bottom: 92px; }
   const group = (list, fn) => list.reduce((m, x) => ((m[fn(x)] ??= []).push(x), m), {});
   const fmt = n => n.toLocaleString('zh-CN');
 
+  /* 访问统计：Google Analytics。GA_ID 为空时不加载任何统计脚本。
+     页面浏览按井号后的路由记成虚拟路径（/2000s/col-xxx），另外记点歌、站内看视频、搜索和留言 */
+  const GA_ID = '';
+  const stat = (name, params = {}) => { if (GA_ID && window.gtag) window.gtag('event', name, params); };
+  if (GA_ID) {
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', GA_ID, { send_page_view: false });
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+    document.head.append(s);
+  }
+  const here = () => (location.hash || '#home').slice(1);
+
   D.artists.forEach(a => { a.photo = window.FACES?.[a.id]; });
   const artists = by(D.artists, 'id');
   // 没有简介的表演者不进歌手库，歌曲和搜索里仍然找得到
@@ -1696,7 +1712,8 @@ body.has-dock { padding-bottom: 92px; }
         <p><b>视频链接：</b>${fmt(m.linked)} 首歌链接到具体的视频或音频，其中 ${fmt(m.official)} 条来自官方、唱片公司频道或 YouTube 官方音频。优先顺序是官方 MV、高播放量的原版 MV、官方音频，最后才是现场版。每条都在 ${esc(m.checked)} 用 YouTube oEmbed 确认过存在。春晚专题优先用 CCTV春晚 官方频道的当届片段。其余歌曲和专辑里的非主打曲目使用 YouTube Music 搜索链接。部分视频有地区限制，打不开时可以用专辑页的搜索链接。</p>
         <p><b>封面与资料：</b>专辑封面、曲目和发行信息取自 iTunes Search API，首发日期参考 MusicBrainz，其中 ${fmt(m.wikiDates)} 张重点专辑的日期再用维基百科校对过。封面版权归各唱片公司所有，这里以缩略图用于资料说明。歌手照片取自维基共享资源，署名见各词条。</p>
         <p><b>奖项：</b>金曲奖名单整理自维基百科各届条目。</p>
-        <p><b>专栏的图片和影像：</b>封面和文中照片来自维基共享资源，按授权署名，其余封面由本站绘制。新闻照片和剧照有版权，这里没有使用。文中的影像是 YouTube 和哔哩哔哩上公开的视频，由官方播放器嵌入，不存放在站内，其中一部分是网友上传的老节目录屏，版权归原权利人。边听边读的背景音乐是陈越龙的《Nop (Lofi Version)》和《午后的梦》，不属于年代歌单。</p>
+        <p><b>专栏的图片和影像：</b>专栏封面多数取自当年的新闻照片、节目和视频截图、杂志和实物照片，少数由本站绘制；文中照片来自维基共享资源。每张图都在文末注明出处，版权归原权利人。文中的影像是 YouTube 和哔哩哔哩上公开的视频，由官方播放器嵌入，不存放在站内，其中一部分是网友上传的老节目录屏，版权归原权利人。边听边读的背景音乐是陈越龙的《Nop (Lofi Version)》和《午后的梦》，不属于年代歌单。</p>
+        ${GA_ID ? `<p><b>访问统计：</b>本站用 Google Analytics 统计访问量、常看的页面、点播的歌和搜索词，用来决定接下来补什么内容，不收集姓名、手机号这类个人信息。</p>` : ''}
         <p><b>选题线索：</b>2008 到 2012 年的部分内娱选题，线索来自播客《过刊》的《内娱过往》系列。事实都另行查证，文字由本站撰写，不含节目内容。</p>
         <p><b>专栏和词条：</b>${fmt((D.columns ?? []).length)} 篇专栏和 ${fmt(D.culture.length)} 条词条取自网上公开资料，每篇每条都列了来源。不少条目只有一两个来源，“场景”写的是报道和回忆里的日常细节，不代表每个地方都一样。说法不一的数字会写出范围或两种说法。</p>
         <p><b>已知局限：</b>iTunes 上缺货的专辑没有封面，用色块代替。曲目来自流媒体版本，可能与原版 CD 有出入。年份以首发为准。约三分之一的链接来自非官方上传，经过规则过滤和抽查，但仍可能有少量挂错版本。部分年份的台湾当年报道和销量数据没有查到，个别事件只有单一来源，每条大事都标了来源，可以点开核对。站内连播不限首数，遇到禁止嵌入的视频会自动跳过；YouTube 可能在歌曲前插片头广告，本站没有收入，也不能去掉；跳去 YouTube 的临时歌单一次最多 50 首。手机浏览器切到后台时可能暂停。</p>
@@ -1727,6 +1744,7 @@ body.has-dock { padding-bottom: 92px; }
       if (!text) return;
       const title = `[${part}] ${text.replace(/\s+/g, ' ').slice(0, 30)}`;
       const body = `${text}\n\n——${who || '匿名'}\n${FEEDBACK_TAIL}`;
+      stat('feedback', { part });
       window.open(`https://github.com/${FEEDBACK_REPO}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`, '_blank', 'noopener');
     });
     fetch(`https://api.github.com/repos/${FEEDBACK_REPO}/issues?labels=${encodeURIComponent(FEEDBACK_OK)}&state=all&per_page=50`)
@@ -1758,10 +1776,14 @@ body.has-dock { padding-bottom: 92px; }
     return hits.sort((x, y) => score(x) - score(y)).slice(0, 14);
   };
   const close = () => { res.hidden = true; };
+  // 停手 1.5 秒才记一次搜索，搜不到的词能看出站里缺什么
+  let qTimer;
   q.addEventListener('input', () => {
     const term = q.value.trim();
+    clearTimeout(qTimer);
     if (!term) return close();
     const hits = lookup(term);
+    qTimer = setTimeout(() => stat('search', { search_term: term, results: hits.length }), 1500);
     res.innerHTML = hits.length
       ? hits.map(h => `<a href="${esc(h.href)}">${h.icon}<span>${esc(h.name)}<small>${esc(h.sub)}</small></span><span class="tech">${h.mark}</span></a>`).join('')
       : `<div class="none">没有找到“${esc(term)}”。可以换个关键词，或者到点歌台找歌。</div>`;
@@ -1891,6 +1913,10 @@ body.has-dock { padding-bottom: 92px; }
     const a = e.target.closest?.('a[data-vid], a[data-vids], a[data-all]');
     if (!a || e.ctrlKey || e.metaKey || e.shiftKey) return;
     e.preventDefault();
+    // 只记用户自己点的歌，随页换歌和自动下一首不记
+    const picked = byVid.get(a.dataset.vid);
+    if (picked) stat('play_song', { song: picked.t, artist: artists[picked.a]?.zh ?? picked.who ?? '', from: here() });
+    else stat('play_list', { songs: a.dataset.all !== undefined ? 'all' : a.dataset.vids.split(',').length, from: here() });
     if (a.dataset.all !== undefined) return playList([...byVid.values()], 0, 'shuffle');
     if (a.dataset.vids) return playList(a.dataset.vids.split(',').map(v => byVid.get(v)), 0, a.dataset.mode);
     if (!dock.hidden && nowSong()?.vid === a.dataset.vid) return $('dk-play').click();
@@ -1937,6 +1963,7 @@ body.has-dock { padding-bottom: 92px; }
   $('dk-tvoff').addEventListener('click', () => { P.adTv = false; tvShow(false); });
   document.addEventListener('click', e => {
     const tv = e.target.closest('[data-tv]'), bili = e.target.closest('[data-bili]'), bgm = e.target.closest('[data-bgm]');
+    if (tv || bili) stat('play_video', { platform: tv ? 'youtube' : 'bilibili', video_id: tv?.dataset.tv ?? bili.dataset.bili, from: here() });
     if (tv) playInline(tv, `https://www.youtube.com/embed/${esc(tv.dataset.tv)}?autoplay=1&rel=0&playsinline=1`, 'YouTube 播放器');
     else if (bili) playInline(bili, `https://player.bilibili.com/player.html?bvid=${esc(bili.dataset.bili)}&autoplay=1&danmaku=0&high_quality=1`, '哔哩哔哩播放器');
     else if (bgm) playBgm();
@@ -2122,6 +2149,7 @@ body.has-dock { padding-bottom: 92px; }
     document.querySelectorAll('#subnav a').forEach(a => (a.getAttribute('href') === `#${nav}` ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
     window.scrollTo({ top: 0, behavior: 'instant' });
     followPage();
+    stat('page_view', { page_location: `${location.origin}${location.pathname.replace(/\/?(index\.html)?$/, '/')}${h}`, page_title: view.querySelector('h1')?.textContent || '千禧时光机' });
   };
   addEventListener('hashchange', route);
   route();
