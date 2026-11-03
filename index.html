@@ -2027,8 +2027,13 @@ body.has-dock { padding-bottom: 92px; }
   $('dk-size').addEventListener('click', e => { e.currentTarget.textContent = dock.classList.toggle('big') ? '小屏' : '大屏'; });
   // 平时只留控制条听声音，电视按需打开
   const tvShow = on => { dock.classList.toggle('tv-on', on); $('dk-tv').setAttribute('aria-pressed', String(on)); };
-  $('dk-tv').addEventListener('click', () => { P.adTv = false; tvShow(!dock.classList.contains('tv-on')); });
-  $('dk-tvoff').addEventListener('click', () => { P.adTv = false; tvShow(false); });
+  // 放广告时用户自己关掉电视，就记住，以后广告不再弹出电视；想跳过时自己按“电视”
+  const tvOffByHand = () => {
+    if (P.adTv && P.adPop) { P.adPop = false; keep('ad-tv', '0'); toast('好的，以后放广告不再弹出电视，只有声音。想跳过广告时，点控制条上的“电视”。'); }
+    P.adTv = false;
+  };
+  $('dk-tv').addEventListener('click', () => { const on = !dock.classList.contains('tv-on'); if (!on) tvOffByHand(); P.adTv = false; tvShow(on); });
+  $('dk-tvoff').addEventListener('click', () => { tvOffByHand(); tvShow(false); });
   document.addEventListener('click', e => {
     const tv = e.target.closest('[data-tv]'), bili = e.target.closest('[data-bili]'), bgm = e.target.closest('[data-bgm]');
     if (tv || bili) stat('play_video', { platform: tv ? 'youtube' : 'bilibili', video_id: tv?.dataset.tv ?? bili.dataset.bili, from: here() });
@@ -2068,6 +2073,7 @@ body.has-dock { padding-bottom: 92px; }
     if (!P.followTold) { P.followTold = true; toast(`已换成${esc(name)}的 ${fresh.length} 首歌。不想跟着换，点控制条上的“随页换歌”。`); }
   };
   P.follow = keep('follow') !== '0';
+  P.adPop = keep('ad-tv') !== '0';
   $('dk-follow').setAttribute('aria-pressed', String(P.follow));
   $('dk-follow').addEventListener('click', e => {
     P.follow = !P.follow;
@@ -2114,10 +2120,10 @@ body.has-dock { padding-bottom: 92px; }
       $('dk-play').innerHTML = on ? ICON.pause : ICON.play;
       $('dk-play').setAttribute('aria-label', on ? '暂停' : '播放');
     }
-    // 片头广告要在画面里才点得到“跳过”，所以先打开电视，放完再收起
-    if (ad && !dock.classList.contains('tv-on')) { P.adTv = true; tvShow(true); }
+    // 片头广告要在画面里才点得到“跳过”，所以先打开电视，放完再收起；用户关过一次就不再弹
+    if (ad && P.adPop && !P.adTv && !dock.classList.contains('tv-on')) { P.adTv = true; tvShow(true); }
     if (!ad && P.adTv) { P.adTv = false; tvShow(false); }
-    if (ad && !P.adSeen) { P.adSeen = true; toast('YouTube 在放片头广告，能跳过时点电视里的“跳过”，放完电视会自动收起。'); }
+    if (ad && !P.adSeen) { P.adSeen = true; toast(P.adPop ? 'YouTube 在放片头广告，能跳过时点电视里的“跳过”，放完电视会自动收起。不想看到电视，点电视旁边的“关”。' : 'YouTube 在放片头广告，想跳过就点控制条上的“电视”。'); }
     $('dk-seek').disabled = ad;
     if (P.seeking) return;
     $('dk-now').textContent = ad ? '广告' : clock(t);
