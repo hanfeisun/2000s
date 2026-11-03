@@ -858,9 +858,9 @@ body.has-dock { padding-bottom: 92px; }
   const group = (list, fn) => list.reduce((m, x) => ((m[fn(x)] ??= []).push(x), m), {});
   const fmt = n => n.toLocaleString('zh-CN');
 
-  /* 访问统计：Google Analytics。GA_ID 为空时不加载任何统计脚本。
+  /* 访问统计：Google Analytics，只在正式网址上加载，本地预览不计。
      页面浏览按井号后的路由记成虚拟路径（/2000s/col-xxx），另外记点歌、站内看视频、搜索和留言 */
-  const GA_ID = '';
+  const GA_ID = location.hostname === 'hanfeisun.github.io' ? 'G-9DB6NZNBF5' : '';
   const stat = (name, params = {}) => { if (GA_ID && window.gtag) window.gtag('event', name, params); };
   if (GA_ID) {
     window.dataLayer = window.dataLayer || [];
