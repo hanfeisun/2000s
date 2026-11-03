@@ -452,6 +452,24 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .coin-cup { font-size: 34px; line-height: 1; }
 .coin-coffee:hover { filter: brightness(1.05); }
 
+/* 投币的三个入口：顶栏的投币键、专栏读完处的小卡片、页脚的徽章。都不动、不弹，只在鼠标经过时掉一枚币 */
+.coin-key { display: inline-flex; align-items: center; gap: 6px; flex: none; color: var(--mute); text-decoration: none; font-size: 12px; letter-spacing: .08em; }
+.coin-key:hover { color: var(--ink); }
+.coin-key i, .coin-mini { position: relative; display: block; flex: none; width: 16px; height: 20px; border-radius: 4px; background: linear-gradient(180deg, #3a4256, #1b2030); box-shadow: inset 0 1px 2px rgba(0, 0, 0, .6), 0 1px 0 var(--gloss); }
+.coin-key i::before, .coin-mini::before { content: ""; position: absolute; left: 50%; top: 4px; bottom: 4px; width: 2px; margin-left: -1px; border-radius: 1px; background: #05070c; box-shadow: 0 0 0 1.5px #c9a227; }
+.coin-key i::after, .coin-mini::after { content: ""; position: absolute; left: 50%; top: -9px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff3b0, #e0a800 70%); box-shadow: 0 0 0 1px #a57a00; opacity: 0; }
+.coin-key:hover i::after, .coin-tip:hover .coin-mini::after { animation: coin-drop .5s ease-in; }
+@keyframes coin-drop { 0% { opacity: 1; transform: translateY(-4px); } 70% { opacity: 1; transform: translateY(8px) scaleY(.4); } 100% { opacity: 0; transform: translateY(10px) scaleY(.2); } }
+@media (prefers-reduced-motion: reduce) { .coin-key:hover i::after, .coin-tip:hover .coin-mini::after { animation: none; } }
+.coin-tip { display: flex; align-items: center; gap: 14px; max-width: 46em; margin: 30px 0 6px; padding: 14px 16px; border-radius: 12px; background: var(--plate); box-shadow: inset 0 1px 0 var(--gloss), 0 0 0 1px var(--hair); }
+.coin-tip p { flex: 1; margin: 0; font-size: 14px; line-height: 1.65; color: var(--mute); }
+.coin-tip .coin-go { flex: none; padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; color: #3a2500; text-decoration: none; background: linear-gradient(180deg, #ffe27a, #f4b400 52%, #e8a800); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 0 0 1px rgba(120, 80, 0, .35), 0 2px 6px var(--shadow); }
+.coin-tip .coin-go:hover { filter: brightness(1.06); }
+.b88.coin { background: linear-gradient(180deg, #ffe88f, #f4b400 50%, #e09a00); color: #3a2500; text-decoration: none; }
+.coin-key[hidden], .b88[hidden], .foot-site[hidden] { display: none; }
+@media (max-width: 1240px) and (min-width: 981px) { .coin-key span { display: none; } }
+@media (max-width: 760px) { .coin-tip { flex-wrap: wrap; } .coin-tip p { flex-basis: calc(100% - 30px); } .coin-tip .coin-go { margin-left: 30px; } }
+
 /* 老式访客计数器：一格一个数字，中间一道接缝像翻牌计数器 */
 .foot-site { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 0 0 6px; font-size: 14px; color: var(--ink); }
 .odo { display: inline-flex; gap: 2px; padding: 3px; border-radius: 4px; background: #1a1a1a; box-shadow: inset 0 1px 2px rgba(0, 0, 0, .6), 0 0 0 1px rgba(10, 20, 44, .34), 0 1px 0 var(--gloss); }
@@ -809,6 +827,7 @@ body.has-dock { padding-bottom: 92px; }
       <input id="q" type="search" placeholder="搜专栏、词条" aria-label="搜索全站" autocomplete="off">
       <div class="results" id="results" hidden></div>
     </div>
+    <a class="coin-key" id="coin-key" href="#donate" title="投币支持本站" hidden><i aria-hidden="true"></i><span>投币</span></a>
     <button type="button" class="hold" id="theme" aria-label="切换午夜模式" aria-pressed="false"><span>Night</span><i></i></button>
   </div>
 </header>
@@ -816,12 +835,13 @@ body.has-dock { padding-bottom: 92px; }
 <main id="view"></main>
 <footer class="foot"><div class="wrap">
   <p class="foot-dream"><a href="#dream">下午永远不会结束。</a></p>
-  <div class="badges" aria-hidden="true">
-    <span class="b88 steel"><b>Y2K</b>READY</span>
-    <span class="b88 lcdb">HI-FI<b>STEREO</b></span>
-    <span class="b88 holo"><b>16</b>YEARS</span>
-    <span class="b88 gel">PLAY<b>▶</b></span>
-    <span class="b88 ink">1024×768<b>BEST VIEW</b></span>
+  <div class="badges">
+    <span class="b88 steel" aria-hidden="true"><b>Y2K</b>READY</span>
+    <span class="b88 lcdb" aria-hidden="true">HI-FI<b>STEREO</b></span>
+    <span class="b88 holo" aria-hidden="true"><b>16</b>YEARS</span>
+    <span class="b88 gel" aria-hidden="true">PLAY<b>▶</b></span>
+    <span class="b88 ink" aria-hidden="true">1024×768<b>BEST VIEW</b></span>
+    <a class="b88 coin" id="foot-coin" href="#donate" title="投币支持本站" aria-label="投币支持本站" hidden>INSERT<b>COIN</b></a>
   </div>
   <p class="foot-site" id="foot-site" hidden>欢迎光临！你是本站第 <span class="odo lcdnum" id="site-uv"></span> 位访客</p>
   <p class="foot-count">这台电脑来过 <b class="lcdnum" id="visits">1</b> 次<span id="foot-pv" hidden>，本站累计被翻开 <b class="lcdnum" id="site-pv"></b> 次</span>。本站建议以 1024×768 分辨率、真彩色浏览。</p>
@@ -1694,6 +1714,7 @@ body.has-dock { padding-bottom: 92px; }
         <div class="col-top"><img class="col-c" src="art/col-${c.id}.webp" alt="" width="800" height="600" data-art="col-${c.id}"><div><h1>${esc(c.title)}</h1><p>${esc(c.summary)}</p><p class="lcdnum ent-y">${span(c)}</p>${list.length ? playAll(list, '边听边读') : '<button type="button" class="play" data-bgm>边听边读</button>'}</div></div>
         <div class="jump">${c.body.filter(s => s.h).map((s, n) => `<button type="button" class="chip" data-go="s${n}">${esc(s.h)}</button>`).join('')}</div></header>
       <div class="prose col-text">${c.body.map((s, n) => `${s.h ? `<h2 class="sub" id="s${n}">${esc(s.h)}</h2>` : ''}${s.p.map(p => `<p>${rich(p)}</p>`).join('')}${c.photos.filter(p => p.at === n).map(photoFig).join('')}${c.media.filter(m => m.at === n).map(mediaFig).join('')}`).join('')}</div>
+      ${donateOn ? `<aside class="coin-tip"><i class="coin-mini" aria-hidden="true"></i><p>这篇让你想起了什么吗？千禧时光机是一个人业余做的，不放广告。觉得值得，可以投个币，支持我继续往下写。</p><a class="coin-go" href="#donate">投个币</a></aside>` : ''}
       ${c.timeline.length ? `<section class="sec"><div class="sec-h"><h2>时间线</h2></div><ul class="events">${c.timeline.map(e => `<li><time>${esc(String(e.d ?? '').slice(0, 7))}</time><span>${rich(e.text)}${srcLink(e.src)}</span></li>`).join('')}</ul></section>` : ''}
       ${list.length ? `<section class="sec"><div class="sec-h"><h2>听这些歌</h2><span class="tech">${list.length} Songs</span></div>${playAll(list)}${tuneList(list)}</section>` : ''}
       ${ents.length ? `<section class="sec"><div class="sec-h"><h2>相关词条</h2></div>${entryIndex(ents)}</section>` : ''}
@@ -2124,7 +2145,7 @@ body.has-dock { padding-bottom: 92px; }
     localStorage.setItem('visits', n);
     $('visits').textContent = n;
   } catch {}
-  $('foot-donate').hidden = !donateOn;
+  ['foot-donate', 'foot-coin', 'coin-key'].forEach(id => { $(id).hidden = !donateOn; });
   // 页脚的全站访客计数，数字来自不蒜子（国内不挂代理也能访问），连不上就只留本机次数。
   // 不蒜子按 Referer 计数，GitHub Pages 默认只发域名，所以这一个请求要求带完整地址
   {
