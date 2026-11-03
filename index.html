@@ -842,7 +842,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=34b94c563a"></script>
+<script src="data.js?v=a2f61432ea"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -1656,7 +1656,9 @@ body.has-dock { padding-bottom: 92px; }
       ${list.length ? `<section class="sec"><div class="sec-h"><h2>听这些歌</h2><span class="tech">${list.length} Songs</span></div>${playAll(list)}${tuneList(list)}</section>` : ''}
       ${ents.length ? `<section class="sec"><div class="sec-h"><h2>相关词条</h2></div>${entryIndex(ents)}</section>` : ''}
       ${c.sources.length ? `<section class="sec"><div class="sec-h"><h2>资料来源</h2></div><ul class="prose">${c.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}</ul></section>` : ''}
-      ${c.credit ? `<p class="credit">封面照片：<a href="${esc(c.credit.url)}" target="_blank" rel="noopener">${esc(c.credit.author || '维基共享资源')}</a>，${esc(c.credit.license)}，经裁切和调色。</p>` : ''}
+      ${c.credit ? (['视频截图', '网络图片'].includes(c.credit.license)
+        ? `<p class="credit">封面图片：取自 <a href="${esc(c.credit.url)}" target="_blank" rel="noopener">${esc(c.credit.file)}</a>${c.credit.author ? `（${esc(c.credit.author)}）` : ''}，经裁切。</p>`
+        : `<p class="credit">封面照片：<a href="${esc(c.credit.url)}" target="_blank" rel="noopener">${esc(c.credit.author || '维基共享资源')}</a>，${esc(c.credit.license)}，经裁切和调色。</p>`) : ''}
       <nav class="col-nav" aria-label="${f.name}专栏">${sibs[i - 1] ? `<a href="#col-${sibs[i - 1].id}"><small>上一篇</small>${esc(sibs[i - 1].title)}</a>` : '<span></span>'}${sibs[i + 1] ? `<a href="#col-${sibs[i + 1].id}"><small>下一篇</small>${esc(sibs[i + 1].title)}</a>` : '<span></span>'}</nav>
     </div>`;
     view.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => document.getElementById(b.dataset.go)?.scrollIntoView({ behavior: 'smooth' })));
