@@ -1787,7 +1787,7 @@ body.has-dock { padding-bottom: 92px; }
   };
 
   /* 投币支持：微信赞赏码放在 src/donate/，填上文件名和 Buy Me a Coffee 的链接后，页脚和关于页才会出现入口 */
-  const DONATE = { wechat: 'wechat.png', coffee: '' };
+  const DONATE = { wechat: 'wechat.png', coffee: 'https://buymeacoffee.com/hanfeisun' };
   const donateOn = Boolean(DONATE.wechat || DONATE.coffee);
   const donateView = () => {
     const wx = /MicroMessenger/i.test(navigator.userAgent);
