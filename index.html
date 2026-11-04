@@ -879,7 +879,7 @@ body.has-dock { padding-bottom: 92px; }
       <button type="button" class="chip" id="dk-shuffle" aria-pressed="false">随机</button>
       <button type="button" class="chip" id="dk-repeat" aria-pressed="false">循环</button>
       <button type="button" class="chip" id="dk-list" aria-pressed="false">列表</button>
-      <button type="button" class="chip" id="dk-follow" aria-pressed="true" title="翻到年份和专题时，把歌换成这一页的">随页换歌</button>
+      <button type="button" class="chip" id="dk-follow" aria-pressed="false" title="翻到年份和专题时，把歌换成这一页的">随页换歌</button>
       <button type="button" class="chip" id="dk-tv" aria-pressed="false">电视</button>
       <button type="button" class="chip" id="dk-size">大屏</button>
       <a class="chip" id="dk-out" target="_blank" rel="noopener">YouTube</a>
@@ -2042,7 +2042,7 @@ body.has-dock { padding-bottom: 92px; }
   });
   const playBgm = () => { P.bgm = true; P.repeat = true; $('dk-repeat').setAttribute('aria-pressed', 'true'); playList(BGMS, 0); };
   const keep = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch {} return null; };
-  // 歌随页面换：年份、专题和专栏页把播放列表换成这一页的歌，用户可以关掉
+  // 歌随页面换：年份、专题和专栏页把播放列表换成这一页的歌，默认关闭，用户可以在控制条上打开
   const pageSongs = () => {
     const h = (location.hash || '#home').slice(1), year = /^y(\d{4})(?:-(hktw|cn))?$/.exec(h);
     if (h === 'home' || h === '') { const v = D.years.find(x => x.y === track), l = nowLine(v); return [`y${track}-${l}`, v[l].songs, `${track} 年`]; }
@@ -2071,7 +2071,8 @@ body.has-dock { padding-bottom: 92px; }
     else playList(fresh, 0, P.shuffle ? 'shuffle' : undefined);
     if (!P.followTold) { P.followTold = true; toast(`已换成${esc(name)}的 ${fresh.length} 首歌。不想跟着换，点控制条上的“随页换歌”。`); }
   };
-  P.follow = keep('follow') !== '0';
+  // 随页换歌默认关闭，用户在控制条上打开过才跟着页面换
+  P.follow = keep('follow') === '1';
   P.adPop = keep('ad-tv') !== '0';
   $('dk-follow').setAttribute('aria-pressed', String(P.follow));
   $('dk-follow').addEventListener('click', e => {
