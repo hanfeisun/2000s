@@ -887,7 +887,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=6db014e54d"></script>
+<script src="data.js?v=a7bdf247e4"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -1758,7 +1758,7 @@ body.has-dock { padding-bottom: 92px; }
         <p><b>视频链接：</b>${fmt(m.linked)} 首歌链接到具体的视频或音频，其中 ${fmt(m.official)} 条来自官方、唱片公司频道或 YouTube 官方音频。优先顺序是官方 MV、高播放量的原版 MV、官方音频，最后才是现场版。每条都在 ${esc(m.checked)} 用 YouTube oEmbed 确认过存在。春晚专题优先用 CCTV春晚 官方频道的当届片段。其余歌曲和专辑里的非主打曲目使用 YouTube Music 搜索链接。部分视频有地区限制，打不开时可以用专辑页的搜索链接。</p>
         <p><b>封面与资料：</b>专辑封面、曲目和发行信息取自 iTunes Search API，首发日期参考 MusicBrainz，其中 ${fmt(m.wikiDates)} 张重点专辑的日期再用维基百科校对过。封面版权归各唱片公司所有，这里以缩略图用于资料说明。歌手照片取自维基共享资源，署名见各词条。</p>
         <p><b>奖项：</b>金曲奖名单整理自维基百科各届条目。</p>
-        <p><b>专栏的图片和影像：</b>专栏封面多数取自当年的新闻照片、节目和视频截图、杂志和实物照片，少数由本站绘制；文中照片来自维基共享资源。每张图都在文末注明出处，版权归原权利人。文中的影像是 YouTube 和哔哩哔哩上公开的视频，由官方播放器嵌入，不存放在站内，其中一部分是网友上传的老节目录屏，版权归原权利人。边听边读的背景音乐是陈越龙的《Nop (Lofi Version)》和《午后的梦》，不属于年代歌单。</p>
+        <p><b>专栏的图片和影像：</b>专栏封面多数取自当年的新闻照片、节目和视频截图、杂志和实物照片，少数由本站绘制；文中照片来自维基共享资源。每张图都在文末注明出处，版权归原权利人。文中的影像是 YouTube 和哔哩哔哩上公开的视频，由官方播放器嵌入，不存放在站内，其中一部分是网友上传的老节目录屏，版权归原权利人。首页和边听边读的背景音乐是陈越龙的《Nop (Lofi Version)》《午后的梦》、July 的《My Soul》和 Yiruma 的《River Flows in You》，不属于年代歌单，四首放完会转成站内歌曲随机播放。</p>
         <p><b>访问统计：</b>页脚的访客数由不蒜子计数，从 2026 年 11 月开始算；同一个人换了浏览器或清了缓存，会被当成新访客。${GA_ID ? '本站还用 Google Analytics 统计常看的页面、点播的歌和搜索词，用来决定接下来补什么内容。' : ''}这些统计都不收集姓名、手机号这类个人信息。</p>
         ${donateOn ? `<p><b>投币支持：</b>喜欢这个站的话，可以<a href="#donate">投个币</a>，帮我把网站和接下来的小游戏做得更好。</p>` : ''}
         <p><b>选题线索：</b>2008 到 2012 年的部分内娱选题，线索来自播客《过刊》的《内娱过往》系列。事实都另行查证，文字由本站撰写，不含节目内容。</p>
@@ -1871,10 +1871,12 @@ body.has-dock { padding-bottom: 92px; }
   D.topics.forEach(t => t.songs.forEach(x => { if (x.vid && !byVid.has(x.vid)) byVid.set(x.vid, x.id ? { ...songs[x.id], vid: x.vid, vk: '现场', ne: 0 } : { vid: x.vid, t: x.t, y: x.y, by: [], who: x.a }); }));
   const $ = id => document.getElementById(id);
   // 读专栏时的背景音乐，不是年代歌单的一部分
-  // 首页的背景音乐：陈越龙的两首，连着循环
+  // 首页的背景音乐：四首轻音乐放一遍，放完转成全站歌曲随机播放
   const BGMS = [
     { vid: 'VBvfXo77f8s', t: 'Nop (Lofi Version)', who: '陈越龙', by: [], y: '' },
     { vid: 'zBKIJzc90x0', t: '午后的梦', who: '陈越龙', by: [], y: '' },
+    { vid: '935RgNLNuno', t: 'My Soul', who: 'July', by: [], y: '' },
+    { vid: '7maJOI3QMu0', t: 'River Flows in You', who: 'Yiruma', by: [], y: '' },
   ];
   BGMS.forEach(s => byVid.set(s.vid, s));
   const isBgm = s => BGMS.includes(s);
@@ -1931,6 +1933,7 @@ body.has-dock { padding-bottom: 92px; }
   const next = () => {
     if (P.pos + 1 < P.queue.length) playAt(P.pos + 1);
     else if (P.repeat) playAt(0);
+    else if (P.bgm) { P.bgm = false; playList(D.songs.filter(s => canEmbed(s) && !bad.has(s.vid)), 0, 'shuffle'); }
     else toast('列表放完了。');
   };
   const onState = e => {
@@ -2040,7 +2043,7 @@ body.has-dock { padding-bottom: 92px; }
     else if (bili) playInline(bili, `https://player.bilibili.com/player.html?bvid=${esc(bili.dataset.bili)}&autoplay=1&danmaku=0&high_quality=1`, '哔哩哔哩播放器');
     else if (bgm) playBgm();
   });
-  const playBgm = () => { P.bgm = true; P.repeat = true; $('dk-repeat').setAttribute('aria-pressed', 'true'); playList(BGMS, 0); };
+  const playBgm = () => { P.bgm = true; P.repeat = false; $('dk-repeat').setAttribute('aria-pressed', 'false'); playList(BGMS, 0); };
   const keep = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch {} return null; };
   // 歌随页面换：年份、专题和专栏页把播放列表换成这一页的歌，默认关闭，用户可以在控制条上打开
   const pageSongs = () => {
