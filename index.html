@@ -887,7 +887,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=30c2fb4900"></script>
+<script src="data.js?v=8a4f21c901"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -1447,7 +1447,7 @@ body.has-dock { padding-bottom: 92px; }
   /* 专辑 */
   const albumFilter = { year: '全部', region: '全部', lang: '全部' };
   const albumsView = () => {
-    const regions = ['全部', ...new Set(D.artists.map(a => a.region))];
+    const regions = ['全部', ...new Set(D.albums.map(b => artists[b.a]?.region).filter(Boolean))];
     const list = D.albums.filter(b => (albumFilter.year === '全部' || b.y === +albumFilter.year) && (albumFilter.region === '全部' || artists[b.a]?.region === albumFilter.region) && (albumFilter.lang === '全部' || b.lang === albumFilter.lang))
       .slice().sort((x, y) => x.d.localeCompare(y.d));
     view.innerHTML = `
