@@ -453,8 +453,10 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 
 /* 地方切面：顶部按大区排的省名，点了直接进专栏 */
 .place-jump { display: grid; gap: 8px; margin: 4px 0 8px; }
-.place-jump .frow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-.place-jump .tech { width: 3em; flex: none; }
+.place-jump .frow { display: flex; flex-wrap: nowrap; align-items: flex-start; gap: 6px; }
+.place-jump .tech { width: 3.4em; flex: none; line-height: 1.6; padding-top: 4px; }
+/* 省名单独一栏换行，第二行和第一行的第一个对齐 */
+.place-chips { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; min-width: 0; }
 .place-jump .chip { text-decoration: none; }
 
 /* 投币的三个入口：顶栏的投币键、专栏读完处的小卡片、页脚的徽章。都不动、不弹，只在鼠标经过时掉一枚币 */
@@ -1644,7 +1646,7 @@ body.has-dock { padding-bottom: 92px; }
   const colIndex = list => `<ol class="cols">${list.map((c, i) => `<li><a href="#col-${c.id}"><img class="col-c" src="art/col-${c.id}.webp" alt="" loading="lazy" width="800" height="600" data-art="col-${c.id}"><span class="col-b"><span class="tech">${String(i + 1).padStart(2, '0')} · ${esc(c.kicker ?? '')} · ${span(c)}</span><b>${esc(c.title)}</b><small>${esc(c.summary)}</small><span class="col-m lcdnum">${[c.media.length ? `${c.media.length} 段影像` : '', c.photos.length ? `${c.photos.length} 张照片` : '', c.songs.length ? `${c.songs.length} 首歌` : ''].filter(Boolean).join(' · ')}</span></span></a></li>`).join('')}</ol>`;
   // 地方切面：按大区分组，每组先列省名，再列专栏
   const AREAS = ['华北', '东北', '华东', '华中', '华南', '西南', '西北', '港澳台', '海外'];
-  const placeIndex = list => { const by = group(list, c => c.area ?? '其他'); const keys = [...AREAS, ...Object.keys(by).filter(a => !AREAS.includes(a))].filter(a => by[a]); return `<nav class="place-jump" aria-label="按地区跳转">${keys.map(a => `<div class="frow"><span class="tech">${esc(a)}</span>${by[a].map(c => `<a class="chip" href="#col-${c.id}">${esc(c.place ?? c.kicker ?? '')}</a>`).join('')}</div>`).join('')}</nav>${keys.map(a => `<section class="sec place-area"><div class="sec-h"><h2>${esc(a)}</h2><span class="tech">${by[a].length} 篇</span></div>${colIndex(by[a])}</section>`).join('')}`; };
+  const placeIndex = list => { const by = group(list, c => c.area ?? '其他'); const keys = [...AREAS, ...Object.keys(by).filter(a => !AREAS.includes(a))].filter(a => by[a]); return `<nav class="place-jump" aria-label="按地区跳转">${keys.map(a => `<div class="frow"><span class="tech">${esc(a)}</span><span class="place-chips">${by[a].map(c => `<a class="chip" href="#col-${c.id}">${esc(c.place ?? c.kicker ?? '')}</a>`).join('')}</span></div>`).join('')}</nav>${keys.map(a => `<section class="sec place-area"><div class="sec-h"><h2>${esc(a)}</h2><span class="tech">${by[a].length} 篇</span></div>${colIndex(by[a])}</section>`).join('')}`; };
   const entryIndex = list => { const by = group(list, e => e.cat); return `<div class="ent-idx">${Object.keys(by).map(c => `<section><h3>${esc(c)}</h3><ul>${by[c].map(e => `<li><a href="#e-${e.id}">${esc(e.name)}</a><small class="lcdnum">${span(e)}</small></li>`).join('')}</ul></section>`).join('')}</div>`; };
   const eventRow = e => `<li><time>${esc(String(e.d ?? '').slice(5) || '—')}</time><span><span class="tag">${esc(e.c)}</span> ${rich(e.t)}${srcLink(e.s)}</span></li>`;
   const chronicle = list => { const by = group(list, e => String(e.d).slice(0, 4)); return Object.keys(by).sort().map(y => `<h3 class="year-h">${y}</h3><ul class="events">${by[y].map(eventRow).join('')}</ul>`).join('') || '<p class="prose">这一格没有大事。</p>'; };
