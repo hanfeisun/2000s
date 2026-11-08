@@ -683,6 +683,10 @@ body.has-dock { padding-bottom: 92px; }
 .dock.can-drag .dock-video, .dock.can-drag .dock-case button { cursor: auto; }
 .dock.dragging .dock-case, .dock.dragging .dock-ant { cursor: grabbing; }
 .dock.dragging iframe { pointer-events: none; }
+/* 右下角的拖拽角：斜纹小三角，只在电脑上出现 */
+.dock-grip { display: none; position: absolute; right: 4px; bottom: 4px; width: 16px; height: 16px; cursor: nwse-resize; border-bottom-right-radius: 14px;
+  background: repeating-linear-gradient(135deg, transparent 0 3px, rgba(40, 55, 85, .45) 3px 4.5px); clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+.dock.can-drag .dock-grip { display: block; }
 .dock.dragging { user-select: none; }
 .dock:not(.tv-on) .dock-tv { position: fixed; left: -1400px; top: 0; width: 356px; pointer-events: none; }
 .dock:not(.tv-on) #dk-size { display: none; }
@@ -878,6 +882,7 @@ body.has-dock { padding-bottom: 92px; }
           <button type="button" id="dk-tvoff" aria-label="收起电视，只听声音">关</button>
         </div>
       </div>
+      <i class="dock-grip" id="dock-grip" title="拖动调整电视大小" aria-hidden="true"></i>
     </div>
   </div>
   <div class="dock-bar">
@@ -2134,6 +2139,31 @@ body.has-dock { padding-bottom: 92px; }
   const restoreTv = () => { const p = wide() && keep('tv-pos'); if (p) { try { const [x, y] = JSON.parse(p); placeTv(x, y); } catch {} } else unplaceTv(); };
   addEventListener('resize', () => { dock.classList.toggle('can-drag', wide()); if (dock.classList.contains('moved')) { const r = stage.getBoundingClientRect(); placeTv(r.left, r.top); } });
   $('dk-size').addEventListener('click', () => { if (dock.classList.contains('moved')) requestAnimationFrame(() => { const r = stage.getBoundingClientRect(); keep('tv-pos', JSON.stringify(placeTv(r.left, r.top))); }); });
+  // 电脑上按住右下角的拖拽角调电视大小，画面保持 4:3；按“大屏/小屏”回到标准大小
+  const grip = $('dock-grip'), MIN_W = 300;
+  const sizeTv = w => {
+    w = Math.round(Math.min(Math.max(MIN_W, w), innerWidth - 16)); stage.style.width = `${w}px`;
+    // 高度也不能超出窗口（上面留天线）：按比例缩回
+    const h = stage.getBoundingClientRect().height, room = innerHeight - 56;
+    if (h > room) { w = Math.max(MIN_W, Math.floor(w * room / h)); stage.style.width = `${w}px`; }
+    return w;
+  };
+  addEventListener('resize', () => { if (stage.style.width) sizeTv(parseFloat(stage.style.width)); });
+  grip.addEventListener('pointerdown', e => {
+    if (!wide() || e.button !== 0) return;
+    e.preventDefault(); e.stopPropagation();
+    const r = stage.getBoundingClientRect();
+    placeTv(r.left, r.top);
+    const x0 = e.clientX, w0 = r.width;
+    grip.setPointerCapture(e.pointerId); dock.classList.add('dragging');
+    let w = w0;
+    const move = ev => { w = sizeTv(w0 + ev.clientX - x0); const q = stage.getBoundingClientRect(); placeTv(q.left, q.top); };
+    const up = () => { grip.removeEventListener('pointermove', move); dock.classList.remove('dragging'); keep('tv-w', String(w)); const q = stage.getBoundingClientRect(); keep('tv-pos', JSON.stringify(placeTv(q.left, q.top))); };
+    grip.addEventListener('pointermove', move);
+    grip.addEventListener('pointerup', up, { once: true }); grip.addEventListener('pointercancel', up, { once: true });
+  });
+  $('dk-size').addEventListener('click', () => { stage.style.width = ''; keep('tv-w', ''); });
+  if (wide() && +keep('tv-w')) sizeTv(+keep('tv-w'));
   restoreTv();
   $('dk-follow').setAttribute('aria-pressed', String(P.follow));
   $('dk-follow').addEventListener('click', e => {
