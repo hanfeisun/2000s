@@ -2043,7 +2043,8 @@ body.has-dock { padding-bottom: 92px; }
     if (!box.hidden) paintQueue();
   });
   $('dock-queue').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b) playAt(+b.dataset.q); });
-  $('dk-size').addEventListener('click', e => { e.currentTarget.textContent = dock.classList.toggle('big') ? '小屏' : '大屏'; });
+  const tvSize = big => { dock.classList.toggle('big', big); $('dk-size').textContent = big ? '小屏' : '大屏'; };
+  $('dk-size').addEventListener('click', () => { const big = !dock.classList.contains('big'); tvSize(big); keep('tv-big', big ? '1' : '0'); });
   // 平时只留控制条听声音，电视按需打开
   const tvShow = on => { dock.classList.toggle('tv-on', on); $('dk-tv').setAttribute('aria-pressed', String(on)); };
   // 放广告时用户自己关掉电视，就记住，以后广告不再弹出电视；想跳过时自己按“电视”
@@ -2094,6 +2095,8 @@ body.has-dock { padding-bottom: 92px; }
   // 随页换歌默认关闭，用户在控制条上打开过才跟着页面换
   P.follow = keep('follow') === '1';
   P.adPop = keep('ad-tv') !== '0';
+  // 电视默认：电脑上大屏，手机上小屏；用户按过就记住
+  tvSize(keep('tv-big') ? keep('tv-big') === '1' : !PHONE && matchMedia('(min-width: 761px)').matches);
   $('dk-follow').setAttribute('aria-pressed', String(P.follow));
   $('dk-follow').addEventListener('click', e => {
     P.follow = !P.follow;
