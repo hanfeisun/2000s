@@ -451,6 +451,12 @@ table.gma { border-collapse: collapse; width: 100%; min-width: 1040px; font-size
 .coin-cup { font-size: 34px; line-height: 1; }
 .coin-coffee:hover { filter: brightness(1.05); }
 
+/* 地方切面：顶部按大区排的省名，点了直接进专栏 */
+.place-jump { display: grid; gap: 8px; margin: 4px 0 8px; }
+.place-jump .frow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.place-jump .tech { width: 3em; flex: none; }
+.place-jump .chip { text-decoration: none; }
+
 /* 投币的三个入口：顶栏的投币键、专栏读完处的小卡片、页脚的徽章。都不动、不弹，只在鼠标经过时掉一枚币 */
 .coin-key { display: inline-flex; align-items: center; gap: 6px; flex: none; color: var(--mute); text-decoration: none; font-size: 12px; letter-spacing: .08em; }
 .coin-key:hover { color: var(--ink); }
@@ -820,7 +826,7 @@ body.has-dock { padding-bottom: 92px; }
   <div class="wrap deck-in">
     <a class="brand" href="#home"><svg class="brand-tv" viewBox="0 0 32 32" aria-hidden="true"><path d="M10 3l6 6 6-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><rect x="1.5" y="9" width="29" height="21" rx="5" fill="#d3dae4" stroke="#6b7690"/><rect x="4" y="11.5" width="19" height="16" rx="4" fill="#2f86ee"/><circle cx="26.8" cy="16" r="2" fill="#525d76"/><path d="M25 21h4M25 23.5h4" stroke="#6b7690"/></svg><b>千禧时光机</b></a>
     <nav class="nav" aria-label="主导航">
-      <a href="#home">首页</a><a href="#music">音乐</a><a href="#f-screen">荧屏</a><a href="#f-net">网络</a><a href="#f-school">校园</a><a href="#f-life">生活</a><a href="#f-world">社会</a><a href="#f-sport">体育</a><a href="#f-sub">亚文化</a><a href="#about">关于</a>
+      <a href="#home">首页</a><a href="#music">音乐</a><a href="#f-screen">荧屏</a><a href="#f-net">网络</a><a href="#f-school">校园</a><a href="#f-life">生活</a><a href="#f-world">社会</a><a href="#f-sport">体育</a><a href="#f-sub">亚文化</a><a href="#f-place">地方</a><a href="#about">关于</a>
     </nav>
     <div class="search" role="search">
       <input id="q" type="search" placeholder="搜专栏、词条" aria-label="搜索全站" autocomplete="off">
@@ -887,8 +893,8 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=jpop20261108"></script>
-<script src="faces.js?v=c7d91e2048"></script>
+<script src="data.js?v=be24c61010"></script>
+<script src="faces.js?v=97d80cec30"></script>
 <script>(() => {
   const D = window.DATA;
   const view = document.getElementById('view');
@@ -1261,7 +1267,7 @@ body.has-dock { padding-bottom: 92px; }
         <div class="sec-h"><h2>时光机里有什么</h2><span class="tech">Facets</span></div>
         <div class="tiles">
           <a class="tile" href="#music"><b>音乐</b><span class="lcdnum">${fmt(D.songs.length)}</span><small>内地和港台两条线，歌手、专辑、榜单、歌单和专题</small></a>
-          ${Object.entries(FACETS).filter(([k]) => inFacet(k).length).map(([k, f]) => `<a class="tile" data-f="${k}" href="#f-${k}"><b>${f.name}</b><span class="lcdnum">${columnsOf(k).length ? `${columnsOf(k).length} 篇专栏` : inFacet(k).length}</span><small>${esc(f.lede)}</small></a>`).join('')}
+          ${Object.entries(FACETS).filter(([k]) => inFacet(k).length || columnsOf(k).length).map(([k, f]) => `<a class="tile" data-f="${k}" href="#f-${k}"><b>${f.name}</b><span class="lcdnum">${columnsOf(k).length ? `${columnsOf(k).length} 篇专栏` : inFacet(k).length}</span><small>${esc(f.lede)}</small></a>`).join('')}
         </div>
       </section>
       <section class="wrap sec">
@@ -1459,6 +1465,7 @@ body.has-dock { padding-bottom: 92px; }
       </div>`;
     view.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => { albumFilter[c.dataset.f] = c.dataset.v; albumsView(); }));
   };
+  // 专辑曲目：主打歌对上站里的歌，其余曲目用曲目表里记的视频直接放
   const norm = s => s.replace(/[\s（）()·，,]/g, '').toLowerCase();
   const hitOfAlbum = (b, t) => (songsIn[b.id] ?? []).find(s => norm(t).startsWith(norm(s.tn ?? s.t)) || norm(s.tn ?? s.t).startsWith(norm(t)));
   const trackSong = (b, t) => hitOfAlbum(b, t[0]) ?? (t[2] ? byVid.get(t[2]) ?? { vid: t[2], vk: t[3] || '音频', t: t[0], a: b.a, al: b.id, y: b.y } : null);
@@ -1623,6 +1630,7 @@ body.has-dock { padding-bottom: 92px; }
     world: { name: '社会', en: 'The World', groups: ['society', 'news'], lede: '那些年的大事和新闻，有热闹的，也有沉重的。' },
     sport: { name: '体育', en: 'Sports', groups: ['sport'], lede: '比赛日的街头和电视机前。' },
     sub: { name: '亚文化', en: 'Subculture', groups: ['subculture'], lede: '打口碟、街舞、二次元、粉丝和杀马特。' },
+    place: { name: '地方', en: 'Hometown', groups: [], lede: '每个省、自治区、直辖市一篇：本地的电视台、汽水、球队、街道和集市，城里的，也有县城和村里的。' },
   };
   const facetOf = e => Object.keys(FACETS).find(k => FACETS[k].groups.includes(e.group));
   const span = e => (e.from === e.to ? e.from : `${e.from}—${e.to}`);
@@ -1634,6 +1642,9 @@ body.has-dock { padding-bottom: 92px; }
   const eventsOf = k => D.facetEvents?.[k] ?? [];
   // 专栏一览：目录式排版，不用卡片
   const colIndex = list => `<ol class="cols">${list.map((c, i) => `<li><a href="#col-${c.id}"><img class="col-c" src="art/col-${c.id}.webp" alt="" loading="lazy" width="800" height="600" data-art="col-${c.id}"><span class="col-b"><span class="tech">${String(i + 1).padStart(2, '0')} · ${esc(c.kicker ?? '')} · ${span(c)}</span><b>${esc(c.title)}</b><small>${esc(c.summary)}</small><span class="col-m lcdnum">${[c.media.length ? `${c.media.length} 段影像` : '', c.photos.length ? `${c.photos.length} 张照片` : '', c.songs.length ? `${c.songs.length} 首歌` : ''].filter(Boolean).join(' · ')}</span></span></a></li>`).join('')}</ol>`;
+  // 地方切面：按大区分组，每组先列省名，再列专栏
+  const AREAS = ['华北', '东北', '华东', '华中', '华南', '西南', '西北', '港澳台', '海外'];
+  const placeIndex = list => { const by = group(list, c => c.area ?? '其他'); const keys = [...AREAS, ...Object.keys(by).filter(a => !AREAS.includes(a))].filter(a => by[a]); return `<nav class="place-jump" aria-label="按地区跳转">${keys.map(a => `<div class="frow"><span class="tech">${esc(a)}</span>${by[a].map(c => `<a class="chip" href="#col-${c.id}">${esc(c.place ?? c.kicker ?? '')}</a>`).join('')}</div>`).join('')}</nav>${keys.map(a => `<section class="sec place-area"><div class="sec-h"><h2>${esc(a)}</h2><span class="tech">${by[a].length} 篇</span></div>${colIndex(by[a])}</section>`).join('')}`; };
   const entryIndex = list => { const by = group(list, e => e.cat); return `<div class="ent-idx">${Object.keys(by).map(c => `<section><h3>${esc(c)}</h3><ul>${by[c].map(e => `<li><a href="#e-${e.id}">${esc(e.name)}</a><small class="lcdnum">${span(e)}</small></li>`).join('')}</ul></section>`).join('')}</div>`; };
   const eventRow = e => `<li><time>${esc(String(e.d ?? '').slice(5) || '—')}</time><span><span class="tag">${esc(e.c)}</span> ${rich(e.t)}${srcLink(e.s)}</span></li>`;
   const chronicle = list => { const by = group(list, e => String(e.d).slice(0, 4)); return Object.keys(by).sort().map(y => `<h3 class="year-h">${y}</h3><ul class="events">${by[y].map(eventRow).join('')}</ul>`).join('') || '<p class="prose">这一格没有大事。</p>'; };
@@ -1673,7 +1684,7 @@ body.has-dock { padding-bottom: 92px; }
     const paint = () => {
       view.querySelectorAll('[data-ft]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.ft === fFilter.tab)));
       const box = $('f-body');
-      if (fFilter.tab === 'cols') box.innerHTML = `${colIndex(cols)}${k === 'school' ? dayBlock() : ''}`;
+      if (fFilter.tab === 'cols') box.innerHTML = k === 'place' ? placeIndex(cols) : `${colIndex(cols)}${k === 'school' ? dayBlock() : ''}`;
       else if (fFilter.tab === 'tv') {
         const list = dramas.filter(d => (fFilter.y === '全部' || d.y === +fFilter.y) && (fFilter.r === '全部' || d.region === fFilter.r));
         box.innerHTML = `<div class="filters"><div class="frow"><span class="tech">年份</span>${chips('ky', ['全部', ...YEARS], fFilter.y)}</div><div class="frow"><span class="tech">地区</span>${chips('kr', ['全部', ...new Set(dramas.map(d => d.region))], fFilter.r)}</div></div><p class="credit">按原产地首播年排。点主题曲的名字，播放器就切到这首歌。</p>${dramaList(list)}`;
@@ -2141,7 +2152,7 @@ body.has-dock { padding-bottom: 92px; }
   new MutationObserver(() => { if (!dock.hidden) requestAnimationFrame(markNow); }).observe(view, { childList: true, subtree: true });
 
   // 内容还没到的切面先不露出来
-  document.querySelectorAll('.nav a[href^="#f-"]').forEach(a => { a.hidden = !inFacet(a.getAttribute('href').slice(3)).length; });
+  document.querySelectorAll('.nav a[href^="#f-"]').forEach(a => { const k = a.getAttribute('href').slice(3); a.hidden = !inFacet(k).length && !columnsOf(k).length; });
 
   /* 机身开关和页脚计数 */
   const themeKey = $('theme');
