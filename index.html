@@ -677,6 +677,13 @@ body.has-dock { padding-bottom: 92px; }
 .dock.big .dock-stage { width: min(720px, calc(100vw - 32px)); }
 /* 视频窗是一台小电视。平时移到屏幕外继续放声音，打开才进画面 */
 .dock-tv { position: relative; }
+/* 电脑上拖电视：拖过的位置固定在窗口里；拖的时候屏蔽视频画面，免得鼠标被播放器吃掉 */
+.dock.moved .dock-stage { position: fixed; right: auto; bottom: auto; }
+.dock.can-drag .dock-case, .dock.can-drag .dock-ant { cursor: grab; }
+.dock.can-drag .dock-video, .dock.can-drag .dock-case button { cursor: auto; }
+.dock.dragging .dock-case, .dock.dragging .dock-ant { cursor: grabbing; }
+.dock.dragging iframe { pointer-events: none; }
+.dock.dragging { user-select: none; }
 .dock:not(.tv-on) .dock-tv { position: fixed; left: -1400px; top: 0; width: 356px; pointer-events: none; }
 .dock:not(.tv-on) #dk-size { display: none; }
 .dock-ant { position: absolute; left: 30%; bottom: calc(100% - 6px); width: 32%; }
@@ -2097,6 +2104,37 @@ body.has-dock { padding-bottom: 92px; }
   P.adPop = keep('ad-tv') !== '0';
   // 电视默认：电脑上大屏，手机上小屏；用户按过就记住
   tvSize(keep('tv-big') ? keep('tv-big') === '1' : !PHONE && matchMedia('(min-width: 761px)').matches);
+  // 电脑上可以按住机壳或天线把电视拖到任意位置，位置记住；双击机壳回到右下角。按在画面和按钮上不拖
+  const stage = dock.querySelector('.dock-stage'), wide = () => !PHONE && matchMedia('(min-width: 761px)').matches;
+  const placeTv = (x, y) => {
+    const r = stage.getBoundingClientRect();
+    x = Math.min(Math.max(8, x), innerWidth - r.width - 8); y = Math.min(Math.max(48, y), innerHeight - r.height - 8); // 上面留出天线的高度
+    dock.classList.add('moved'); stage.style.left = `${x}px`; stage.style.top = `${y}px`;
+    return [x, y];
+  };
+  const unplaceTv = () => { dock.classList.remove('moved'); stage.style.left = stage.style.top = ''; };
+  dock.classList.toggle('can-drag', wide());
+  dock.querySelectorAll('.dock-case, .dock-ant').forEach(h => {
+    h.addEventListener('pointerdown', e => {
+      if (!wide() || e.button !== 0 || e.target.closest('.dock-video, button')) return;
+      e.preventDefault();
+      // 两次按下间隔很短、几乎没动，就当双击：回到右下角
+      const now = Date.now();
+      if (now - (h.lastDown ?? 0) < 400 && Math.hypot(e.clientX - h.lastX, e.clientY - h.lastY) < 6) { h.lastDown = 0; unplaceTv(); keep('tv-pos', ''); return; }
+      Object.assign(h, { lastDown: now, lastX: e.clientX, lastY: e.clientY });
+      const r = stage.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top;
+      h.setPointerCapture(e.pointerId); dock.classList.add('dragging');
+      let last = null;
+      const move = ev => { if (!last && Math.hypot(ev.clientX - e.clientX, ev.clientY - e.clientY) < 4) return; last = placeTv(ev.clientX - dx, ev.clientY - dy); };
+      const up = () => { h.removeEventListener('pointermove', move); dock.classList.remove('dragging'); if (last) keep('tv-pos', JSON.stringify(last)); };
+      h.addEventListener('pointermove', move);
+      h.addEventListener('pointerup', up, { once: true }); h.addEventListener('pointercancel', up, { once: true });
+    });
+  });
+  const restoreTv = () => { const p = wide() && keep('tv-pos'); if (p) { try { const [x, y] = JSON.parse(p); placeTv(x, y); } catch {} } else unplaceTv(); };
+  addEventListener('resize', () => { dock.classList.toggle('can-drag', wide()); if (dock.classList.contains('moved')) { const r = stage.getBoundingClientRect(); placeTv(r.left, r.top); } });
+  $('dk-size').addEventListener('click', () => { if (dock.classList.contains('moved')) requestAnimationFrame(() => { const r = stage.getBoundingClientRect(); keep('tv-pos', JSON.stringify(placeTv(r.left, r.top))); }); });
+  restoreTv();
   $('dk-follow').setAttribute('aria-pressed', String(P.follow));
   $('dk-follow').addEventListener('click', e => {
     P.follow = !P.follow;
