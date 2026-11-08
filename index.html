@@ -887,7 +887,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=a7bdf247e4"></script>
+<script src="data.js?v=deb742afcd"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -1464,7 +1464,7 @@ body.has-dock { padding-bottom: 92px; }
     if (!b) return notFound();
     const a = artists[b.a];
     const hits = songsIn[id] ?? [];
-    const norm = s => s.replace(/[\s（）()·]/g, '').toLowerCase();
+    const norm = s => s.replace(/[\s（）()·，,]/g, '').toLowerCase();
     const hitOf = t => hits.find(s => norm(t).startsWith(norm(s.tn ?? s.t)) || norm(s.tn ?? s.t).startsWith(norm(t)));
     const trackRow = (t, i) => {
       const h = hitOf(t[0]);
