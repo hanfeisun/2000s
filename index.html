@@ -887,7 +887,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=deb742afcd"></script>
+<script src="data.js?v=30c2fb4900"></script>
 <script src="faces.js"></script>
 <script>(() => {
   const D = window.DATA;
@@ -1459,17 +1459,20 @@ body.has-dock { padding-bottom: 92px; }
       </div>`;
     view.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => { albumFilter[c.dataset.f] = c.dataset.v; albumsView(); }));
   };
+  const norm = s => s.replace(/[\s（）()·，,]/g, '').toLowerCase();
+  const hitOfAlbum = (b, t) => (songsIn[b.id] ?? []).find(s => norm(t).startsWith(norm(s.tn ?? s.t)) || norm(s.tn ?? s.t).startsWith(norm(t)));
+  const trackSong = (b, t) => hitOfAlbum(b, t[0]) ?? (t[2] ? byVid.get(t[2]) ?? { vid: t[2], vk: t[3] || '音频', t: t[0], a: b.a, al: b.id, y: b.y } : null);
+  const albumSongs = b => b.tracks?.length ? b.tracks.map(t => trackSong(b, t)).filter(Boolean) : (songsIn[b.id] ?? []);
   const albumPage = id => {
     const b = albums[id];
     if (!b) return notFound();
     const a = artists[b.a];
     const hits = songsIn[id] ?? [];
-    const norm = s => s.replace(/[\s（）()·，,]/g, '').toLowerCase();
-    const hitOf = t => hits.find(s => norm(t).startsWith(norm(s.tn ?? s.t)) || norm(s.tn ?? s.t).startsWith(norm(t)));
+    const playable = albumSongs(b);
     const trackRow = (t, i) => {
-      const h = hitOf(t[0]);
+      const h = hitOfAlbum(b, t[0]), s = h ?? (t[2] ? byVid.get(t[2]) ?? { vid: t[2], vk: t[3] || '音频', t: t[0], a: b.a, al: b.id, y: b.y } : null);
       const dur = t[1] ? `${Math.floor(t[1] / 60)}:${String(t[1] % 60).padStart(2, '0')}` : '';
-      const link = h ? playLink(h) : `<a class="play alt" href="${esc(musicSearch(`${a.tw} ${t[0]}`))}" target="_blank" rel="noopener" aria-label="在 YouTube Music 搜索《${esc(t[0])}》">搜索</a>`;
+      const link = s ? playLink(s) : `<a class="play alt" href="${esc(musicSearch(`${a.tw} ${t[0]}`))}" target="_blank" rel="noopener" aria-label="在 YouTube Music 搜索《${esc(t[0])}》">搜索</a>`;
       return `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="${h ? 'h' : ''}">${esc(t[0])}${h ? '<span class="hit">主打</span>' : ''}</span><span class="t">${dur}</span>${link}</li>`;
     };
     const others = (albumsOf[b.a] ?? []).filter(x => x.id !== id).sort((x, y) => x.d.localeCompare(y.d));
@@ -1479,7 +1482,7 @@ body.has-dock { padding-bottom: 92px; }
           <h1>${esc(b.t)}</h1><p class="sub">${artistLink(b.a)} · ${esc(b.d)}${b.tt && b.tt !== b.t ? ` · 原名《${esc(b.tt)}》` : ''}</p></div>
         ${b.note ? `<div class="prose" style="margin-top:14px"><p>${esc(b.note)}</p></div>` : ''}
         ${b.tracks?.length
-          ? `<section class="sec"><div class="sec-h"><h2>曲目</h2><span class="tech">${b.tracks.length} Tracks</span></div>${playAll(hits, '连播主打')}<ol class="tracklist">${b.tracks.map(trackRow).join('')}</ol></section>`
+          ? `<section class="sec"><div class="sec-h"><h2>曲目</h2><span class="tech">${b.tracks.length} Tracks</span></div>${playAll(playable, '连播专辑')}<ol class="tracklist">${b.tracks.map(trackRow).join('')}</ol></section>`
           : hits.length ? `<section class="sec"><div class="sec-h"><h2>主打歌</h2></div>${tuneList(hits)}</section>` : ''}
         ${others.length ? `<section class="sec"><div class="sec-h"><h2>${esc(a.zh)}的其他专辑</h2></div><div class="albums tight">${others.map(albumCard).join('')}</div></section>` : ''}
       </div>
@@ -1868,6 +1871,7 @@ body.has-dock { padding-bottom: 92px; }
   /* 站内播放器。切页不刷新，音乐不会断。YouTube 官方接口会报告播完和禁止嵌入，连播和跳过都靠这两个事件 */
   const byVid = new Map();
   D.songs.forEach(s => { if (canEmbed(s) && !byVid.has(s.vid)) byVid.set(s.vid, s); });
+  D.albums.forEach(b => (b.tracks ?? []).forEach(t => { if (t[2] && !byVid.has(t[2])) byVid.set(t[2], { vid: t[2], vk: t[3] || '音频', t: t[0], a: b.a, al: b.id, y: b.y }); }));
   D.topics.forEach(t => t.songs.forEach(x => { if (x.vid && !byVid.has(x.vid)) byVid.set(x.vid, x.id ? { ...songs[x.id], vid: x.vid, vk: '现场', ne: 0 } : { vid: x.vid, t: x.t, y: x.y, by: [], who: x.a }); }));
   const $ = id => document.getElementById(id);
   // 读专栏时的背景音乐，不是年代歌单的一部分
@@ -2188,7 +2192,7 @@ body.has-dock { padding-bottom: 92px; }
     playYear: y => { if (P.dreamYear !== y) { P.dreamYear = y; playList(songsOfLine(y), 0, 'shuffle'); } },
     wake: () => { location.hash = '#home'; },
     entryHtml: e => `<span class="tech">${e.from === e.to ? e.from : `${e.from}—${e.to}`} · ${esc(e.cat)}</span><h3>${esc(e.name)}</h3><p>${esc(e.text)}</p>${e.scene ? `<p class="d-scene">${esc(e.scene)}</p>` : ''}${playAll((e.songs ?? []).map(id => songs[id]).filter(Boolean), '放这几首')}<p><a href="#e-${e.id}">看这一条的详情</a></p>`,
-    albumHtml: a => { const b = albums[a.id]; return `<span class="tech">${b.y} · 专辑</span><h3>《${esc(b.t)}》</h3><p>${esc(artists[b.a]?.zh)}</p>${playAll(songsIn[b.id] ?? [], '放这张专辑的歌')}<p><a href="#b-${b.id}">看完整曲目</a></p>`; },
+    albumHtml: a => { const b = albums[a.id]; return `<span class="tech">${b.y} · 专辑</span><h3>《${esc(b.t)}》</h3><p>${esc(artists[b.a]?.zh)}</p>${playAll(albumSongs(b), '放这张专辑的歌')}<p><a href="#b-${b.id}">看完整曲目</a></p>`; },
     yearHtml: y => { const l = dreamLine(y); return `<span class="tech">${y} · 这一年</span><h3>${esc(l.title)}</h3><p>${esc(l.lead)}</p><p><a href="#y${y}-${D.years.find(v => v.y === y).cn ? 'cn' : 'hktw'}">读完这一年</a></p>`; },
     eventHtml: y => { const list = dreamLine(y).events, e = list[Math.floor(Math.random() * list.length)]; return `<span class="tech">${esc(e.d)} · ${esc(e.c)}</span><h3>晚报</h3><p>${esc(e.t)}</p>${srcLink(e.s)}`; },
     radioHtml: y => { const eds = editionsAt(y, 'cn').filter(([, e]) => vidsOf(editionSongs(e)).length > 1); const [c, e] = eds[Math.floor(Math.random() * eds.length)] ?? []; return c ? `<span class="tech">${y} · 收音机</span><h3>${esc(c.name)}</h3><p>${esc(e.title ?? '')}</p>${playAll(editionSongs(e), '调到这个台')}` : `<span class="tech">${y} · 收音机</span><h3>只有沙沙声</h3><p>这一年没有收录内地榜单。</p>`; },
