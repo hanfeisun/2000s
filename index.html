@@ -907,7 +907,7 @@ body.has-dock { padding-bottom: 92px; }
     </div>
   </div>
 </aside>
-<script src="data.js?v=bc699c80e2"></script>
+<script src="data.js?v=2d28020b56"></script>
 <script src="faces.js?v=97d80cec30"></script>
 <script>(() => {
   const D = window.DATA;
@@ -1657,7 +1657,7 @@ body.has-dock { padding-bottom: 92px; }
   // 专栏一览：目录式排版，不用卡片
   const colIndex = list => `<ol class="cols">${list.map((c, i) => `<li><a href="#col-${c.id}"><img class="col-c" src="art/col-${c.id}.webp" alt="" loading="lazy" width="800" height="600" data-art="col-${c.id}"><span class="col-b"><span class="tech">${String(i + 1).padStart(2, '0')} · ${esc(c.kicker ?? '')} · ${span(c)}</span><b>${esc(c.title)}</b><small>${esc(c.summary)}</small><span class="col-m lcdnum">${[c.media.length ? `${c.media.length} 段影像` : '', c.photos.length ? `${c.photos.length} 张照片` : '', c.songs.length ? `${c.songs.length} 首歌` : ''].filter(Boolean).join(' · ')}</span></span></a></li>`).join('')}</ol>`;
   // 地方切面：按大区分组，每组先列省名，再列专栏
-  const AREAS = ['华北', '东北', '华东', '华中', '华南', '西南', '西北', '港澳台', '海外'];
+  const AREAS = ['华北', '东北', '华东', '华中', '华南', '西南', '西北', '港澳台', '海外', '美国'];
   const placeIndex = list => { const by = group(list, c => c.area ?? '其他'); const keys = [...AREAS, ...Object.keys(by).filter(a => !AREAS.includes(a))].filter(a => by[a]); return `<nav class="place-jump" aria-label="按地区跳转">${keys.map(a => `<div class="frow"><span class="tech">${esc(a)}</span><span class="place-chips">${by[a].map(c => `<a class="chip" href="#col-${c.id}">${esc(c.place ?? c.kicker ?? '')}</a>`).join('')}</span></div>`).join('')}</nav>${keys.map(a => `<section class="sec place-area"><div class="sec-h"><h2>${esc(a)}</h2><span class="tech">${by[a].length} 篇</span></div>${colIndex(by[a])}</section>`).join('')}`; };
   const entryIndex = list => { const by = group(list, e => e.cat); return `<div class="ent-idx">${Object.keys(by).map(c => `<section><h3>${esc(c)}</h3><ul>${by[c].map(e => `<li><a href="#e-${e.id}">${esc(e.name)}</a><small class="lcdnum">${span(e)}</small></li>`).join('')}</ul></section>`).join('')}</div>`; };
   const eventRow = e => `<li><time>${esc(String(e.d ?? '').slice(5) || '—')}</time><span><span class="tag">${esc(e.c)}</span> ${rich(e.t)}${srcLink(e.s)}</span></li>`;
@@ -1849,7 +1849,7 @@ body.has-dock { padding-bottom: 92px; }
       </div>
       <div class="prose">
         <p>多少都行。五毛钱是当年一包辣条，十块钱是网吧一次包夜。</p>
-        <p><b>钱会用在：</b>买查资料用的旧杂志、旧报纸和老碟，做接下来的小游戏，以后换独立域名和服务器。</p>
+        <p><b>钱会用在：</b>买查资料用的旧杂志、旧报纸和老碟，买 Claude 会员，做接下来的小游戏，以后换独立域名和服务器。</p>
         <p class="credit">完全自愿，不投币也能看全部内容。这是个人项目，不开发票，也没有会员特权。</p>
       </div>
     </div>`;
